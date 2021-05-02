@@ -1,0 +1,13 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 100px;
+  padding: 37px 120px;
+  background: #fbf9f4;
+}
+
+.footer-rights {
+  font: normal 500 20px/24px 'Montserrat', sans-serif;
+  color: #4A525A;
+}

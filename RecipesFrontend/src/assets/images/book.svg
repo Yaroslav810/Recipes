@@ -1,0 +1,20 @@
+<svg 
+  width="50" 
+  height="50" 
+  viewBox="0 0 50 50" 
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect 
+    width="50" 
+    height="50" 
+    rx="12" 
+    fill="#FFEFCC"
+  />
+  <path 
+    d="M14 13H16.4444V37H14V13ZM33.5556 13H17.6667V37H33.5556C34.9037 
+      37 36 35.9236 36 34.6V15.4C36 14.0764 34.9037 13 33.5556 13ZM32.3333 
+      25H21.3333V22.6H32.3333V25ZM32.3333 20.2H21.3333V17.8H32.3333V20.2Z" 
+    fill="#F29E1F"
+  />
+</svg>
