@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IMainCourseCard } from './../../directives/main-course-card/main-course-card-interface';
+import { IMainCourseCard } from './main-course-card.interface';
 
 @Component({
   selector: 'app-main-course-card',

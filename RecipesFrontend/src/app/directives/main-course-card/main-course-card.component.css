@@ -40,13 +40,13 @@
 .like-icon {
   width: 20px;
   height: 19px;
-  background: url('./../../../assets/images/heart.svg');
+  background: url('/assets/images/heart.svg');
 }
 
 .timer-icon {
   width: 18px;
   height: 21px;
-  background: url('./../../../assets/images/timer.svg');
+  background: url('/assets/images/timer.svg');
 }
 
 .value {

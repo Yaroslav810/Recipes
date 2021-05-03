@@ -1,7 +1,7 @@
 export interface IMainCourseCard {
   title: string,
   description: string,
-  likeCount: number,
+  likesCount: number,
   time: string,
   image: string, 
   icon: string,

@@ -1,6 +1,6 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { ISimpleCard } from './../../directives/simple-card/simple-card-interface';
-import { IMainCourseCard } from './../../directives/main-course-card/main-course-card-interface';
+import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
+import { IMainCourseCard } from '../../directives/main-course-card/main-course-card.interface';
 
 @Component({
   selector: 'app-main',
@@ -19,7 +19,7 @@ export class MainComponent implements OnInit {
   constructor() {
     this.cards = this.getAdvantagesCards();
     this.mainCourseCard = this.getMainCourseCard();
-    this.hintsDishes = this.getHintsDishes();
+    this.hintsDishes = this.getDishHints();
    }
 
   ngOnInit(): void {
@@ -54,14 +54,14 @@ export class MainComponent implements OnInit {
     return {
       title: 'Тыквенный супчик на кокосовом молоке',
       description: 'Если у вас осталась тыква, и вы не знаете что с ней сделать, то это решение для вас! Ароматный, согревающий суп-пюре на кокосовом молоке. Можно даже в Пост! ',
-      likeCount: 23,
+      likesCount: 23,
       time: '35 минут',
       image: 'pumpkin-soup-with-coconut-milk.png', 
       icon: 'recipeDay.svg',
     };
   }
 
-  private getHintsDishes = (): string[] => {
+  private getDishHints = (): string[] => {
     return [
       'Мясо',
       'Деликатесы',
@@ -70,7 +70,7 @@ export class MainComponent implements OnInit {
     ];
   }
 
-  private getSerch = (hint): void => {
+  public searchByHint = (hint: string): void => {
     this.searchDishes = hint;
   }
 

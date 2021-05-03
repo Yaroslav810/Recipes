@@ -42,7 +42,7 @@
         </button>
       </div>
       <div class="form-hints">
-        <span *ngFor="let hint of hintsDishes" class="hint" (click)="getSerch(hint)" >{{ hint }}</span>
+        <span *ngFor="let hint of hintsDishes" class="hint" (click)="searchByHint(hint)" >{{ hint }}</span>
       </div>
     </form>
   </section>

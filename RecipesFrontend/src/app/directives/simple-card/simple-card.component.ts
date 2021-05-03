@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISimpleCard } from './../../directives/simple-card/simple-card-interface';
+import { ISimpleCard } from './simple-card.interface';
 
 @Component({
   selector: 'app-simple-card',

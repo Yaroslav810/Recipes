@@ -61,7 +61,7 @@
   width: 14px;
   height: 14px;
   margin-right: 23px;
-  background: url('./../../../assets/images/plus.svg');
+  background: url('/assets/images/plus.svg');
 }
 
 .button span {
