@@ -1,0 +1,20 @@
+<mat-card class="card">
+  <div class="card-image">
+    <img mat-card-image src="./assets/images/{{ card.image }}" alt="{{ card.title }}">
+  </div>
+  <div class="card-content">
+    <div class="additional-info">
+      <div class="additional-info__item">
+        <div class="like-icon"></div>
+        <div class="value">{{ card.likesCount }}</div>
+      </div>
+      <div class="additional-info__item">
+        <div class="timer-icon"></div>
+        <div class="value">{{ card.time }}</div>
+      </div>
+    </div>
+    <img mat-card-sm-image class="card-icon" src="./assets/images/{{ card.icon }}" alt="{{ card.title }}" />
+    <mat-card-title class="card-title">{{ card.title }}</mat-card-title>
+    <mat-card-content class="card-description">{{ card.description }}</mat-card-content>
+  </div>
+</mat-card>

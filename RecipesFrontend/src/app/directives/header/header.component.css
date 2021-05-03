@@ -1,8 +1,72 @@
+.header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 85%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 35px;
+  font: normal 600 18px/22px 'Montserrat', sans-serif;
+}
+
+.header__navigation {
+  display: flex;
+  flex: 1 1 0;
+  margin-left: 65px;
+  color: #3A3C41;
+}
+
 .navigation {
   padding: 0;
-  list-style: none;
+  margin-right: 8px;
 }
 
 .navigation__link {
+  font: normal 600 18px/22px 'Montserrat', sans-serif;
   text-decoration: none;
 }
+
+.header__account {
+  display: flex;
+  align-items: center;
+}
+
+.account__links {
+  display: flex;
+  align-items: center;
+}
+
+.account__links::before {
+  content: '';
+  width: 19px;
+  height: 0px;
+  margin: 0 25px;
+  border: 1px solid rgba(253, 177, 0, 0.72);
+  transform: rotate(90deg);
+}
+
+.account__links:first-child::before {
+  display: none;
+}
+
+.account__link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.account-image {
+  display: flex;
+}
+
+.account-text {
+  max-width: 200px;
+  margin-left: 14px;
+  color: #FDB100;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

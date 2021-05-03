@@ -5,16 +5,18 @@
     </a>
   </div>
   <nav class="header__navigation">
-    <mat-nav-list class="navigation">
-      <a mat-list-item href="/" class="navigation__link">Главная</a>
+    <mat-nav-list class="navigation" *ngFor="let link of links">
+      <a mat-list-item routerLink="/{{ link.link }}" class="navigation__link">{{ link.title }}</a>
     </mat-nav-list>
   </nav>
   <div class="header__account">
-    <div>
-      <img src="./assets/images/user.svg" alt="user">
-    </div>
-    <div>
-      Войти
+    <div class="account__links" *ngFor="let accountButton of accountButtons">
+      <a href="/" class="account__link" (click)=" accountButton.onAction($event) ">
+        <div class="account-image">
+          <img src="./assets/images/{{ accountButton.icon }}">
+        </div>
+        <div class="account-text" title="{{ accountButton.title }}">{{ accountButton.title }}</div>
+      </a>
     </div>
   </div>
 </header>

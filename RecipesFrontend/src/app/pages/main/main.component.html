@@ -1,3 +1,53 @@
-<div>
-  Main
+<div class="main">
+  <section class="introduction">
+    <h1 class="introduction-title">Готовь и делись рецептами</h1>
+    <p class="introduction-description">Никаких кулинарных книг и блокнотов! Храни все любимые рецепты в одном месте.</p>
+    <div class="introduction-buttons">
+      <button mat-flat-button color="accent" class="button">
+        <span class="plus"></span>
+        <span>Добавить рецепт</span>
+      </button>
+      <button mat-stroked-button color="accent" class="button stroked-button">
+        <span>Войти</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="advantages">
+    <h2 class="advantages-title">Умная сортировка по тегам</h2>
+    <p class="advantages-description">Добавляй рецепты и указывай наиболее популярные теги. Это позволит быстро находить любые категории.</p>
+    <div class="advantages-cards">
+      <app-simple-card class="advantages-card" *ngFor="let card of cards" [card]="card"></app-simple-card>
+    </div>
+  </section>
+
+  <section class="dynamic-content">
+    <app-main-course-card [card]="mainCourseCard"></app-main-course-card>
+  </section>
+
+  <section class="search">
+    <h2 class="search-title">Поиск рецептов</h2>
+    <p class="search-description">Введите примерное название блюда, а мы по тегам найдем его</p>
+    <form class="form">
+      <div class="form-content">
+        <input 
+          type="text" 
+          placeholder="Название блюда..."
+          name="searchDishes"
+          [(ngModel)]="searchDishes"
+          class="form-input" 
+          autocomplete="off" />
+        <button mat-raised-button color="accent" class="form-button">
+          <span>Поиск</span>
+        </button>
+      </div>
+      <div class="form-hints">
+        <span *ngFor="let hint of hintsDishes" class="hint" (click)="searchByHint(hint)" >{{ hint }}</span>
+      </div>
+    </form>
+  </section>
+
+  <div class="main-image">
+    <img src="./assets/images/dishes.png">
+  </div>
 </div>
