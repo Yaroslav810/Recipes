@@ -51,6 +51,9 @@ export class MainComponent implements OnInit {
   }
 
   private getMainCourseCard = (): IMainCourseCard => {
+    // var abc = [];
+    // const convertedAbcs = abc.map(x => AbcMapper.Map(x));
+    // return AbcMapper.Map(abc);
     return {
       id: 1,
       title: 'Тыквенный супчик на кокосовом молоке',

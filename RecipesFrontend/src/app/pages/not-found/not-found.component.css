@@ -1,0 +1,50 @@
+.not-found {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.video {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%,-50%);
+  z-index: 2;
+}
+
+.text {
+  max-width: 800px;
+  font: normal 600 52px/60px 'Montserrat', sans-serif;
+  text-align: center;
+  color: #fff;
+  z-index: 4;
+}
+
+.button {
+  padding: 18px 45px 22px;
+  font: normal 600 28px/22px 'Montserrat', sans-serif;
+  text-align: center;
+  color: #fff;
+  background: #fdb100;
+  border-radius: 16px;
+  z-index: 4;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, .5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+}
