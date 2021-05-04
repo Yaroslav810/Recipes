@@ -31,16 +31,16 @@
             <span>Поиск</span>
           </button>
         </div>
-        <div class="form-hints">
-          <span *ngFor="let hint of dishHints" class="hint" (click)="fillSearchInput(hint)" >{{ hint }}</span>
+        <div class="form-tags">
+          <span *ngFor="let tag of dishTags" class="tag" (click)="fillSearchInput(tag)" >{{ tag }}</span>
         </div>
       </form>
     </div>
 
 
     <div class="search__results">
-      <app-dish-card *ngFor="let card of dishCards" [card]="card"></app-dish-card>
-      <button mat-stroked-button color="accent" class="stroked-button" (click)="addCardsHandler()" >
+      <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes"></app-dish-card>
+      <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" >
         <span>Загрузить ещё</span>
       </button>
     </div>

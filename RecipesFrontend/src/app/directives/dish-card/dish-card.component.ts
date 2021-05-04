@@ -9,15 +9,16 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 export class DishCardComponent implements OnInit {
 
   @Input() card: IDishCard;
+  @Input() onOpenDishCard: Function;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  public starCountHandler = (): void => {
-    if (this.card.isStarSet)
-    {
+  public onStarButtonClick(event): void {
+    event.stopPropagation();
+    if (this.card.isStarSet) {
       this.card.starsCount = --this.card.starsCount;
     } else {
       this.card.starsCount = ++this.card.starsCount;
@@ -25,14 +26,18 @@ export class DishCardComponent implements OnInit {
     this.card.isStarSet = !this.card.isStarSet;
   }
 
-  public likeCountHandler = (): void => {
-    if (this.card.isLikeSet)
-    {
+  public onLikeButtonClick(event): void {
+    event.stopPropagation()
+    if (this.card.isLikeSet) {
       this.card.likesCount = --this.card.likesCount;
     } else {
       this.card.likesCount = ++this.card.likesCount;
     }
     this.card.isLikeSet = !this.card.isLikeSet;
+  }
+
+  public onCardButtonClick = (): void => {
+    this.onOpenDishCard(this.card);
   }
 
 }

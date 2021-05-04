@@ -1,4 +1,5 @@
 export interface IMainCourseCard {
+  id: number,
   title: string,
   description: string,
   likesCount: number,

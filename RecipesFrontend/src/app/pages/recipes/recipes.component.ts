@@ -11,14 +11,14 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 export class RecipesComponent implements OnInit {
 
   public cards: ISimpleCard[];
-  public dishHints: string[];
+  public dishTags: string[];
   public dishCards: IDishCard[];
 
   searchDishes = '';
 
   constructor() {
     this.cards = this.getAdvantagesCards();
-    this.dishHints = this.getDishHints();
+    this.dishTags = this.getDishTags();
     this.dishCards = this.getDishCards();
   }
 
@@ -29,9 +29,10 @@ export class RecipesComponent implements OnInit {
     this.searchDishes = search;
   }
 
-  addCardsHandler = (): void => {
+  public loadAdditionalCards(): void {
     let response = [
       {
+        id: 6,
         title: 'Клубничная панна-котта',
         description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
         keywords: ['десерты', 'клубника', 'сливки'],
@@ -39,11 +40,12 @@ export class RecipesComponent implements OnInit {
         starsCount: 10,
         time: '35  мин',
         personsCount: '5 персон',
-        image: 'strawberry-panna-cotta.png', 
+        image: './assets/images/strawberry-panna-cotta.png', 
         isStarSet: true,
         isLikeSet: false,
       },
       {
+        id: 17,
         title: 'Мясные фрикадельки',
         description: 'Мясные фрикадельки в томатном соусе - несложное и вкусное блюдо, которым можно порадовать своих близких.',
         keywords: ['вторые блюда', 'мясо', 'соевый соус'],
@@ -51,7 +53,7 @@ export class RecipesComponent implements OnInit {
         starsCount: 4,
         time: '90  мин',
         personsCount: '4 персоны',
-        image: 'meat-meatballs.png', 
+        image: './assets/images/meat-meatballs.png', 
         isStarSet: false,
         isLikeSet: false,
       },
@@ -59,7 +61,7 @@ export class RecipesComponent implements OnInit {
     this.dishCards = this.dishCards.concat(response);
   }
 
-  private getAdvantagesCards = (): ISimpleCard[] => {
+  private getAdvantagesCards(): ISimpleCard[] {
     return [
       {
         title: 'Простые блюда',
@@ -84,7 +86,7 @@ export class RecipesComponent implements OnInit {
     ];
   }
 
-  private getDishHints = (): string[] => {
+  private getDishTags(): string[] {
     return [
       'мясо',
       'деликатесы',
@@ -95,9 +97,10 @@ export class RecipesComponent implements OnInit {
     ];
   }
 
-  private getDishCards = (): IDishCard[] => {
+  private getDishCards(): IDishCard[] {
     return [
       {
+        id: 2,
         title: 'Клубничная панна-котта',
         description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
         keywords: ['десерты', 'клубника', 'сливки'],
@@ -105,11 +108,12 @@ export class RecipesComponent implements OnInit {
         starsCount: 10,
         time: '35  мин',
         personsCount: '5 персон',
-        image: 'strawberry-panna-cotta.png', 
+        image: './assets/images/strawberry-panna-cotta.png', 
         isStarSet: true,
         isLikeSet: false,
       },
       {
+        id: 3,
         title: 'Мясные фрикадельки',
         description: 'Мясные фрикадельки в томатном соусе - несложное и вкусное блюдо, которым можно порадовать своих близких.',
         keywords: ['вторые блюда', 'мясо', 'соевый соус'],
@@ -117,11 +121,12 @@ export class RecipesComponent implements OnInit {
         starsCount: 4,
         time: '90  мин',
         personsCount: '4 персоны',
-        image: 'meat-meatballs.png', 
+        image: './assets/images/meat-meatballs.png', 
         isStarSet: false,
         isLikeSet: false,
       },
       {
+        id: 4,
         title: 'Панкейки',
         description: 'Панкейки: меньше, чем блины, но больше, чем оладьи. Основное отличие — в тесте, оно должно быть воздушным, чтобы панкейки не растекались по сковородке...',
         keywords: ['десерты', 'завтрак', 'блины'],
@@ -129,11 +134,12 @@ export class RecipesComponent implements OnInit {
         starsCount: 25,
         time: '40  мин',
         personsCount: '3 персон',
-        image: 'pancakes.png', 
+        image: './assets/images/pancakes.png', 
         isStarSet: true,
         isLikeSet: true,
       },
       {
+        id: 5,
         title: 'Полезное мороженое без сахара',
         description: 'Йогуртовое мороженое сочетает в себе нежный вкус и низкую калорийность, что будет особенно актуально для сладкоежек, соблюдающих диету.',
         keywords: ['десерты', 'вишня', 'мороженое'],
@@ -141,11 +147,15 @@ export class RecipesComponent implements OnInit {
         starsCount: 4,
         time: '35  мин',
         personsCount: '2 персоны',
-        image: 'healthy-ice-cream-without-sugar.png', 
+        image: './assets/images/healthy-ice-cream-without-sugar.png', 
         isStarSet: false,
         isLikeSet: false,
       }
     ];
+  }
+
+  public openRecipes(card: IDishCard): void {
+    console.log('Ну погнали открывать карточку с id ' + card.id + '!');
   }
 
 }

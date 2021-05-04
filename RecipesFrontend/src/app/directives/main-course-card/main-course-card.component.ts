@@ -10,10 +10,15 @@ import { IMainCourseCard } from './main-course-card.interface';
 export class MainCourseCardComponent implements OnInit {
 
   @Input() card: IMainCourseCard;
+  @Input() onOpenDishCard: Function;
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  public onCardButtonClick = (): void => {
+    this.onOpenDishCard(this.card);
   }
 
 }

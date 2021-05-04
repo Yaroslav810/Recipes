@@ -1,6 +1,6 @@
-<mat-card class="card">
+<mat-card class="card" (click)="onCardButtonClick()">
   <div class="card-image">
-    <img mat-card-image src="./assets/images/{{ card.image }}" alt="{{ card.title }}">
+    <img mat-card-image src="{{ card.image }}" alt="{{ card.title }}">
   </div>
   <div class="card-content">
     <div class="card-header">
@@ -9,12 +9,12 @@
           <p class="keyword-text">{{ keyword }}</p>
         </div>
       </div>
-      <div class="card-ratings">
-        <div class="rating__item" (click)="starCountHandler()">
+      <div class="rating">
+        <div class="rating__item" (click)="onStarButtonClick($event)">
           <div class="star-icon" [class.star-icon_active]="card.isStarSet"></div>
           <div class="value">{{ card.starsCount }}</div>
         </div>
-        <div class="rating__item" (click)="likeCountHandler()">
+        <div class="rating__item" (click)="onLikeButtonClick($event)">
           <div class="like-icon" [class.like-icon_active]="card.isLikeSet"></div>
           <div class="value">{{ card.likesCount }}</div>
         </div>

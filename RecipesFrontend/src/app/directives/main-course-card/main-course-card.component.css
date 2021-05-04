@@ -4,12 +4,25 @@
   margin: 0;
   box-shadow: none;
   background: transparent;
+  cursor: pointer;
+  transition: .5s;
+}
+
+.card:hover {
+  box-shadow: 0px 16px 72px rgba(34, 39, 47, 0.15);
+  border-radius: 72px;
+  overflow: hidden;
 }
 
 .card-image {
   width: 543px;
   border-radius: 72px 0;
   overflow: hidden;
+  transition: .5s;
+}
+
+.card:hover .card-image {
+  border-radius: 72px 0 72px 72px;
 }
 
 .card-image img {
@@ -22,7 +35,7 @@
 
 .card-content {
   flex: 1 1 0;
-  margin-left: 70px;
+  padding: 20px 50px 20px 70px;
 }
 
 .additional-info {

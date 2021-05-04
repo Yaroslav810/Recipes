@@ -1,4 +1,5 @@
 export interface IDishCard {
+  id: number,
   title: string,
   description: string,
   keywords: string[],
