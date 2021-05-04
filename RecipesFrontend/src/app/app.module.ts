@@ -14,6 +14,7 @@ import { SimpleCardComponent } from './directives/simple-card/simple-card.compon
 import { MainCourseCardComponent } from './directives/main-course-card/main-course-card.component';
 import { FooterComponent } from './directives/footer/footer.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
+import { DishCardComponent } from './directives/dish-card/dish-card.component';
 
 
 
@@ -27,6 +28,7 @@ import { FavoritesComponent } from './pages/favorites/favorites.component';
     MainCourseCardComponent,
     FooterComponent,
     FavoritesComponent,
+    DishCardComponent,
   ],
   imports: [
     BrowserModule,

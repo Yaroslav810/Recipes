@@ -52,12 +52,14 @@ export class MainComponent implements OnInit {
 
   private getMainCourseCard = (): IMainCourseCard => {
     return {
+      id: 1,
       title: 'Тыквенный супчик на кокосовом молоке',
       description: 'Если у вас осталась тыква, и вы не знаете что с ней сделать, то это решение для вас! Ароматный, согревающий суп-пюре на кокосовом молоке. Можно даже в Пост! ',
+      author: 'glazest',
       likesCount: 23,
       time: '35 минут',
-      image: 'pumpkin-soup-with-coconut-milk.png', 
-      icon: 'recipeDay.svg',
+      image: './assets/images/pumpkin-soup-with-coconut-milk.png', 
+      icon: './assets/images/recipeDay.svg',
     };
   }
 
@@ -72,6 +74,10 @@ export class MainComponent implements OnInit {
 
   public searchByHint = (hint: string): void => {
     this.searchDishes = hint;
+  }
+
+  public openRecipe = (card: IMainCourseCard): void => {
+    console.log('Откроем карточку с id ' + card.id + '?');
   }
 
 }

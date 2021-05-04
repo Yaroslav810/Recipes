@@ -76,6 +76,7 @@
 
 /***** ADVANTAGES *****/
 
+
 .advantages-title {
   margin: 350px 0 0 0;
   font: normal bold 42px/62px 'Montserrat', sans-serif;
@@ -98,6 +99,7 @@
   align-items: stretch;
   flex: 1 1 0;
   max-width: 275px;
+  cursor: default;
 }
 
 
