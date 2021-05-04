@@ -1,0 +1,42 @@
+<mat-card class="card">
+  <div class="card-image">
+    <img mat-card-image src="./assets/images/{{ card.image }}" alt="{{ card.title }}">
+  </div>
+  <div class="card-content">
+    <div class="card-header">
+      <div class="keywords">
+        <div class="keyword" *ngFor="let keyword of card.keywords" title="{{ keyword }}">
+          <p class="keyword-text">{{ keyword }}</p>
+        </div>
+      </div>
+      <div class="card-ratings">
+        <div class="rating__item" (click)="starCountHandler()">
+          <div class="star-icon" [class.star-icon_active]="card.isStarSet"></div>
+          <div class="value">{{ card.starsCount }}</div>
+        </div>
+        <div class="rating__item" (click)="likeCountHandler()">
+          <div class="like-icon" [class.like-icon_active]="card.isLikeSet"></div>
+          <div class="value">{{ card.likesCount }}</div>
+        </div>
+      </div>
+    </div>
+    <mat-card-title class="card-title">{{ card.title }}</mat-card-title>
+    <mat-card-content class="card-description">{{ card.description }}</mat-card-content>
+    <div class="card-additional">
+      <div class="additional__item">
+        <div class="big-timer-icon"></div>
+        <div class="additional-item__content">
+          <p class="additional-item__title">Время приготовления:</p>
+          <p class="additional-item__value">{{ card.time }}</p>
+        </div>
+      </div>
+      <div class="additional__item">
+        <div class="group-people-icon"></div>
+        <div class="additional-item__content">
+          <p class="additional-item__title">Рецепт на:</p>
+          <p class="additional-item__value">{{ card.personsCount }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

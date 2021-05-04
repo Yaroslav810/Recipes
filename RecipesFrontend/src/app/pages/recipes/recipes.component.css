@@ -1,0 +1,138 @@
+.recipes {
+  width: 85%;
+  max-width: 1200px;
+  margin: 30px auto 0;
+}
+
+/***** RECIPES-BLOCK *****/
+
+.recipes-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 82px;
+}
+
+.recipes-block__title {
+  margin: 0;
+  font: normal bold 42px/62px 'Montserrat', sans-serif;
+  color: #25292D;
+}
+
+.button {
+  padding: 12px 37px;
+  border-radius: 16px;
+  background: #fdb100;
+}
+
+.plus {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 23px;
+  background: url('/assets/images/plus.svg');
+}
+
+.button span {
+  font: normal 600 18px/28px 'Montserrat', sans-serif;
+  color: #fff;
+}
+
+
+/***** ADVANTAGES *****/
+
+.advantages {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 52px;
+}
+
+.advantages-card {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  max-width: 275px;
+  cursor: pointer;
+}
+
+
+/***** SEARCH *****/
+
+.search {
+  margin-top: 50px;
+}
+
+.search__form {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.form-title {
+  margin-right: 56px;
+  font: normal bold 24px/30px 'Montserrat', sans-serif;
+  color: #25292D;
+}
+
+.form {
+  flex: 1;
+}
+
+.form-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.form-input {
+  flex: 1 1 0;
+  padding: 26px 0 26px 32px;
+  background: #FFFFFF;
+  font: normal normal 18px/22px 'Montserrat', sans-serif;
+  text-transform: capitalize;
+  color: rgba(37, 41, 45, 0.5);
+  box-shadow: 0px 8px 42px rgba(34, 39, 47, 0.04);
+  border: 0;
+  border-radius: 16px;
+  outline: none;
+}
+
+.form-button {
+  margin-left: 16px;
+  padding: 18px 45px 14px;
+  font: normal 600 18px/22px 'Montserrat', sans-serif;
+  text-align: center;
+  color: #FFFFFF;
+  background: #FDB100;
+  border-radius: 16px;
+}
+
+.form-hints {
+  display: flex;
+  align-items: center;
+}
+
+.hint {
+  margin: 24px 15px 0 0;
+  font: normal normal 16px/18px 'Montserrat', sans-serif;
+  color: #808080;
+  cursor: pointer;
+}
+
+.search__results {
+  padding: 40px 0 0;
+}
+
+.stroked-button {
+  display: flex;
+  margin: 65px auto 0;
+  padding: 12px 78px;
+  border: 1px solid #FDB100;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.stroked-button span {
+  font: normal 600 18px/22px 'Montserrat', sans-serif;
+  color: #fdb100;
+}

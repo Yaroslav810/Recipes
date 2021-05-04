@@ -1,3 +1,50 @@
 <div class="recipes">
-  Recipes works!
+  
+  <section class="recipes-block">
+    <h2 class="recipes-block__title">Рецепты</h2>
+    <button mat-flat-button color="accent" class="button">
+      <span class="plus"></span>
+      <span>Добавить рецепт</span>
+    </button>
+  </section>
+
+  <section class="advantages">
+    <app-simple-card class="advantages-card" *ngFor="let card of cards" [card]="card" (click)="fillSearchInput(card.title)" ></app-simple-card>
+  </section>
+
+  <section class="search">
+
+    <div class="search__form">
+
+      <p class="form-title">Поиск рецепта</p>
+  
+      <form class="form">
+        <div class="form-content">
+          <input 
+            type="text" 
+            placeholder="Название блюда..."
+            name="searchDishes"
+            [(ngModel)]="searchDishes"
+            class="form-input" 
+            autocomplete="off" />
+          <button mat-raised-button color="accent" class="form-button">
+            <span>Поиск</span>
+          </button>
+        </div>
+        <div class="form-hints">
+          <span *ngFor="let hint of dishHints" class="hint" (click)="fillSearchInput(hint)" >{{ hint }}</span>
+        </div>
+      </form>
+    </div>
+
+
+    <div class="search__results">
+      <app-dish-card *ngFor="let card of dishCards" [card]="card"></app-dish-card>
+      <button mat-stroked-button color="accent" class="stroked-button" (click)="addCardsHandler()" >
+        <span>Загрузить ещё</span>
+      </button>
+    </div>
+
+  </section>
+
 </div>
