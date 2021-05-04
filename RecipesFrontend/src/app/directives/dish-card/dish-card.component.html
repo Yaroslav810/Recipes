@@ -1,6 +1,9 @@
 <mat-card class="card" (click)="onCardButtonClick()">
   <div class="card-image">
     <img mat-card-image src="{{ card.image }}" alt="{{ card.title }}">
+    <div class="card-author">
+      <p class="author">@{{ card.author }}</p>
+    </div>
   </div>
   <div class="card-content">
     <div class="card-header">

@@ -16,6 +16,7 @@
 }
 
 .card-image {
+  position: relative;
   width: 430px;
   height: 430px;
   border-radius: 72px 0;
@@ -33,6 +34,20 @@
   height: 100%;
   margin: 0;
   object-fit: cover;
+}
+
+.card-author {
+  position: absolute;
+  left: 0;
+  bottom: 38px;
+  padding: 2px 16px;
+  background: #fff;
+}
+
+.author {
+  margin: 0;
+  font: normal 600 16px/28px 'Montserrat', sans-serif;
+  color: #FDB100;
 }
 
 .card-content {

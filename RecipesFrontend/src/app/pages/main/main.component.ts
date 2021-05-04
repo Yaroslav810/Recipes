@@ -55,6 +55,7 @@ export class MainComponent implements OnInit {
       id: 1,
       title: 'Тыквенный супчик на кокосовом молоке',
       description: 'Если у вас осталась тыква, и вы не знаете что с ней сделать, то это решение для вас! Ароматный, согревающий суп-пюре на кокосовом молоке. Можно даже в Пост! ',
+      author: 'glazest',
       likesCount: 23,
       time: '35 минут',
       image: './assets/images/pumpkin-soup-with-coconut-milk.png', 

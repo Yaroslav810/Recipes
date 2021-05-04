@@ -3,6 +3,7 @@ export interface IDishCard {
   title: string,
   description: string,
   keywords: string[],
+  author: string,
   likesCount: number,
   starsCount: number,
   time: string,
