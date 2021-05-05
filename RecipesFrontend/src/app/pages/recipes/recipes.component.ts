@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
 import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 
@@ -16,7 +17,7 @@ export class RecipesComponent implements OnInit {
 
   searchDishes = '';
 
-  constructor() {
+  constructor(private router: Router) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
     this.dishCards = this.getDishCards();
@@ -161,7 +162,7 @@ export class RecipesComponent implements OnInit {
   }
 
   public openRecipes(card: IDishCard): void {
-    console.log('Ну погнали открывать карточку с id ' + card.id + '!');
+    this.router.navigate(['/recipe', card.id]);
   }
 
 }

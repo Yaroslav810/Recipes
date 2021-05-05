@@ -1,0 +1,108 @@
+.recipe {
+  width: 85%;
+  max-width: 1200px;
+  margin: 38px auto 0;
+}
+
+.back {
+  display: inline-block;
+  margin: 0;
+  font: normal 500 18px/22px 'Montserrat', sans-serif;
+  color: #fdb100;
+  cursor: pointer;
+}
+
+.back::before {
+  content: url('/assets/images/leftArrow.svg');
+  margin-right: 13px;
+}
+
+.main__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 10px 0;
+  font: normal bold 42px/62px 'Montserrat', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #25292D;
+}
+
+.сontrol-buttons {
+  display: flex;
+}
+
+.stroked-button {
+  margin-right: 18px;
+  padding: 21px 23px;
+  border: 1px solid rgba(145, 150, 161, 0.7);
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.basket-icon {
+  width: 14px;
+  height: 18px;
+  background: url('/assets/images/basket.svg');
+}
+
+.button {
+  padding: 12px 37px;
+  border-radius: 16px;
+  background: #fdb100;
+}
+
+.edit-icon {
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  margin-right: 23px;
+  background: url('/assets/images/pencil.svg');
+}
+
+.button span {
+  font: normal 600 18px/28px 'Montserrat', sans-serif;
+  color: #fff;
+}
+
+.details {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ingredients {
+  margin-right: 14px;
+  width: 390px;
+}
+
+.ingredients-title {
+  margin: 0;
+  font: normal bold 20px/30px 'Montserrat', sans-serif;
+  color: #fdb100;
+}
+
+.ingredient-title {
+  margin: 20px 0 5px;
+  font: normal 600 18px/30px 'Montserrat', sans-serif;
+  color: #4a525a;
+}
+
+.ingredient-value {
+  margin: 0;
+  font: normal normal 18px/30px 'Montserrat', sans-serif;
+  color: #4a525a;
+}
+
+.wish {
+  margin-top: 40px;
+  font: normal 600 24px/30px 'Montserrat', sans-serif;
+  text-align: center;
+  text-transform: capitalize;
+  color: #FDB100;
+  opacity: 0.5;
+}

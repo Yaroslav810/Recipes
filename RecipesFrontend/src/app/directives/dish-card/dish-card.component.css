@@ -130,7 +130,7 @@
   color: #FDB100;
 }
 
-.card-title {
+.card-content .card-title {
   display: -webkit-box;
   margin-top: 34px;
   font: normal bold 24px/30px 'Montserrat', sans-serif;
