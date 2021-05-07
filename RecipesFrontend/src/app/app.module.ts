@@ -11,7 +11,6 @@ import { MainComponent } from './pages/main/main.component';
 import { RecipesComponent } from './pages/recipes/recipes.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { RecipeComponent } from './pages/recipe/recipe.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { HeaderComponent } from './directives/header/header.component';
 import { FooterComponent } from './directives/footer/footer.component';
 import { SimpleCardComponent } from './directives/simple-card/simple-card.component';
@@ -19,6 +18,8 @@ import { MainCourseCardComponent } from './directives/main-course-card/main-cour
 import { DishCardComponent } from './directives/dish-card/dish-card.component';
 import { StepCardComponent } from './directives/step-card/step-card.component';
 
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 
 
 
@@ -36,6 +37,7 @@ import { StepCardComponent } from './directives/step-card/step-card.component';
     NotFoundComponent,
     RecipeComponent,
     StepCardComponent,
+    AddRecipeComponent,
   ],
   imports: [
     BrowserModule,

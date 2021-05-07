@@ -1,6 +1,7 @@
 import { Component, NgModule, OnInit } from '@angular/core';
 import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
 import { IMainCourseCard } from '../../directives/main-course-card/main-course-card.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -16,7 +17,7 @@ export class MainComponent implements OnInit {
 
   searchDishes = '';
 
-  constructor() {
+  constructor(private router: Router) {
     this.cards = this.getAdvantagesCards();
     this.mainCourseCard = this.getMainCourseCard();
     this.hintsDishes = this.getDishHints();
@@ -81,6 +82,10 @@ export class MainComponent implements OnInit {
 
   public openRecipe = (card: IMainCourseCard): void => {
     console.log('Откроем карточку с id ' + card.id + '?');
+  }
+
+  public onAddRecipe(): void {
+    this.router.navigate(['/add']);
   }
 
 }
