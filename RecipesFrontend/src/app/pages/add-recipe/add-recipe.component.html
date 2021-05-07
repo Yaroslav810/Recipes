@@ -3,32 +3,32 @@
     Назад
   </p>
   <section class="add">
-    <div class="add__header">
-      <h2 class="title">Добавить новый рецепт</h2>
+    <div class="header">
+      <h2 class="header__title">Добавить новый рецепт</h2>
       <button mat-flat-button color="accent" class="button" (click)="onSaveRecipe()">
         <span>Опубликовать</span>
       </button>
     </div>
     <mat-card class="card">
-      <div class="card-image">
+      <div class="card__image">
         <div *ngIf="details.image;then image else uploading"></div>    
         <ng-template #image>
           <img mat-card-image src="{{ details.image }}" alt="{{ details.title }}">
-          <div class="delete-image" (click)="onDeleteImage()">
+          <div class="image-delete" (click)="onDeleteImage()">
             <div class="cancel-icon"></div>
           </div>
         </ng-template>
         <ng-template #uploading>
-          <label for="form-image" class="label-image">
-            <div class="label-image__content">
-              <p class="label-image__content-icon"></p>
-              <p class="label-image__content-text">Загрузите фото готового блюда</p>
+          <label for="form-image" class="image-label">
+            <div class="image-label__content">
+              <p class="image-label__content-icon"></p>
+              <p class="image-label__content-text">Загрузите фото готового блюда</p>
             </div>
           </label>
-          <input type="file" name="form-image" id="form-image" (change)="onChangeImage($event)" />
+          <input type="file" name="form-image" id="form-image" (change)="onChangeImage($event)" class="image-input" />
         </ng-template>
       </div>
-      <div class="card-content">
+      <div class="card__content">
         <div class="form-field">
           <input class="form-input" placeholder="Название рецепта" [(ngModel)]="details.title" />
         </div>
@@ -40,10 +40,9 @@
             [(ngModel)]="details.description"
           ></textarea>
         </div>
-        <div class="form-field form-input chip-frames">
+        <div class="form-field frame-input">
           <mat-chip-list #keywordsList>
             <mat-chip 
-              class="chip"
               *ngFor="let keyword of details.keywords"
               (removed)="removeKeyword(keyword)"
             >
@@ -51,7 +50,7 @@
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
             <input
-              class="form-field__form-input form-input"
+              class="form-input"
               placeholder="Добавить теги"
               [matChipInputFor]="keywordsList"
               (matChipInputTokenEnd)="addKeyword($event)"
@@ -61,7 +60,7 @@
         </div>
         <div class="form-field">
           <div class="select-item">
-            <mat-select placeholder="Время готовки" class="form-input" [(ngModel)]="details.time">
+            <mat-select placeholder="Время готовки" class="frame-input" [(ngModel)]="details.time">
               <mat-option *ngFor="let value of timeValue" [value]="value">
                 {{ value }}
               </mat-option>
@@ -69,7 +68,7 @@
             <p>Минут</p>
           </div>
           <div class="select-item">
-            <mat-select placeholder="Порций в блюде" class="form-input" [(ngModel)]="details.personsCount">
+            <mat-select placeholder="Порций в блюде" class="frame-input" [(ngModel)]="details.personsCount">
               <mat-option *ngFor="let value of personValue" [value]="value">
                 {{ value }}
               </mat-option>
@@ -79,44 +78,42 @@
         </div>
       </div>
     </mat-card>
-    <div class="add__details">
+    <div class="details">
       <div class="ingredients">
         <h2 class="ingredients-title">Ингридиенты</h2> 
-        <div *ngFor="let ingredient of details.ingredients" class="ingredient">
+        <div *ngFor="let ingredient of details.ingredients" class="ingredient-group">
           <div class="ingredient-close">
             <div class="close" (click)="onDeleteIngredient(ingredient)">
               <div class="close-icon"></div>
             </div>
           </div>
-          <div class="ingredient-block">
+          <div class="ingredient">
             <div class="form-field">
               <input class="form-input" placeholder="Заголовок для ингридиентов" [(ngModel)]="ingredient.title" />
             </div>
-            <div class="form-field">
-              <div class="form-field form-input chip-frames">
-                <mat-chip-list #ingredientsList>
-                  <input
-                    class="form-field__form-input form-input"
-                    placeholder="Список подуктов для категории"
-                    [matChipInputFor]="ingredientsList"
-                    (matChipInputTokenEnd)="addIngredientItem(ingredient, $event)"
-                    autocomplete="off"
-                  />
-                  <mat-chip 
-                    *ngFor="let item of ingredient.value" 
-                    class="ingredient-chip-item"
-                    (removed)="removeIngredientItem(item, ingredient)"
-                  >
-                    {{ item }}
-                    <mat-icon matChipRemove class="ingredient-chip-cancel">cancel</mat-icon>
-                  </mat-chip>
-                </mat-chip-list>
-              </div>
+            <div class="form-field frame-input">
+              <mat-chip-list #ingredientsList>
+                <input
+                  class="form-input"
+                  placeholder="Список подуктов для категории"
+                  [matChipInputFor]="ingredientsList"
+                  (matChipInputTokenEnd)="addIngredientItem(ingredient, $event)"
+                  autocomplete="off"
+                />
+                <mat-chip 
+                  *ngFor="let item of ingredient.value" 
+                  class="ingredient-item"
+                  (removed)="removeIngredientItem(item, ingredient)"
+                >
+                  {{ item }}
+                  <mat-icon matChipRemove class="ingredient-chip-cancel">cancel</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
             </div>           
           </div>
         </div>
         <button mat-stroked-button color="accent" class="button stroked-button" (click)="onAddIngredient()">
-          <span class="plus"></span>
+          <span class="plus-icon"></span>
           <span>Добавить заголовок</span>
         </button>
       </div>
@@ -140,7 +137,7 @@
           </div>
         </div>
         <button mat-stroked-button color="accent" class="button stroked-button" (click)="onAddStep()">
-          <span class="plus"></span>
+          <span class="plus-icon"></span>
           <span>Добавить шаг</span>
         </button>
       </div>

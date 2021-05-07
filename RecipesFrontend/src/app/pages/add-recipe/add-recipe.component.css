@@ -8,6 +8,97 @@
   margin: 38px auto 0;
 }
 
+.button {
+  padding: 12px 50px;
+  border-radius: 16px;
+  background: #fdb100;
+}
+
+.button span {
+  font: normal 600 18px/28px 'Montserrat', sans-serif;
+  color: #fff;
+}
+
+.stroked-button {
+  margin: 20px auto 0;
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+}
+
+.stroked-button span {
+  color: #fdb100;
+}
+
+.form-field {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 10px 11px 24px;
+  font: normal normal 16px/28px 'Montserrat', sans-serif;
+  border: 1px solid rgba(145, 150, 161, 0.4);
+  border-radius: 16px;
+  color: rgba(37, 41, 45, 0.5);
+  outline: none;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.frame-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(145, 150, 161, 0.4);
+  border-radius: 16px;
+}
+
+.frame-input .form-input {
+  margin: 0;
+  padding: 4px 2px 3px 16px;
+  border: none;
+}
+
+.close {
+  padding: 5px 10px 15px;
+  cursor: pointer;
+}
+
+.mat-chip-list {
+  width: 100%;
+}
+
+.mat-chip {
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+.plus-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 23px;
+  background: url('/assets/images/addPlus.svg');
+}
+
+.close-icon {
+  width: 14px;
+  height: 14px;
+  background: url('/assets/images/close.svg');
+}
+
+
+
+
+
+
+/***** BACK *****/
+
 .back {
   display: inline-block;
   margin: 0;
@@ -21,13 +112,16 @@
   margin-right: 13px;
 }
 
-.add__header {
+
+/***** HEADER *****/
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.title {
+.header__title {
   margin: 10px 0;
   font: normal bold 42px/62px 'Montserrat', sans-serif;
   white-space: nowrap;
@@ -36,18 +130,9 @@
   color: #25292D;
 }
 
-.button {
-  padding: 12px 50px;
-  border-radius: 16px;
-  background: #fdb100;
-}
-
-.button span {
-  font: normal 600 18px/28px 'Montserrat', sans-serif;
-  color: #fff;
-}
 
 /***** CARD *****/
+
 .card {
   display: flex;
   margin-top: 50px;
@@ -57,7 +142,10 @@
   background: #fff;
 }
 
-.card-image {
+
+/***** CARD-IMAGE *****/
+
+.card__image {
   position: relative;
   width: 430px;
   border-radius: 72px 0;
@@ -65,15 +153,15 @@
   transition: .5s;
 }
 
-.card-image img {
+.mat-card-image {
   display: block;
   width: 100%;
   height: 100%;
-  margin: 0;
+  margin: 0 !important;
   object-fit: cover;
 }
 
-.delete-image {
+.image-delete {
   position: absolute;
   top: 0;
   left: 0;
@@ -96,17 +184,12 @@
   transition: .5s;
 }
 
-.delete-image:hover,
-.delete-image:hover .cancel-icon {
+.image-delete:hover,
+.image-delete:hover .cancel-icon {
   opacity: 1;
 }
 
-.card-image:hover .label-image__content {
-  width: 65%;
-  height: 65%;
-}
-
-.label-image {
+.image-label {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +200,7 @@
   cursor: pointer;
 }
 
-.label-image__content {
+.image-label__content {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,14 +212,19 @@
   transition: .5s;
 }
 
-.label-image__content-icon {
+.card__image:hover .image-label__content {
+  width: 65%;
+  height: 65%;
+}
+
+.image-label__content-icon {
   margin: 0;
   width: 42px;
   height: 42px;
   background: url('/assets/images/upload.svg');
 }
 
-.label-image__content-text {
+.image-label__content-text {
   max-width: 165px;
   margin: 30px 0 0;
   font: normal normal 16px/20px 'Montserrat', sans-serif;
@@ -144,76 +232,57 @@
   color: #f29e1f;
 }
 
-.card-image input {
+.image-input {
   opacity: 0;
   visibility: hidden;
 }
 
-.card-content {
+
+/***** CARD-CONTENT *****/
+
+.card__content {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 30px 70px 20px 50px;
 }
 
-.form-field {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.form-input {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px 10px 11px 24px;
-  font: normal normal 16px/28px 'Montserrat', sans-serif;
-  border: 1px solid rgba(145, 150, 161, 0.4);
-  border-radius: 16px;
-  color: rgba(37, 41, 45, 0.5);
-  outline: none;
-}
-
-.form-textarea {
-  /* height: 150px; */
-  resize: vertical;
-}
-
-.card-content .form-textarea {
+.card__content .form-textarea {
   height: 120px;
   resize: none;
-}
-
-.chip-frames {
-  padding: 8px 10px 7px 12px;
-}
-
-.form-field__form-input {
-  margin: 0;
-  padding: 5px;
-  border: none;
 }
 
 .select-item {
   display: flex;
   align-items: baseline;
+  margin-bottom: 20px;
 }
 
 .select-item p {
-  margin-left: 11px;
+  margin: 0 11px;
   font: normal normal 16px/28px 'Montserrat', sans-serif;
   color: #25292d;
 }
 
-.select-item .form-input {
+.select-item .frame-input {
   width: 15em;
   max-width: 220px;
+  padding: 12px 10px 11px 24px;
+  font: normal normal 16px/28px 'Montserrat', sans-serif;
+  color: rgba(37, 41, 45, 0.5);
 }
 
-.add__details {
+
+/***** DETAILS *****/
+
+.details {
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
 }
+
+
+/***** INGREDIENTS *****/
 
 .ingredients {
   flex: 1;
@@ -226,7 +295,7 @@
   color: #4a525a;
 }
 
-.ingredient {
+.ingredient-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
@@ -237,58 +306,25 @@
   justify-content: flex-end;
 }
 
-.close {
-  padding: 5px 10px 15px;
-  cursor: pointer;
-}
-
-.close-icon {
-  width: 14px;
-  height: 14px;
-  background: url('/assets/images/close.svg');
-}
-
-.ingredient-block {
+.ingredient {
   padding: 16px 30px 36px;
   background: #fff;
   box-shadow: 0px 16px 72px rgba(34, 39, 47, 0.05);
   border-radius: 24px;
 }
 
-.stroked-button {
-  margin: 20px auto 0;
+.ingredient-item {
   width: 100%;
-  max-width: 380px;
-  background: #fff;
-}
-
-.plus {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-right: 23px;
-  background: url('/assets/images/addPlus.svg');
-}
-
-.stroked-button span {
-  color: #fdb100;
-}
-
-.mat-chip-list {
-  width: 100%;
-}
-
-.ingredient-chip-item {
-  width: 100%;
-  height: auto;
   padding-right: 30px !important;
-  overflow-wrap: anywhere;
 }
 
 .ingredient-chip-cancel {
   position: absolute;
   right: 10px;
 }
+
+
+/***** STEPS *****/
 
 .steps {
   display: flex;
