@@ -39,7 +39,7 @@
 
 
     <div class="search__results">
-      <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes"></app-dish-card>
+      <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
       <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" >
         <span>Загрузить ещё</span>
       </button>
