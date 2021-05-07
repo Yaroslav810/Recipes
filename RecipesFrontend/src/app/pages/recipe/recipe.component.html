@@ -21,9 +21,9 @@
     <div class="ingredients">
       <h2 class="ingredients-title">Ингридиенты</h2>
 
-      <div *ngFor="let ingredient of recipeDetails.ingredients" class="ingredient">
-        <h3 class="ingredient-title">{{ ingredient.title }}</h3>
-        <p *ngFor="let value of ingredient.value" class="ingredient-value">{{ value }}</p>
+      <div *ngFor="let ingredient of recipeDetails.ingredients" class="ingredient-group">
+        <h3 class="ingredient-group__title">{{ ingredient.title }}</h3>
+        <p *ngFor="let ingredient of ingredient.value" class="ingredient">{{ ingredient }}</p>
       </div>
 
     </div>

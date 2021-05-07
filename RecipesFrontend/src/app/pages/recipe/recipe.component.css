@@ -86,13 +86,13 @@
   color: #fdb100;
 }
 
-.ingredient-title {
+.ingredient-group__title {
   margin: 20px 0 5px;
   font: normal 600 18px/30px 'Montserrat', sans-serif;
   color: #4a525a;
 }
 
-.ingredient-value {
+.ingredient {
   margin: 0;
   font: normal normal 18px/30px 'Montserrat', sans-serif;
   color: #4a525a;
