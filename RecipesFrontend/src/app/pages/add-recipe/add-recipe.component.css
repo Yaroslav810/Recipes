@@ -75,6 +75,7 @@
 
 .mat-chip {
   height: auto;
+  font: normal normal 14px/22px 'Montserrat', sans-serif;
   overflow-wrap: anywhere;
 }
 
