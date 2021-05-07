@@ -169,8 +169,4 @@ export class RecipesComponent implements OnInit {
     this.router.navigate(['/add']);
   }
 
-  public onAddRecipe(): void {
-    this.router.navigate(['/add']);
-  }
-
 }
