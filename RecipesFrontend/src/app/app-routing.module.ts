@@ -6,7 +6,7 @@ import { RecipesComponent } from './../../src/app/pages/recipes/recipes.componen
 import { RecipeComponent } from './../../src/app/pages/recipe/recipe.component'
 import { FavoritesComponent } from './../../src/app/pages/favorites/favorites.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
-import { NotFoundComponent } from './../../src/app/pages/not-found/not-found.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
