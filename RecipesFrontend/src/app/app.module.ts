@@ -16,6 +16,7 @@ import { FooterComponent } from './directives/footer/footer.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { DishCardComponent } from './directives/dish-card/dish-card.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 
 
 
@@ -31,6 +32,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
     FavoritesComponent,
     DishCardComponent,
     NotFoundComponent,
+    AddRecipeComponent,
   ],
   imports: [
     BrowserModule,
