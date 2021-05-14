@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './modules/material-design-module';
@@ -20,6 +20,7 @@ import { StepCardComponent } from './directives/step-card/step-card.component';
 
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
+import { DataLossModalComponent } from './directives/data-loss-modal/data-loss-modal.component';
 
 
 
@@ -38,6 +39,7 @@ import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
     RecipeComponent,
     StepCardComponent,
     AddRecipeComponent,
+    DataLossModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +47,7 @@ import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
     AppRoutingModule,
     MaterialModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

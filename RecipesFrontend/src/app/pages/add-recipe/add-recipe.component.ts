@@ -1,77 +1,103 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
+import { FormControl, FormGroup, NgForm, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
+import { Observable } from "rxjs";
+import { map } from 'rxjs/operators';
 
-export interface IIngredient {
-  title: string,
-  value: string[]
-}
+import { DataLossModalComponent } from './../../directives/data-loss-modal/data-loss-modal.component';
 
-export interface IStep {
-  step: number,
-  value: string,
-}
+import { IAddRecipe, IIngredient, IStep } from './add-recipe.interface';
+import { IComponentCanDeactivate } from './../../guards/user-data-deactivate.guard';
 
 @Component({
   selector: 'app-add-recipe',
   templateUrl: './add-recipe.component.html',
   styleUrls: ['./add-recipe.component.css']
 })
+export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
 
-export class AddRecipeComponent implements OnInit {
+  public timeValue: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120];
+  public personValue: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  public formGroup: FormGroup;
 
-  public details = {
-    title: '',
-    description: '',
-    keywords: [],
-    time: null,
-    personsCount: null,
-    image: null, 
-    ingredients: [
-      {
-        title: '',
-        value: [],
-      } as IIngredient,
-    ],
-    steps: [
-      {
-        step: 1,
-        value: '',
-      } as IStep,
-    ],
-  };
+  // @ViewChild('addRecipeForm')
+  // private addRecipeForm: NgForm;
 
-  public timeValue = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120];
-  public personValue = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  constructor(private location: Location) { }
+  constructor(
+    private location: Location, 
+    public dialog: MatDialog,
+    private formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit(): void {
+    this.formGroup = this.formBuilder.group({
+      "title": ["", Validators.required],
+      "description": [""],
+      "keywords": this.formBuilder.array([]),
+      "timeInMinutes": [null, Validators.required],
+      "personsCount": [null, Validators.required],
+      "image": [null],
+      "ingredients": this.formBuilder.array([
+        this.formBuilder.group({
+          title: ["", Validators.required],
+          value: this.formBuilder.array([])
+        })
+      ]),
+      "steps": this.formBuilder.array([
+        this.formBuilder.group({
+          step: [1],
+          value: ["", Validators.required],
+        })
+      ]),
+    });
+  }
+
+  public canDeactivate() {
+    return !this.hasUnsavedData() || this.shouldSaveData();
   }
 
   public goBack(): void {
     this.location.back();
   }
 
-  public onSaveRecipe(): void {
+  // public getInitialValues(): IAddRecipe {
+  //   return {
+  //     title: '',
+  //     description: '',
+  //     keywords: [],
+  //     timeInMinutes: null,
+  //     personsCount: null,
+  //     image: null, 
+  //     ingredients: [],
+  //     steps: [
+  //       {
+  //         step: 1,
+  //         value: '',
+  //       } as IStep,
+  //     ],
+  //   }
+  // }
+
+  public saveRecipe(): void {
     console.log('Ещё чего???');
-    console.log('Пошёл ты со своим: ', this.details);
+    console.log('Пошёл ты со своим: ', this.formGroup.value);
   }
 
   public onChangeImage($event: any): void {
-    let reader = new FileReader();
-    let file = $event.target.files[0];
-
+    const reader = new FileReader();
+    const file = $event.target.files[0];
 
     reader.onloadend = () => {
-      this.details.image = reader.result;
+      this.formGroup.patchValue({ image: reader.result });
     }
 
     reader.readAsDataURL(file)
   }
 
   public onDeleteImage(): void {
-    this.details.image = null;
+    this.formGroup.patchValue({ image: null });
   }
 
   public addKeyword(event: MatChipInputEvent): void {
@@ -79,7 +105,7 @@ export class AddRecipeComponent implements OnInit {
     const value = (event.value || '').trim();
 
     if (value) {
-      this.details.keywords.push(value);
+      (<FormArray>this.formGroup.get('keywords')).push(new FormControl(value));
     }
 
     if (input) {
@@ -88,75 +114,75 @@ export class AddRecipeComponent implements OnInit {
   }
 
   public removeKeyword(keyword: string): void {
-    const index = this.details.keywords.indexOf(keyword);
+    const index = (this.formGroup.get('keywords').value).indexOf(keyword);
 
     if (index >= 0) {
-      this.details.keywords.splice(index, 1);
-    }
-  }
-
-  public addIngredientItem(ingredient: IIngredient, event: MatChipInputEvent): void {
-    console.log(ingredient);
-    const index = this.details.ingredients.indexOf(ingredient);
-    const input = event.input;
-    const valueInput = (event.value || '').trim();
-
-    if (valueInput && (index >= 0)) {
-      this.details.ingredients[index].value.push(valueInput);
-    }
-
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  public removeIngredientItem(item: string, ingredient: IIngredient): void {
-    const index = ingredient.value.indexOf(item);
-
-    if (index >= 0) {
-      ingredient.value.splice(index, 1);
+      (<FormArray>this.formGroup.get('keywords')).removeAt(index);
     }
   }
 
   public onAddIngredient(): void {
-    const ingredients = this.details.ingredients;
-    ingredients.push(
-      {
-        title: '',
-        value: [],
-      } as IIngredient,
-    );
+    const ingredients = <FormArray>this.formGroup.get('ingredients');
+    
+    ingredients.push(new FormGroup({
+      title: new FormControl('', [Validators.required]),
+      value: new FormArray([])
+    }));
   }
 
-  public onDeleteIngredient(ingredient: IIngredient): void {
-    const index = this.details.ingredients.indexOf(ingredient);
+  public onDeleteIngredient(ingredient: FormGroup): void {
+    const index = this.formGroup.get('ingredients').value.indexOf(ingredient.value);
 
     if (index >= 0) {
-      this.details.ingredients.splice(index, 1); 
+      (<FormArray>this.formGroup.get('ingredients')).removeAt(index); 
     }
+  }
+
+  public addIngredientItem(ingredient: FormGroup, event: MatChipInputEvent): void {
+    const input = event.input;
+    const valueInput = (event.value || '').trim();
+
+    if (valueInput) {
+      (<FormArray>ingredient.get('value')).push(new FormControl(valueInput));
+
+      if (input) {
+        input.value = '';
+      }
+    }
+  }
+
+  public removeIngredientItem(ingredient: FormGroup, index: number): void {
+    (<FormArray>ingredient.get('value')).removeAt(index);
   }
 
   public onAddStep(): void {
-    const steps = this.details.steps;
-
-    steps.push(
-      {
-        step: steps.length + 1,
-        value: '',
-      } as IStep,
-    );
-    console.log(this.details.steps);
+    (<FormArray>this.formGroup.get('steps')).push(new FormGroup({
+      step: new FormControl((<FormArray>this.formGroup.get('steps')).length + 1),
+      value: new FormControl("", Validators.required)
+    }));
   }
 
-  public onDeleteStep(step: IStep): void {
-    const index = this.details.steps.indexOf(step);
+  public onDeleteStep(step: FormGroup): void {
+    const index = this.formGroup.get('steps').value.indexOf(step.value);
 
     if (index >= 0) {
-      this.details.steps.splice(index, 1); 
+      (<FormArray>this.formGroup.get('steps')).removeAt(index);
     }
 
-    this.details.steps.forEach((item, index) => {
-      item.step = index + 1;
+    <FormArray>this.formGroup.get('steps')['controls'].forEach((item, index) => {
+      item.patchValue({
+        step: index + 1
+      });
     });
+  }
+
+  private shouldSaveData(): Observable<boolean> {
+    const dialogRef = this.dialog.open(DataLossModalComponent);
+    
+    return dialogRef.afterClosed().pipe(map(x => x ?? false));
+  }
+
+  private hasUnsavedData(): boolean {
+    return this.formGroup.dirty;
   }
 }

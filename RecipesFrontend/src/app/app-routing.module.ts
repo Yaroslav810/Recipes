@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { UserDataDeactivateGuard } from './guards/user-data-deactivate.guard';
+
 import { MainComponent } from './../../src/app/pages/main/main.component';
 import { RecipesComponent } from './../../src/app/pages/recipes/recipes.component'
 import { RecipeComponent } from './../../src/app/pages/recipe/recipe.component'
@@ -13,12 +15,13 @@ const routes: Routes = [
   { path: 'recipes', component: RecipesComponent },
   { path: 'recipe/:id', component: RecipeComponent },
   { path: 'favorites', component: FavoritesComponent },
-  { path: 'add', component: AddRecipeComponent },
+  { path: 'add', component: AddRecipeComponent, canDeactivate: [UserDataDeactivateGuard] },
   { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [UserDataDeactivateGuard],
 })
 export class AppRoutingModule { }

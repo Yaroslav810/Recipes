@@ -1,0 +1,35 @@
+.data-loss {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px 0;
+  transition: .5s;
+}
+
+.mat-dialog-content {
+  margin: 0;
+  font: normal 600 18px/30px 'Montserrat', sans-serif;
+  color: #4a525a;
+}
+
+.image {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mat-button {
+  padding: 5px 15px;
+}
+
+.mat-button span {
+  font: normal 500 16px/24px 'Montserrat', sans-serif;
+}
+
+.focus-button span {
+  color: #fdb100;
+}
