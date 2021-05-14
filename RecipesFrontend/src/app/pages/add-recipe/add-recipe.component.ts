@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormControl, FormGroup, NgForm, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 
 import { DataLossModalComponent } from './../../directives/data-loss-modal/data-loss-modal.component';
-
-import { IAddRecipe, IIngredient, IStep } from './add-recipe.interface';
 import { IComponentCanDeactivate } from './../../guards/user-data-deactivate.guard';
 
 @Component({
@@ -21,9 +19,6 @@ export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
   public timeValue: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120];
   public personValue: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   public formGroup: FormGroup;
-
-  // @ViewChild('addRecipeForm')
-  // private addRecipeForm: NgForm;
 
   constructor(
     private location: Location, 
@@ -61,24 +56,6 @@ export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
   public goBack(): void {
     this.location.back();
   }
-
-  // public getInitialValues(): IAddRecipe {
-  //   return {
-  //     title: '',
-  //     description: '',
-  //     keywords: [],
-  //     timeInMinutes: null,
-  //     personsCount: null,
-  //     image: null, 
-  //     ingredients: [],
-  //     steps: [
-  //       {
-  //         step: 1,
-  //         value: '',
-  //       } as IStep,
-  //     ],
-  //   }
-  // }
 
   public saveRecipe(): void {
     console.log('Ещё чего???');
