@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 
 @Component({
   selector: 'app-favorites',
@@ -7,9 +9,50 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FavoritesComponent implements OnInit {
 
-  constructor() { }
+  public favorites: IDishCard[];
+
+  constructor(private router: Router) { 
+    this.favorites = this.getFavoritesCard();
+  }
 
   ngOnInit(): void {
+  }
+
+  private getFavoritesCard(): IDishCard[] {
+    return [
+      {
+        id: 2,
+        title: 'Клубничная панна-котта',
+        description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
+        keywords: ['десерты', 'клубника', 'сливки'],
+        author: 'glazest',
+        likesCount: 8,
+        starsCount: 10,
+        time: '35  мин',
+        personsCount: '5 персон',
+        image: './assets/images/strawberry-panna-cotta.png', 
+        isStarSet: true,
+        isLikeSet: false,
+      },
+      {
+        id: 4,
+        title: 'Панкейки',
+        description: 'Панкейки: меньше, чем блины, но больше, чем оладьи. Основное отличие — в тесте, оно должно быть воздушным, чтобы панкейки не растекались по сковородке...',
+        keywords: ['десерты', 'завтрак', 'блины'],
+        author: 'turum-pum-pum',
+        likesCount: 7,
+        starsCount: 25,
+        time: '40  мин',
+        personsCount: '3 персон',
+        image: './assets/images/pancakes.png', 
+        isStarSet: true,
+        isLikeSet: true,
+      },
+    ];
+  }
+
+  public openRecipes(card: IDishCard): void {
+    this.router.navigate(['/recipe', card.id]);
   }
 
 }

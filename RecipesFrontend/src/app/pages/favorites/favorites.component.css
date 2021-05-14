@@ -1,0 +1,11 @@
+.favorites {
+  width: 85%;
+  max-width: 1200px;
+  margin: 30px auto 0;
+}
+
+.favorites-title {
+  margin: 82px 0 0;
+  font: normal bold 42px/62px 'Montserrat', sans-serif;
+  color: #25292D;
+}

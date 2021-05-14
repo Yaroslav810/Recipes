@@ -104,6 +104,10 @@
   transition: .5s;
 }
 
+.rating__item:hover {
+  background: rgba(255, 220, 139, 0.2);
+}
+
 .star-icon {
   width: 20px;
   height: 19px;
