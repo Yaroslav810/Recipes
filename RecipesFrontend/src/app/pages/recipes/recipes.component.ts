@@ -165,4 +165,8 @@ export class RecipesComponent implements OnInit {
     this.router.navigate(['/recipe', card.id]);
   }
 
+  public onAddRecipe(): void {
+    this.router.navigate(['/add']);
+  }
+
 }

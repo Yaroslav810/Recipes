@@ -1,0 +1,173 @@
+<div class="add-recipe">
+  <p class="back" (click)="goBack()">
+    Назад
+  </p>
+  <form class="add" [formGroup]="formGroup">
+    <div class="header">
+      <h2 class="header__title">Добавить новый рецепт</h2>
+      <button mat-flat-button color="accent" class="button" (click)="saveRecipe()" [disabled]="formGroup.invalid">
+        <span>Опубликовать</span>
+      </button>
+    </div>
+    <mat-card class="card">
+      <div class="card__image">
+        <div *ngIf="formGroup.controls['image'].value;then image else uploading"></div>    
+        <ng-template #image>
+          <img mat-card-image src="{{ formGroup.controls['image'].value }}">
+          <div class="image-delete" (click)="onDeleteImage()">
+            <div class="cancel-icon"></div>
+          </div>
+        </ng-template>
+        <ng-template #uploading>
+          <label for="formImage" class="image-label">
+            <div class="image-label__content">
+              <p class="image-label__content-icon"></p>
+              <p class="image-label__content-text">Загрузите фото готового блюда</p>
+            </div>
+          </label>
+          <input 
+            type="file" 
+            name="formImage" 
+            id="formImage"
+            class="image-input"
+            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+            (change)="onChangeImage($event)"
+          />
+        </ng-template>
+      </div>
+      <div class="card__content">
+        <div class="form-field">
+          <input 
+            class="form-input"
+            name="formTitle" 
+            placeholder="Название рецепта"
+            formControlName="title"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-field">
+          <textarea 
+            class="form-input form-textarea" 
+            name="formDescription" 
+            placeholder="Краткое описание рецепта (150 символов)" 
+            maxlength="150"
+            formControlName="description"
+            autocomplete="off"
+          ></textarea>
+        </div>
+        <div class="form-field frame-input">
+          <mat-chip-list #keywordsList>
+            <mat-chip 
+              *ngFor="let keyword of formGroup.controls['keywords'].value"
+              (removed)="removeKeyword(keyword)"
+            >
+              {{ keyword }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input
+              class="form-input"
+              name="formKeywords" 
+              placeholder="Добавить теги"
+              [matChipInputFor]="keywordsList"
+              (matChipInputTokenEnd)="addKeyword($event)"
+              formArrayName="keywords"
+              [hidden]="formGroup.controls['keywords'].value.length >= 10"
+              autocomplete="off"
+            />
+          </mat-chip-list>
+        </div>
+        <div class="form-field">
+          <div class="select-item">
+            <mat-select placeholder="Время готовки" class="frame-input" name="formTime" formControlName="timeInMinutes">
+              <mat-option *ngFor="let value of timeValue" [value]="value">
+                {{ value }}
+              </mat-option>
+            </mat-select>
+            <p>Минут</p>
+          </div>
+          <div class="select-item">
+            <mat-select placeholder="Порций в блюде" class="frame-input" name="formPersonCount" formControlName="personsCount">
+              <mat-option *ngFor="let value of personValue" [value]="value">
+                {{ value }}
+              </mat-option>
+            </mat-select>
+            <p>Персон</p>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <div class="details">
+      <div class="ingredients" formArrayName="ingredients">
+        <h2 class="ingredients-title">Ингридиенты</h2> 
+        <div *ngFor="let ingredient of formGroup.controls['ingredients']['controls']; let i = index" class="ingredient-group" [formGroupName]="i" >
+          <div class="ingredient-close">
+            <div class="close" (click)="onDeleteIngredient(ingredient)">
+              <div class="close-icon"></div>
+            </div>
+          </div>
+          <div class="ingredient">
+            <div class="form-field">
+              <input 
+                class="form-input" 
+                name="formIngredientTitle_{{ i }}" 
+                placeholder="Заголовок для ингридиентов" 
+                formControlName="title"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-field frame-input">
+              <mat-chip-list #ingredientsList>
+                <input
+                  class="form-input"
+                  name="formIngredientConsist_{{ i }}" 
+                  placeholder="Список подуктов для категории"
+                  [matChipInputFor]="ingredientsList"
+                  (matChipInputTokenEnd)="addIngredientItem(ingredient, $event)"
+                  formArrayName="value"
+                  autocomplete="off" 
+                />
+                <mat-chip 
+                  *ngFor="let item of ingredient.controls['value'].value; let indexItem = index" 
+                  class="ingredient-item"
+                  (removed)="removeIngredientItem(ingredient, indexItem)"
+                >
+                  {{ item }}
+                  <mat-icon matChipRemove class="ingredient-chip-cancel">cancel</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
+            </div>      
+          </div>
+        </div>
+        <button mat-stroked-button color="accent" class="button stroked-button" (click)="onAddIngredient()">
+          <span class="plus-icon"></span>
+          <span>Добавить заголовок</span>
+        </button>
+      </div>
+      <div class="steps" formArrayName="steps">
+        <div class="step" *ngFor="let step of formGroup.controls['steps']['controls']; let i = index" [formGroupName]="i">
+          <div class="step-header">
+            <p class="step-title">Шаг {{ step.value.step }}</p>
+            <div class="close" (click)="onDeleteStep(step)">
+              <div class="close-icon"></div>
+            </div>
+          </div>
+          <div class="form-field">
+            <textarea 
+              matTextareaAutosize 
+              matAutosizeMinRows = 3
+              matAutosizeMaxRows = 10
+              class="form-input form-textarea"
+              name="formSteps_{{ i }}"  
+              placeholder="Описание шага" 
+              formControlName="value"
+            ></textarea>
+          </div>
+        </div>
+        <button mat-stroked-button color="accent" class="button stroked-button" (click)="onAddStep()">
+          <span class="plus-icon"></span>
+          <span>Добавить шаг</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
