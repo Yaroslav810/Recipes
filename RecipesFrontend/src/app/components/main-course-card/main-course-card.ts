@@ -1,4 +1,4 @@
-export interface IMainCourseCard {
+export interface MainCourseCard {
   id: number,
   title: string,
   description: string,

@@ -11,16 +11,16 @@ import { MainComponent } from './pages/main/main.component';
 import { RecipesComponent } from './pages/recipes/recipes.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { RecipeComponent } from './pages/recipe/recipe.component';
-import { HeaderComponent } from './directives/header/header.component';
-import { FooterComponent } from './directives/footer/footer.component';
-import { SimpleCardComponent } from './directives/simple-card/simple-card.component';
-import { MainCourseCardComponent } from './directives/main-course-card/main-course-card.component';
-import { DishCardComponent } from './directives/dish-card/dish-card.component';
-import { StepCardComponent } from './directives/step-card/step-card.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { SimpleCardComponent } from './components/simple-card/simple-card.component';
+import { MainCourseCardComponent } from './components/main-course-card/main-course-card.component';
+import { DishCardComponent } from './components/dish-card/dish-card.component';
+import { StepCardComponent } from './components/step-card/step-card.component';
 
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
-import { DataLossModalComponent } from './directives/data-loss-modal/data-loss-modal.component';
+import { DataLossModalComponent } from './components/data-loss-modal/data-loss-modal.component';
 
 
 

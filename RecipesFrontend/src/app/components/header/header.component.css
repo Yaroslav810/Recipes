@@ -24,8 +24,12 @@
 }
 
 .navigation__link {
-  font: normal 600 18px/22px 'Montserrat', sans-serif;
+  font: normal normal 18px/22px 'Montserrat', sans-serif;
   text-decoration: none;
+}
+
+.navigation__link_active {
+  text-shadow: -0.5px 0 #000, 0 .5px #000, 0 -0.5px #000, .5px 0 #000;
 }
 
 .header__account {

@@ -1,4 +1,8 @@
 <div class="main">
+  <div class="main-image">
+    <img src="./assets/images/dishes.png">
+  </div>
+  
   <section class="introduction">
     <h1 class="introduction-title">Готовь и делись рецептами</h1>
     <p class="introduction-description">Никаких кулинарных книг и блокнотов! Храни все любимые рецепты в одном месте.</p>
@@ -37,17 +41,13 @@
           [(ngModel)]="searchDishes"
           class="form-input" 
           autocomplete="off" />
-        <button mat-raised-button color="accent" class="form-button">
+        <button mat-raised-button color="accent" class="form-button" (click)="onSearch()">
           <span>Поиск</span>
         </button>
       </div>
       <div class="form-hints">
-        <span *ngFor="let hint of hintsDishes" class="hint" (click)="searchByHint(hint)" >{{ hint }}</span>
+        <span *ngFor="let hint of hintsDishes" class="hint" (click)="searchByHint(hint)">{{ hint }}</span>
       </div>
     </form>
   </section>
-
-  <div class="main-image">
-    <img src="./assets/images/dishes.png">
-  </div>
 </div>

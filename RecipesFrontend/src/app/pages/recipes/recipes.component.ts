@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
-import { IDishCard } from '../../directives/dish-card/dish-card.interface';
+import { Router, ActivatedRoute } from '@angular/router';
+import { SimpleCard } from '../../components/simple-card/simple-card';
+import { DishCard } from '../../components/dish-card/dish-card';
 
 
 @Component({
@@ -11,23 +11,46 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 })
 export class RecipesComponent implements OnInit {
 
-  public cards: ISimpleCard[];
+  public cards: SimpleCard[];
   public dishTags: string[];
-  public dishCards: IDishCard[];
+  public dishCards: DishCard[];
 
-  searchDishes = '';
+  public searchDishes = '';
+  public isButtonActive = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
-    this.dishCards = this.getDishCards();
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const searchString = params['search'];
+      console.log('Таксс... Ну погнали искать: ' + searchString);
+      if (searchString !== undefined) {
+        this.searchDishes = searchString;
+        this.dishCards = this.getDishCards(); //Загрузка по поиску
+        this.isButtonActive = this.dishCards.length !== 0;
+      } else {
+        this.dishCards = this.getDishCards(); //Загрузка "рекламных" рецетов)
+      }
+    });
   }
 
-  public fillSearchInput = (search: string): void => {
+  public changeQuery(): void {
+    const inputString = this.searchDishes.trim();
+    if (inputString !== '') {
+      this.router.navigate(['/recipes'], {
+        queryParams: {
+          search: inputString, 
+        }
+      });
+    }
+  }
+
+  public searchByHint = (search: string): void => {
     this.searchDishes = search;
+    this.changeQuery();
   }
 
   public loadAdditionalCards(): void {
@@ -61,10 +84,11 @@ export class RecipesComponent implements OnInit {
         isLikeSet: false,
       },
     ];
+    this.isButtonActive = response.length !== 0;
     this.dishCards = this.dishCards.concat(response);
   }
 
-  private getAdvantagesCards(): ISimpleCard[] {
+  private getAdvantagesCards(): SimpleCard[] {
     return [
       {
         title: 'Простые блюда',
@@ -100,7 +124,7 @@ export class RecipesComponent implements OnInit {
     ];
   }
 
-  private getDishCards(): IDishCard[] {
+  private getDishCards(): DishCard[] {
     return [
       {
         id: 2,
@@ -158,15 +182,14 @@ export class RecipesComponent implements OnInit {
         isStarSet: false,
         isLikeSet: false,
       }
-    ];
+    ];;
   }
 
-  public openRecipes(card: IDishCard): void {
+  public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
   }
 
   public onAddRecipe(): void {
     this.router.navigate(['/add']);
   }
-
 }

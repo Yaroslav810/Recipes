@@ -23,7 +23,6 @@
 /***** INTRODUCTION *****/
 .introduction {
   position: relative;
-  z-index: 2;
 }
 
 .introduction-title {

@@ -1,6 +1,6 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
-import { IMainCourseCard } from '../../directives/main-course-card/main-course-card.interface';
+import { SimpleCard } from '../../components/simple-card/simple-card';
+import { MainCourseCard } from '../../components/main-course-card/main-course-card';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,22 +11,22 @@ import { Router } from '@angular/router';
 
 export class MainComponent implements OnInit {
 
-  public cards: ISimpleCard[];
-  public mainCourseCard: IMainCourseCard;
+  public cards: SimpleCard[];
+  public mainCourseCard: MainCourseCard;
   public hintsDishes: string[];
 
   searchDishes = '';
 
   constructor(private router: Router) {
     this.cards = this.getAdvantagesCards();
-    this.mainCourseCard = this.getMainCourseCard();
     this.hintsDishes = this.getDishHints();
-   }
-
-  ngOnInit(): void {
   }
 
-  private getAdvantagesCards = (): ISimpleCard[] => {
+  ngOnInit(): void {
+    this.mainCourseCard = this.getMainCourseCard();
+  }
+
+  private getAdvantagesCards = (): SimpleCard[] => {
     return [
       {
         title: 'Простые блюда',
@@ -51,7 +51,7 @@ export class MainComponent implements OnInit {
     ];
   }
 
-  private getMainCourseCard = (): IMainCourseCard => {
+  private getMainCourseCard = (): MainCourseCard => {
     // var abc = [];
     // const convertedAbcs = abc.map(x => AbcMapper.Map(x));
     // return AbcMapper.Map(abc);
@@ -80,7 +80,7 @@ export class MainComponent implements OnInit {
     this.searchDishes = hint;
   }
 
-  public openRecipe = (card: IMainCourseCard): void => {
+  public openRecipe = (card: MainCourseCard): void => {
     console.log('Откроем карточку с id ' + card.id + '?');
   }
 
@@ -88,4 +88,13 @@ export class MainComponent implements OnInit {
     this.router.navigate(['/add']);
   }
 
+  public onSearch(): void {
+    let inputString = this.searchDishes.trim();
+    if (inputString !== '') 
+      this.router.navigate(['/recipes'], {
+        queryParams: {
+          search: inputString, 
+        }
+      })
+  }
 }

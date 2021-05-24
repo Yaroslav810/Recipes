@@ -6,12 +6,19 @@
   </div>
   <nav class="header__navigation">
     <mat-nav-list class="navigation" *ngFor="let link of links">
-      <a mat-list-item routerLink="/{{ link.link }}" class="navigation__link">{{ link.title }}</a>
+      <a 
+        mat-list-item routerLink="/{{ link.link }}"
+        class="navigation__link"  
+        [class.navigation__link_active]="isLinkActive(link.link)"
+        
+      >
+        {{ link.title }}
+      </a>
     </mat-nav-list>
   </nav>
   <div class="header__account">
     <div class="account__links" *ngFor="let accountButton of accountButtons">
-      <a href="/" class="account__link" (click)=" accountButton.onAction($event) ">
+      <a href="/" class="account__link" (click)="accountButton.onAction($event)">
         <div class="account-image">
           <img src="./assets/images/{{ accountButton.icon }}">
         </div>

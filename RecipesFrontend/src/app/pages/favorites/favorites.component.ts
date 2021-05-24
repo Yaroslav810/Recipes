@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IDishCard } from '../../directives/dish-card/dish-card.interface';
+import { DishCard } from '../../components/dish-card/dish-card';
 
 @Component({
   selector: 'app-favorites',
@@ -9,7 +9,7 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 })
 export class FavoritesComponent implements OnInit {
 
-  public favorites: IDishCard[];
+  public favorites: DishCard[];
 
   constructor(private router: Router) { 
     this.favorites = this.getFavoritesCard();
@@ -18,7 +18,7 @@ export class FavoritesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  private getFavoritesCard(): IDishCard[] {
+  private getFavoritesCard(): DishCard[] {
     return [
       {
         id: 2,
@@ -51,7 +51,7 @@ export class FavoritesComponent implements OnInit {
     ];
   }
 
-  public openRecipes(card: IDishCard): void {
+  public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
   }
 

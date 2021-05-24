@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 
-import { DataLossModalComponent } from './../../directives/data-loss-modal/data-loss-modal.component';
+import { DataLossModalComponent } from './../../components/data-loss-modal/data-loss-modal.component';
 import { IComponentCanDeactivate } from './../../guards/user-data-deactivate.guard';
 
 @Component({
@@ -42,7 +42,6 @@ export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
       ]),
       "steps": this.formBuilder.array([
         this.formBuilder.group({
-          step: [1],
           value: ["", Validators.required],
         })
       ]),
@@ -134,7 +133,6 @@ export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
 
   public onAddStep(): void {
     (<FormArray>this.formGroup.get('steps')).push(new FormGroup({
-      step: new FormControl((<FormArray>this.formGroup.get('steps')).length + 1),
       value: new FormControl("", Validators.required)
     }));
   }
@@ -145,17 +143,11 @@ export class AddRecipeComponent implements OnInit, IComponentCanDeactivate {
     if (index >= 0) {
       (<FormArray>this.formGroup.get('steps')).removeAt(index);
     }
-
-    <FormArray>this.formGroup.get('steps')['controls'].forEach((item, index) => {
-      item.patchValue({
-        step: index + 1
-      });
-    });
   }
 
   private shouldSaveData(): Observable<boolean> {
     const dialogRef = this.dialog.open(DataLossModalComponent);
-    
+
     return dialogRef.afterClosed().pipe(map(x => x ?? false));
   }
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { StepCard } from './step-card';
 
 @Component({
   selector: 'app-step-card',
@@ -7,7 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class StepCardComponent implements OnInit {
 
-  @Input() card;
+  @Input() card: StepCard;
   
   constructor() { }
 

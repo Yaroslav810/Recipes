@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IMainCourseCard } from './main-course-card.interface';
+import { MainCourseCard } from './main-course-card';
 
 @Component({
   selector: 'app-main-course-card',
@@ -9,7 +9,7 @@ import { IMainCourseCard } from './main-course-card.interface';
 
 export class MainCourseCardComponent implements OnInit {
 
-  @Input() card: IMainCourseCard;
+  @Input() card: MainCourseCard;
   @Input() onOpenDishCard: Function;
 
   constructor() { }

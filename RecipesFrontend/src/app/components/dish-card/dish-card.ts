@@ -1,4 +1,4 @@
-export interface IDishCard {
+export interface DishCard {
   id: number,
   title: string,
   description: string,
