@@ -1,0 +1,18 @@
+<div class="identification-window-modal">
+  <div class="close-container">
+    <div class="close" [mat-dialog-close]>
+      <div class="close-icon"></div>
+    </div>
+  </div>
+  <div class="content" [ngSwitch]="currentPage">
+    <div *ngSwitchCase="'login'">
+      <app-login [changePage]="changePage.bind(this)"></app-login>
+    </div>
+    <div *ngSwitchCase="'registration'">
+      <app-registration [changePage]="changePage.bind(this)"></app-registration>
+    </div>
+    <div *ngSwitchDefault>
+      <app-default [changePage]="changePage.bind(this)"></app-default>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+
+import { IdentificationWindowModalComponent} from './../../directives/identification-window-modal/identification-window-modal.component';
 
 export interface IHeaderLinks {
   title: string,
@@ -23,7 +26,7 @@ export class HeaderComponent implements OnInit {
   public links: IHeaderLinks[];
   public accountButtons: IAccountButtons[];
 
-  constructor() { 
+  constructor(private dialog: MatDialog) { 
     this.links = this.getHeaderNavigation();
     this.accountButtons = this.getAccountButtons();
   }
@@ -76,6 +79,10 @@ export class HeaderComponent implements OnInit {
           onAction: ($event) => {
             $event.preventDefault();
             console.log('Ого! Ну войдите войдите');
+            const modal = this.dialog.open(IdentificationWindowModalComponent, {
+              autoFocus: false,
+              data: '',
+            });
           }
         },
       ];

@@ -1,0 +1,35 @@
+<div class="login">
+  <h3 class="title">Войти</h3>
+  <form class="form" [formGroup]="formGroup">
+    <div class="form-field">
+      <input 
+        class="form-input"
+        name="login" 
+        formControlName="login"
+        placeholder="Логин"
+      />
+    </div>
+    <div class="form-field">
+      <input 
+        type="password"
+        class="form-input"
+        name="password" 
+        formControlName="password"
+        placeholder="Пароль"      
+      />
+    </div>
+    <div class="buttons">
+      <button mat-flat-button color="accent" class="button" [disabled]="formGroup.invalid">
+        <span>Войти</span>
+      </button>
+      <button mat-stroked-button color="accent" class="button stroked-button" [mat-dialog-close]>
+        <span>Отмена</span>
+      </button>
+    </div>
+  </form>
+  <div class="additionally">
+    <button mat-button color="accent" class="link" (click)="clickButton('registration')">
+      <span>У меня еще нет аккаунта</span>
+    </button>
+  </div>
+</div>

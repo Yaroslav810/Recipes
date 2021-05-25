@@ -1,7 +1,10 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+
 import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
 import { IMainCourseCard } from '../../directives/main-course-card/main-course-card.interface';
-import { Router } from '@angular/router';
+import { IdentificationWindowModalComponent} from './../../directives/identification-window-modal/identification-window-modal.component';
 
 @Component({
   selector: 'app-main',
@@ -17,11 +20,14 @@ export class MainComponent implements OnInit {
 
   searchDishes = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private dialog: MatDialog
+  ) {
     this.cards = this.getAdvantagesCards();
     this.mainCourseCard = this.getMainCourseCard();
     this.hintsDishes = this.getDishHints();
-   }
+  }
 
   ngOnInit(): void {
   }
@@ -86,6 +92,13 @@ export class MainComponent implements OnInit {
 
   public onAddRecipe(): void {
     this.router.navigate(['/add']);
+  }
+
+  public showModalWindow(): void {
+    const modal = this.dialog.open(IdentificationWindowModalComponent, {
+      autoFocus: false,
+      data: 'login',
+    });
   }
 
 }
