@@ -27,13 +27,9 @@ export class RecipesComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       const searchString = params['search'];
       console.log('Таксс... Ну погнали искать: ' + searchString);
-      if (searchString !== undefined) {
-        this.searchDishes = searchString;
-        this.dishCards = this.getDishCards(); //Загрузка по поиску
-        this.isButtonActive = this.dishCards.length !== 0;
-      } else {
-        this.dishCards = this.getDishCards(); //Загрузка "рекламных" рецетов)
-      }
+      this.searchDishes = searchString;
+      this.dishCards = this.getDishCards();
+      this.isButtonActive = this.dishCards.length !== 0;
     });
   }
 
