@@ -1,0 +1,50 @@
+<div class="registration">
+  <h3 class="title">Регистрация</h3>
+  <form class="form" [formGroup]="formGroup">
+    <div class="form-field">
+      <input 
+        class="form-input"
+        name="name" 
+        formControlName="name"
+        placeholder="Имя"
+      />
+    </div>
+    <div class="form-field">
+      <input 
+        class="form-input"
+        name="login"
+        formControlName="login" 
+        placeholder="Логин"
+      />
+    </div>
+    <div class="form-field">
+      <input 
+        type="password"
+        class="form-input"
+        name="password"
+        formControlName="password" 
+        placeholder="Пароль"
+      />
+      <input 
+        type="password"
+        class="form-input"
+        name="confirmPassword"
+        formControlName="confirmPassword" 
+        placeholder="Повторите пароль"
+      />
+    </div>
+    <div class="buttons">
+      <button mat-flat-button color="accent" class="button" [disabled]="formGroup.invalid">
+        <span>Зарегистрироваться</span>
+      </button>
+      <button mat-stroked-button color="accent" class="button stroked-button" [mat-dialog-close]>
+        <span>Отмена</span>
+      </button>
+    </div>
+  </form>
+  <div class="additionally">
+    <button mat-button color="accent" class="link" (click)="clickButton('login')">
+      <span>У меня уже есть аккаунт</span>
+    </button>
+  </div>
+</div>
