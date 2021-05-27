@@ -26,8 +26,8 @@ export class RecipesComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       const searchString = params['search'];
-      console.log('Таксс... Ну погнали искать: ' + searchString);
       this.searchDishes = searchString;
+      // TODO: Обращение к серверу за рецептами со строкой поиска
       this.dishCards = this.getDishCards();
       this.isButtonActive = this.dishCards.length !== 0;
     });
@@ -82,6 +82,14 @@ export class RecipesComponent implements OnInit {
     ];
     this.isButtonActive = response.length !== 0;
     this.dishCards = this.dishCards.concat(response);
+  }
+
+  public openRecipes(card: DishCard): void {
+    this.router.navigate(['/recipe', card.id]);
+  }
+
+  public onAddRecipe(): void {
+    this.router.navigate(['/add']);
   }
 
   private getAdvantagesCards(): SimpleCard[] {
@@ -179,13 +187,5 @@ export class RecipesComponent implements OnInit {
         isLikeSet: false,
       }
     ];;
-  }
-
-  public openRecipes(card: DishCard): void {
-    this.router.navigate(['/recipe', card.id]);
-  }
-
-  public onAddRecipe(): void {
-    this.router.navigate(['/add']);
   }
 }
