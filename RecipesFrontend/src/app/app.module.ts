@@ -21,6 +21,10 @@ import { StepCardComponent } from './components/step-card/step-card.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
 import { DataLossModalComponent } from './components/data-loss-modal/data-loss-modal.component';
+import { IdentificationWindowModalComponent } from './components/identification-window-modal/identification-window-modal.component';
+import { LoginComponent } from './components/identification-window-modal/components/login/login.component';
+import { RegistrationComponent } from './components/identification-window-modal/components/registration/registration.component';
+import { DefaultComponent } from './components/identification-window-modal/components/default/default.component';
 
 
 
@@ -40,6 +44,10 @@ import { DataLossModalComponent } from './components/data-loss-modal/data-loss-m
     StepCardComponent,
     AddRecipeComponent,
     DataLossModalComponent,
+    IdentificationWindowModalComponent,
+    LoginComponent,
+    RegistrationComponent,
+    DefaultComponent,
   ],
   imports: [
     BrowserModule,

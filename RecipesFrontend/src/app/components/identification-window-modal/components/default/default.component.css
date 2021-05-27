@@ -1,0 +1,39 @@
+.title {
+  margin: 0;
+  font: normal bold 24px/30px 'Montserrat', sans-serif;
+  color: #25292D;
+}
+
+.description {
+  margin: 30px 0 0;
+  font: normal normal 18px/28px 'Montserrat', sans-serif;
+  color: #4A525A;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.button {
+  flex: 1;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fdb100;
+}
+
+.stroked-button {
+  background: #fff;
+  border: 1px solid #fdb100;
+}
+
+.button span {
+  font: normal 600 18px/28px 'Montserrat', sans-serif;
+  color: #fff;
+}
+
+.stroked-button span {
+  color: #fdb100;
+}
