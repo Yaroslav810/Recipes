@@ -22,6 +22,5 @@ namespace Recipes.Api.Application.Entities
         public List<RecipeTag> Tags { get; set; }
         public List<Ingredient> Ingredients { get; set; }
         public List<Step> Steps { get; set; }
-
     }
 }

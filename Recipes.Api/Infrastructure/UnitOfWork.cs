@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Recipes.Api.Application;
+﻿using Recipes.Api.Application;
+using Recipes.Api.Infrastructure.Dbcontext;
 
 namespace Recipes.Api.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-        protected readonly DbContext _context;
+        protected readonly RecipeContext _context;
 
-        public UnitOfWork( DbContext context )
+        public UnitOfWork( RecipeContext context )
         {
             _context = context;
         }

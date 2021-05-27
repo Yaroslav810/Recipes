@@ -38,20 +38,25 @@ namespace Recipes.Api.Infrastructure.Repositories
                 .ToList();
         }
 
-        public Recipe GetRecipe( int recipeId )
+        public Recipe GetRecipe( int recipeId, bool includeIngredientsAndSteps )
         {
-            return _recipeContext
+            var recipeQuery = _recipeContext
                 .Set<Recipe>()
                 .Include( x => x.Tags )
-                .Include( x => x.Ingredients )
-                    .ThenInclude( y => y.IngredientItems )
-                .Include( x => x.Steps )
-                .FirstOrDefault( x => x.Id == recipeId );
+                .AsQueryable();
+            if ( includeIngredientsAndSteps )
+            {
+                recipeQuery = recipeQuery
+                    .Include( x => x.Ingredients )
+                        .ThenInclude( y => y.IngredientItems )
+                    .Include( x => x.Steps );
+            }
+            return recipeQuery.FirstOrDefault( x => x.Id == recipeId );
         }
 
-        public int? AddLike( int recipeId )
+        public void CreateRecipe( Recipe recipe )
         {
-            return null;
+            _recipeContext.Set<Recipe>().Add( recipe );
         }
     }
 }

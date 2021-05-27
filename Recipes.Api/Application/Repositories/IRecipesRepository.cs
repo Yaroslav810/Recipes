@@ -8,10 +8,10 @@ namespace Recipes.Api.Application.Repositories
 {
     public interface IRecipesRepository
     {
-        public List<Recipe> GetRecipes( string search, int take, int skip );
+        public List<Recipe> GetRecipes( string searchString, int take, int skip );
 
-        public Recipe GetRecipe( int recipeId );
+        public Recipe GetRecipe( int recipeId, bool includeIngredientsAndSteps = true );
 
-        public int? AddLike( int recipeId );
+        public void CreateRecipe( Recipe recipe );
     }
 }

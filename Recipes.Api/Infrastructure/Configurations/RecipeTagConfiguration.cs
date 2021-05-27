@@ -16,14 +16,10 @@ namespace Recipes.Api.Infrastructure.Configurations
                 .HasKey( item => item.Id );
 
             builder.Property( item => item.Id )
-                .UseIdentityColumn( 1, 1 )
-                .IsRequired();
+                .UseIdentityColumn();
 
             builder.Property( item => item.Name )
                 .HasMaxLength( 256 )
-                .IsRequired();
-
-            builder.Property( item => item.RecipeId )
                 .IsRequired();
         }
     }

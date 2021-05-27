@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Recipes.Api.Application;
 using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Entities;
+using Recipes.Api.Application.Mappers;
 using Recipes.Api.Application.Services;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Recipes.Api.Controllers
 {
@@ -16,14 +15,13 @@ namespace Recipes.Api.Controllers
     [ApiController]
     public class RecipeController : ControllerBase
     {
+        private readonly IRecipesService _recipesService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        protected readonly IRecipesService _recipesService;
-        //protected readonly IUnitOfWork _unitOfWork; 
-
-        public RecipeController( IRecipesService recipesService ) // TODO: Сделать подключение UnitOfWork: IUnitOfWork unitOfWork )
+        public RecipeController( IRecipesService recipesService, IUnitOfWork unitOfWork )
         {
             _recipesService = recipesService;
-            //_unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/recipe
@@ -51,59 +49,52 @@ namespace Recipes.Api.Controllers
             return phrases[ new Random().Next( 0, phrases.Length ) ];
         }
 
-        // GET api/recipe/{id}
-        [HttpGet( "{id}" )]
-        public RecipeDetailDto Get( int id )
+        // GET api/recipe/{recipeId}
+        [HttpGet( "{recipeId}" )]
+        public RecipeDetailDto GetRecipe( int recipeId )
         {
-            Recipe recipe = _recipesService.GetRecipe( id );
-            if ( recipe != null ) return new RecipeDetailDto( recipe );
-            return null;
+            Recipe recipe = _recipesService.GetRecipe( recipeId );
+            return recipe.MapToDetail();
         }
 
-        // GET api/recipe/{recipeId}/addlike
-        [HttpGet( "{recipeId}/addlike" )]
-        public int? AddLike( int recipeId )
+        // GET api/recipe/{recipeId}/add-like
+        [HttpGet( "{recipeId}/add-like" )]
+        public void AddLike( int recipeId )
         {
-            return _recipesService.AddLike( recipeId );
+            _recipesService.AddLike( recipeId );
+            _unitOfWork.Commit();
         }
 
-        // GET api/recipe/{id}/removelike
-        [HttpGet( "{id}/removelike" )]
-        public string RemoveLike( int id )
+        // GET api/recipe/{recipeId}/remove-like
+        [HttpGet( "{recipeId}/remove-like" )]
+        public void RemoveLike( int recipeId )
         {
-            return "Убрали лайк для: " + id;
+            _recipesService.RemoveLike( recipeId );
+            _unitOfWork.Commit();
         }
 
-        // GET api/recipe/{id}/addFavourite
-        [HttpGet( "{id}/addfavourite" )]
-        public string AddFavourite( int id )
+        // GET api/recipe/{recipeId}/add-favourite
+        [HttpGet( "{recipeId}/add-favourite" )]
+        public void AddFavourite( int recipeId )
         {
-            return "Добавили в Избранное: " + id;
+            _recipesService.AddFavourite( recipeId );
+            _unitOfWork.Commit();
         }
 
-        // GET api/recipe/{id}/removeFavourite
-        [HttpGet( "{id}/removefavourite" )]
-        public string RemoveFavourite( int id )
+        // GET api/recipe/{recipeId}/remove-favourite
+        [HttpGet( "{recipeId}/remove-favourite" )]
+        public void RemoveFavourite( int recipeId )
         {
-            return "Убрали из Избранного: " + id;
+            _recipesService.RemoveFavourite( recipeId );
+            _unitOfWork.Commit();
         }
 
         // POST api/recipe
-        /*[HttpPost]
-        public void Post( [FromBody] string value )
+        [HttpPost]
+        public void Post( [FromBody] RecipeDetailDto recipeDetailDto )
         {
-        }*/
-
-        // PUT api/recipe/5
-        /*[HttpPut( "{id}" )]
-        public void Put( int id, [FromBody] string value )
-        {
-        }*/
-
-        // DELETE api/recipe/5
-        /*[HttpDelete( "{id}" )]
-        public void Delete( int id )
-        {
-        }*/
+            _recipesService.CreateRecipe( recipeDetailDto.Map() );
+            _unitOfWork.Commit();
+        }
     }
 }

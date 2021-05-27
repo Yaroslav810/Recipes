@@ -40,12 +40,11 @@ namespace Recipes.Api
             services.AddScoped<IRecipesService, RecipesService>();
             services.AddScoped<IRecipesRepository, RecipesRepository>();
             services.AddDbContext<RecipeContext>( opts => opts.UseSqlServer( @"Server=MSI\SQLEXPRESS;Database=Recipes;Trusted_Connection=True;" ) );
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public void Configure( IApplicationBuilder app, IWebHostEnvironment env, RecipeContext context )
         {
-            context.Database.EnsureCreated();
             if ( env.IsDevelopment() )
             {
                 app.UseDeveloperExceptionPage();

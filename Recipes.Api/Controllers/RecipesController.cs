@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Recipes.Api.Application;
 using Recipes.Api.Application.Dto;
+using Recipes.Api.Application.Mappers;
 using Recipes.Api.Application.Services;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,11 @@ namespace Recipes.Api.Controllers
     [ApiController]
     public class RecipesController : ControllerBase
     {
-
         protected readonly IRecipesService _recipesService;
-        //protected readonly IUnitOfWork _unitOfWork;
 
-        public RecipesController( IRecipesService recipesService ) //, IUnitOfWork unitOfWork )
+        public RecipesController( IRecipesService recipesService )
         {
             _recipesService = recipesService;
-            // _unitOfWork = unitOfWork;
         }
 
         // GET: api/recipes
@@ -32,41 +30,16 @@ namespace Recipes.Api.Controllers
         {
             return _recipesService
                 .GetRecipes( searchString, take, skip )
-                .ConvertAll( item => new RecipeDto( item ) ); ;
+                .Map();
         }
 
-        // GET: api/recipes
-        [HttpGet( "recipeOfDay" )]
-        public List<RecipeDto> Get()  // TODO: не list
+        // GET: api/recipes/recipe-of-day
+        [HttpGet( "recipe-of-day" )]
+        public List<RecipeDto> Get()
         {
             return _recipesService
                 .GetRecipes( "", 1, 2 )
-                .ConvertAll( item => new RecipeDto( item ) ); // TODO: _recipeService.GetRecipeOfDay();
+                .Map(); // TODO: Сделать _recipeService.GetRecipeOfDay();
         }
-
-        // GET api/recipes/5
-        /*[HttpGet( "{id}" )]
-        public string Get( int id )
-        {
-            return "value";
-        }*/
-
-        // POST api/<RecipesController>
-        /*[HttpPost]
-        public void Post( [FromBody] string value )
-        {
-        }*/
-
-        // PUT api/<RecipesController>/5
-        /*[HttpPut( "{id}" )]
-        public void Put( int id, [FromBody] string value )
-        {
-        }*/
-
-        // DELETE api/<RecipesController>/5
-        /*[HttpDelete( "{id}" )]
-        public void Delete( int id )
-        {
-        }*/
     }
 }

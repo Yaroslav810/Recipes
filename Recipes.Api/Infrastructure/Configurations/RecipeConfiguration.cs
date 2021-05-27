@@ -16,8 +16,7 @@ namespace Recipes.Api.Infrastructure.Configurations
                 .HasKey( item => item.Id );
 
             builder.Property( item => item.Id )
-                .UseIdentityColumn( 1, 1 )
-                .IsRequired();
+                .UseIdentityColumn();
 
             builder.Property( item => item.Title )
                 .HasMaxLength( 256 )

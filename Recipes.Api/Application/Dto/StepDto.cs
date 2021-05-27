@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Recipes.Api.Application.Dto
 {
-    public class IngredientDto
+    public class StepDto
     {
-        public string Title { get; set; }
-        public string[] Items { get; set; }
+        public int Step { get; set; }
+        public string Description { get; set; }
     }
 }

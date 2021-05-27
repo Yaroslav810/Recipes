@@ -8,6 +8,7 @@ namespace Recipes.Api.Application.Entities
     public class Step
     {
         public int Id { get; protected set; }
+        public int StepNumber { get; set; }
         public string Description { get; set; }
         public int RecipeId { get; set; }
     }
