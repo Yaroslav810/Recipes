@@ -1,8 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "C:\\Users\\Mvideo\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\Mvideo\\.nuget\\packages"
-    ]
-  }
-}
