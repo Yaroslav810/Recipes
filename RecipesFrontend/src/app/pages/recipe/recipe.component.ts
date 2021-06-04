@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { IDishCard } from '../../directives/dish-card/dish-card.interface';
+import { DishCard } from '../../components/dish-card/dish-card';
 
 @Component({
   selector: 'app-recipe',
@@ -9,10 +9,9 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 })  
 
 export class RecipeComponent implements OnInit {
-
-
+  
   public recipeDetails;
-  public card: IDishCard;
+  public card: DishCard;
 
   constructor(private location: Location) {
     this.recipeDetails = this.getRecipeDetails();
@@ -61,7 +60,7 @@ export class RecipeComponent implements OnInit {
     this.location.back();
   }
 
-  private convertRecipeForCard(): IDishCard {
+  private convertRecipeForCard(): DishCard {
     return { 
       id: this.recipeDetails.id,
       title: this.recipeDetails.title,
@@ -75,7 +74,7 @@ export class RecipeComponent implements OnInit {
       image: this.recipeDetails.image, 
       isStarSet: this.recipeDetails.isStarSet,
       isLikeSet: this.recipeDetails.isLikeSet,
-    } as IDishCard;
+    } as DishCard;
   }
 
   public openCard(): void {  }

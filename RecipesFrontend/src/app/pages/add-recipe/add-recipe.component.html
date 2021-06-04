@@ -146,7 +146,7 @@
       <div class="steps" formArrayName="steps">
         <div class="step" *ngFor="let step of formGroup.controls['steps']['controls']; let i = index" [formGroupName]="i">
           <div class="step-header">
-            <p class="step-title">Шаг {{ step.value.step }}</p>
+            <p class="step-title">Шаг {{ i + 1 }}</p>
             <div class="close" (click)="onDeleteStep(step)">
               <div class="close-icon"></div>
             </div>

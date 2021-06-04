@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ISimpleCard } from '../../directives/simple-card/simple-card.interface';
-import { IMainCourseCard } from '../../directives/main-course-card/main-course-card.interface';
-import { IdentificationWindowModalComponent} from './../../directives/identification-window-modal/identification-window-modal.component';
+import { SimpleCard } from '../../components/simple-card/simple-card';
+import { MainCourseCard } from '../../components/main-course-card/main-course-card';
+import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
 
 @Component({
   selector: 'app-main',
@@ -14,8 +14,8 @@ import { IdentificationWindowModalComponent} from './../../directives/identifica
 
 export class MainComponent implements OnInit {
 
-  public cards: ISimpleCard[];
-  public mainCourseCard: IMainCourseCard;
+  public cards: SimpleCard[];
+  public mainCourseCard: MainCourseCard;
   public hintsDishes: string[];
 
   searchDishes = '';
@@ -25,14 +25,14 @@ export class MainComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.cards = this.getAdvantagesCards();
-    this.mainCourseCard = this.getMainCourseCard();
     this.hintsDishes = this.getDishHints();
   }
 
   ngOnInit(): void {
+    this.mainCourseCard = this.getMainCourseCard();
   }
 
-  private getAdvantagesCards = (): ISimpleCard[] => {
+  private getAdvantagesCards = (): SimpleCard[] => {
     return [
       {
         title: 'Простые блюда',
@@ -57,7 +57,7 @@ export class MainComponent implements OnInit {
     ];
   }
 
-  private getMainCourseCard = (): IMainCourseCard => {
+  private getMainCourseCard = (): MainCourseCard => {
     // var abc = [];
     // const convertedAbcs = abc.map(x => AbcMapper.Map(x));
     // return AbcMapper.Map(abc);
@@ -86,12 +86,22 @@ export class MainComponent implements OnInit {
     this.searchDishes = hint;
   }
 
-  public openRecipe = (card: IMainCourseCard): void => {
+  public openRecipe = (card: MainCourseCard): void => {
     console.log('Откроем карточку с id ' + card.id + '?');
   }
 
   public onAddRecipe(): void {
     this.router.navigate(['/add']);
+  }
+
+  public onSearch(): void {
+    let inputString = this.searchDishes.trim();
+    if (inputString !== '') 
+      this.router.navigate(['/recipes'], {
+        queryParams: {
+          search: inputString, 
+        }
+      })
   }
 
   public showModalWindow(): void {
@@ -100,5 +110,4 @@ export class MainComponent implements OnInit {
       data: 'login',
     });
   }
-
 }

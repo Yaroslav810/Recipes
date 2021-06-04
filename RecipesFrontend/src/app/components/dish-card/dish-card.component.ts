@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IDishCard } from '../../directives/dish-card/dish-card.interface';
+import { DishCard } from './dish-card';
 
 @Component({
   selector: 'app-dish-card',
@@ -8,7 +8,7 @@ import { IDishCard } from '../../directives/dish-card/dish-card.interface';
 })
 export class DishCardComponent implements OnInit {
 
-  @Input() card: IDishCard;
+  @Input() card: DishCard;
   @Input() onOpenDishCard: Function;
 
   constructor() { }

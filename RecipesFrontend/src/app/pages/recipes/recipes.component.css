@@ -136,3 +136,7 @@
   font: normal 600 18px/22px 'Montserrat', sans-serif;
   color: #fdb100;
 }
+
+.hidden {
+  display: none;
+}

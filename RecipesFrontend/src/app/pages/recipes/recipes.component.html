@@ -9,15 +9,12 @@
   </section>
 
   <section class="advantages">
-    <app-simple-card class="advantages-card" *ngFor="let card of cards" [card]="card" (click)="fillSearchInput(card.title)" ></app-simple-card>
+    <app-simple-card class="advantages-card" *ngFor="let card of cards" [card]="card" (click)="searchByHint(card.title)" ></app-simple-card>
   </section>
 
   <section class="search">
-
     <div class="search__form">
-
       <p class="form-title">Поиск рецепта</p>
-  
       <form class="form">
         <div class="form-content">
           <input 
@@ -27,24 +24,20 @@
             [(ngModel)]="searchDishes"
             class="form-input" 
             autocomplete="off" />
-          <button mat-raised-button color="accent" class="form-button">
+          <button mat-raised-button color="accent" class="form-button" (click)="changeQuery()">
             <span>Поиск</span>
           </button>
         </div>
         <div class="form-tags">
-          <span *ngFor="let tag of dishTags" class="tag" (click)="fillSearchInput(tag)" >{{ tag }}</span>
+          <span *ngFor="let tag of dishTags" class="tag" (click)="searchByHint(tag)">{{ tag }}</span>
         </div>
       </form>
     </div>
-
-
     <div class="search__results">
       <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
-      <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" >
+      <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" [class.hidden]="!isButtonActive">
         <span>Загрузить ещё</span>
       </button>
     </div>
-
   </section>
-
 </div>

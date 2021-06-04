@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import { IdentificationWindowModalComponent} from './../../directives/identification-window-modal/identification-window-modal.component';
+import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
 
 export interface IHeaderLinks {
   title: string,
@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   public links: IHeaderLinks[];
   public accountButtons: IAccountButtons[];
 
-  constructor(private dialog: MatDialog) { 
+  constructor(private router: Router, private dialog: MatDialog) { 
     this.links = this.getHeaderNavigation();
     this.accountButtons = this.getAccountButtons();
   }
@@ -88,5 +88,13 @@ export class HeaderComponent implements OnInit {
       ];
     }
   }
+
+  public isLinkActive(url: string): boolean {
+    const queryParamsIndex = this.router.url.indexOf('?');
+    const baseUrl = queryParamsIndex === -1 
+      ? this.router.url 
+      : this.router.url.slice(0, queryParamsIndex);
+    return baseUrl === url;
+ }
 
 }
