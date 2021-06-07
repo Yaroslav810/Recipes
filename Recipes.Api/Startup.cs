@@ -31,6 +31,17 @@ namespace Recipes.Api
 
         public void ConfigureServices( IServiceCollection services )
         {
+            services.AddCors( options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins( "http://localhost:4200" )
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    } );
+            } );
 
             services.AddControllers();
             services.AddSwaggerGen( c =>
@@ -52,14 +63,16 @@ namespace Recipes.Api
                 app.UseSwaggerUI( c => c.SwaggerEndpoint( "/swagger/v1/swagger.json", "apiRecipes v1" ) );
             }
 
+            app.UseCors();
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseEndpoints( endpoints =>
-             {
-                 endpoints.MapControllers();
-             } );
+            {
+                endpoints.MapControllers();
+            } );
         }
     }
 }

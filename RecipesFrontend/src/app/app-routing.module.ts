@@ -16,7 +16,8 @@ const routes: Routes = [
   { path: 'recipe/:id', component: RecipeComponent },
   { path: 'favorites', component: FavoritesComponent },
   { path: 'add', component: AddRecipeComponent, canDeactivate: [UserDataDeactivateGuard] },
-  { path: '**', component: NotFoundComponent },
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '/404' },
 ];
 
 @NgModule({

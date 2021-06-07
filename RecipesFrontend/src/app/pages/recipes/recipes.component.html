@@ -1,5 +1,4 @@
 <div class="recipes">
-  
   <section class="recipes-block">
     <h2 class="recipes-block__title">Рецепты</h2>
     <button mat-flat-button color="accent" class="button" (click)="onAddRecipe()">
@@ -35,6 +34,8 @@
     </div>
     <div class="search__results">
       <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
+      <app-loader *ngIf="!dishCards"></app-loader>
+      <p *ngIf="dishCards && dishCards.length === 0" class="not-found">Оооопс.... Ничего не найдено</p>
       <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" [class.hidden]="!isButtonActive">
         <span>Загрузить ещё</span>
       </button>

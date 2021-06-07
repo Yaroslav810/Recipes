@@ -123,6 +123,13 @@
   padding: 40px 0 0;
 }
 
+.not-found {
+  margin: 10px 0 0;
+  font: normal bold 24px/30px 'Montserrat', sans-serif;
+  text-align: center;
+  color: #808080;
+}
+
 .stroked-button {
   display: flex;
   margin: 65px auto 0;

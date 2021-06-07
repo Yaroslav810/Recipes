@@ -4,7 +4,7 @@
   </p>
   <section class="main">
     <div class="main__header">
-      <h2 class="title">{{ recipeDetails.title }}</h2>
+      <h2 class="title">{{ recipeDetails?.title }}</h2>
       <div class="сontrol-buttons">
         <button mat-stroked-button class="stroked-button">
           <div class="basket-icon"></div>
@@ -18,17 +18,15 @@
     <app-dish-card [card]="card" [onOpenDishCard]="openCard"></app-dish-card>
   </section>
   <section class="details">
-    <div class="ingredients">
+    <div *ngIf="recipeDetails?.ingredients.length !== 0" class="ingredients">
       <h2 class="ingredients-title">Ингридиенты</h2>
-
-      <div *ngFor="let ingredient of recipeDetails.ingredients" class="ingredient-group">
+      <div *ngFor="let ingredient of recipeDetails?.ingredients" class="ingredient-group">
         <h3 class="ingredient-group__title">{{ ingredient.title }}</h3>
         <p *ngFor="let ingredient of ingredient.value" class="ingredient">{{ ingredient }}</p>
       </div>
-
     </div>
     <div class="steps">
-      <app-step-card *ngFor="let step of recipeDetails.steps | keyvalue" [card]="step" class="step"></app-step-card>
+      <app-step-card *ngFor="let step of recipeDetails?.steps" [card]="step" class="step"></app-step-card>
       <p class="wish">Приятного аппетита!</p>
     </div>
   </section>
