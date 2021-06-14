@@ -56,7 +56,9 @@ namespace Recipes.Api.Infrastructure.Repositories
 
         public void CreateRecipe( Recipe recipe )
         {
-            _recipeContext.Set<Recipe>().Add( recipe );
+            _recipeContext
+                .Set<Recipe>()
+                .Add( recipe );
         }
     }
 }

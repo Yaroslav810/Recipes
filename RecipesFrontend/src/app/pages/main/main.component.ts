@@ -91,7 +91,7 @@ export class MainComponent implements OnInit {
   }
 
   public onAddRecipe(): void {
-    this.router.navigate(['/add']);
+    this.router.navigate(['/edit']);
   }
 
   public onSearch(): void {

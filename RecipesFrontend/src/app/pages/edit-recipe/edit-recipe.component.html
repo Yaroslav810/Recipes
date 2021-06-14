@@ -2,18 +2,30 @@
   <p class="back" (click)="goBack()">
     Назад
   </p>
-  <form class="add" [formGroup]="formGroup">
+  <form *ngIf="!isError && !isLoadingActive" class="add" [formGroup]="formData">
     <div class="header">
-      <h2 class="header__title">Добавить новый рецепт</h2>
-      <button mat-flat-button color="accent" class="button" (click)="saveRecipe()" [disabled]="formGroup.invalid">
+      <div *ngIf="!recipeId; then add else update"></div>
+      <ng-template #add>
+        <h2 class="header__title">Добавить новый рецепт</h2>
+      </ng-template>
+      <ng-template #update>
+        <h2 class="header__title">Доработать рецепт</h2>
+      </ng-template>
+      <button 
+        mat-flat-button 
+        color="accent" 
+        class="button" 
+        (click)="saveRecipe()" 
+        [disabled]="formData.invalid"
+      >
         <span>Опубликовать</span>
       </button>
     </div>
     <mat-card class="card">
       <div class="card__image">
-        <div *ngIf="formGroup.controls['image'].value;then image else uploading"></div>    
+        <div *ngIf="formData.controls.imagePath.value; then image else uploading"></div>    
         <ng-template #image>
-          <img mat-card-image src="{{ formGroup.controls['image'].value }}">
+          <img mat-card-image src="{{ formData.controls.imagePath.value }}">
           <div class="image-delete" (click)="onDeleteImage()">
             <div class="cancel-icon"></div>
           </div>
@@ -37,10 +49,11 @@
       </div>
       <div class="card__content">
         <div class="form-field">
-          <input 
+          <input
+            matInput
             class="form-input"
             name="formTitle" 
-            placeholder="Название рецепта"
+            placeholder="Название рецепта *"
             formControlName="title"
             autocomplete="off"
           />
@@ -58,7 +71,7 @@
         <div class="form-field frame-input">
           <mat-chip-list #keywordsList>
             <mat-chip 
-              *ngFor="let keyword of formGroup.controls['keywords'].value"
+              *ngFor="let keyword of formData.controls.keywords.value"
               (removed)="removeKeyword(keyword)"
             >
               {{ keyword }}
@@ -71,14 +84,15 @@
               [matChipInputFor]="keywordsList"
               (matChipInputTokenEnd)="addKeyword($event)"
               formArrayName="keywords"
-              [hidden]="formGroup.controls['keywords'].value.length >= 10"
               autocomplete="off"
+              maxlength="25"
+              [hidden]="formData.controls.keywords.value.length >= 10"
             />
           </mat-chip-list>
         </div>
         <div class="form-field">
           <div class="select-item">
-            <mat-select placeholder="Время готовки" class="frame-input" name="formTime" formControlName="timeInMinutes">
+            <mat-select placeholder="Время готовки *" class="frame-input" name="formTime" formControlName="timeInMinutes">
               <mat-option *ngFor="let value of timeValue" [value]="value">
                 {{ value }}
               </mat-option>
@@ -86,7 +100,7 @@
             <p>Минут</p>
           </div>
           <div class="select-item">
-            <mat-select placeholder="Порций в блюде" class="frame-input" name="formPersonCount" formControlName="personsCount">
+            <mat-select placeholder="Порций в блюде *" class="frame-input" name="formPersonCount" formControlName="personsCount">
               <mat-option *ngFor="let value of personValue" [value]="value">
                 {{ value }}
               </mat-option>
@@ -99,7 +113,7 @@
     <div class="details">
       <div class="ingredients" formArrayName="ingredients">
         <h2 class="ingredients-title">Ингридиенты</h2> 
-        <div *ngFor="let ingredient of formGroup.controls['ingredients']['controls']; let i = index" class="ingredient-group" [formGroupName]="i" >
+        <div *ngFor="let ingredient of formData.controls['ingredients']['controls']; let i = index" class="ingredient-group" [formGroupName]="i" >
           <div class="ingredient-close">
             <div class="close" (click)="onDeleteIngredient(ingredient)">
               <div class="close-icon"></div>
@@ -110,26 +124,31 @@
               <input 
                 class="form-input" 
                 name="formIngredientTitle_{{ i }}" 
-                placeholder="Заголовок для ингридиентов" 
+                placeholder="Заголовок для ингридиентов *" 
                 formControlName="title"
                 autocomplete="off"
               />
             </div>
             <div class="form-field frame-input">
-              <mat-chip-list #ingredientsList>
+              <mat-chip-list 
+                #ingredientsList 
+                cdkDropList 
+                (cdkDropListDropped)="dropIngredientItem(ingredient, $event)"
+              >
                 <input
                   class="form-input"
                   name="formIngredientConsist_{{ i }}" 
                   placeholder="Список подуктов для категории"
                   [matChipInputFor]="ingredientsList"
                   (matChipInputTokenEnd)="addIngredientItem(ingredient, $event)"
-                  formArrayName="value"
+                  formArrayName="items"
                   autocomplete="off" 
                 />
                 <mat-chip 
-                  *ngFor="let item of ingredient.controls['value'].value; let indexItem = index" 
+                  *ngFor="let item of ingredient.controls.items.value; let indexItem = index" 
                   class="ingredient-item"
                   (removed)="removeIngredientItem(ingredient, indexItem)"
+                  cdkDrag
                 >
                   {{ item }}
                   <mat-icon matChipRemove class="ingredient-chip-cancel">cancel</mat-icon>
@@ -144,9 +163,9 @@
         </button>
       </div>
       <div class="steps" formArrayName="steps">
-        <div class="step" *ngFor="let step of formGroup.controls['steps']['controls']; let i = index" [formGroupName]="i">
+        <div class="step" *ngFor="let step of formData.controls['steps']['controls']; let i = index" [formGroupName]="i">
           <div class="step-header">
-            <p class="step-title">Шаг {{ i + 1 }}</p>
+            <p class="step-title">Шаг {{ step.value.step }}</p>
             <div class="close" (click)="onDeleteStep(step)">
               <div class="close-icon"></div>
             </div>
@@ -158,8 +177,8 @@
               matAutosizeMaxRows = 10
               class="form-input form-textarea"
               name="formSteps_{{ i }}"  
-              placeholder="Описание шага" 
-              formControlName="value"
+              placeholder="Описание шага *" 
+              formControlName="description"
             ></textarea>
           </div>
         </div>
@@ -170,4 +189,13 @@
       </div>
     </div>
   </form>
+  <section>
+    <app-loader *ngIf="isLoadingActive"></app-loader>
+    <div *ngIf="isError && !isLoadingActive" class="server-error">
+      <p class="text-error">Кажется что-то пошло не так, но мы уже работаем над этим!</p>
+      <button mat-stroked-button color="accent" class="try-again__button" (click)="loadRecipe()">
+        <span>Повторить попытку</span>
+      </button>
+    </div>
+  </section>
 </div>

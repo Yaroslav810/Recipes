@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { DishCard } from '../../components/dish-card/dish-card';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RecipeService } from 'src/app/services/recipe/recipe.service';
+import { Location } from '@angular/common';
+
+import { DishCard } from '../../components/dish-card/dish-card';
+import { RecipeService } from '../../services/recipe/recipe.service';
+import { Mapper } from '../../services/recipe/recipe-mapper';
 import { Recipe } from './recipe';
+import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 
 @Component({
   selector: 'app-recipe',
   templateUrl: './recipe.component.html',
   styleUrls: ['./recipe.component.css']
 })  
-
 export class RecipeComponent implements OnInit {
   
-  public recipeDetails: Recipe;
-  public card: DishCard;
+  public recipeDetails: Recipe = null;
+  public card: DishCard = null;
+  public isLoadingActive: boolean = true;
 
   constructor(
     private location: Location,
@@ -24,24 +27,42 @@ export class RecipeComponent implements OnInit {
   ) {  }
 
   ngOnInit(): void {
-    const recipeId: number = this.getUser();
-
-    this.recipeService.getRecipeDetail(recipeId).then((recipeDetails: Recipe) => {
-      if (recipeDetails === null) {
-        this.router.navigate(['/404']);
-      } else {
-        this.recipeDetails = recipeDetails;
-        this.card = this.convertRecipeForCard(recipeDetails);
-      }
-    });
-  }
-
-  private getUser(): number {
-    return Number(this.activatedRoute.snapshot.paramMap.get("id"));
+    this.loadRecipe();
   }
 
   public goBack(): void {
     this.location.back();
+  }
+
+  public openCard(): void {  }
+
+  public loadRecipe(): void {
+    const recipeId: number = this.getRecipeIdFromQuery();
+    this.updateRecipe(recipeId);
+  }
+
+  public openEditPage(): void {
+    this.router.navigate(['edit', this.recipeDetails.id]);
+  }
+
+  private getRecipeIdFromQuery(): number {
+    return Number(this.activatedRoute.snapshot.paramMap.get("id"));
+  }
+
+  private updateRecipe(recipeId: number): void {
+    this.isLoadingActive = true;
+    this.recipeService.getRecipeDetail(recipeId)
+      .then((recipeDetails: RecipeDetailDto) => {
+        if (recipeDetails === null) {
+          this.router.navigate(['/404']);
+        } else {
+          this.recipeDetails = Mapper.convertToRecipe(recipeDetails);
+          this.card = this.convertRecipeForCard(this.recipeDetails);
+        }
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+      });
   }
 
   private convertRecipeForCard(recipeDetails: Recipe): DishCard {
@@ -59,6 +80,4 @@ export class RecipeComponent implements OnInit {
       isLikeSet: recipeDetails.isLikeSet,
     } as DishCard;
   }
-
-  public openCard(): void {  }
 }

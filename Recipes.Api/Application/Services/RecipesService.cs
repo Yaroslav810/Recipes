@@ -17,6 +17,7 @@ namespace Recipes.Api.Application.Services
         public void AddFavourite( int recipeId );
         public void RemoveFavourite( int recipeId );
         public void CreateRecipe( Recipe recipe );
+        public void UpdateRecipe( int recipeId, Recipe recipe );
     }
 
     public class RecipesService : IRecipesService
@@ -104,7 +105,46 @@ namespace Recipes.Api.Application.Services
 
         public void CreateRecipe( Recipe recipe )
         {
+            recipe = PrepareRecipeForInsert( recipe );
             _recipeRepository.CreateRecipe( recipe );
+        }
+
+        public void UpdateRecipe( int recipeId, Recipe recipe )
+        {
+            UpdateСurrentRecipe( recipeId, recipe );
+        }
+
+        private Recipe PrepareRecipeForInsert( Recipe recipe )
+        {
+            return new Recipe
+            {
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Tags = recipe.Tags,
+                ImagePath = recipe.ImagePath,
+                TimeInMin = recipe.TimeInMin,
+                PersonCount = recipe.PersonCount,
+                Ingredients = recipe.Ingredients,
+                Steps = recipe.Steps,
+                Author = "Elon Musk",
+                CreationDateTime = DateTime.Now,
+                LikesCount = 0,
+                StarsCount = 0,
+            };
+        }
+
+        private void UpdateСurrentRecipe( int recipeId, Recipe recipe )
+        {
+            Recipe recipeCurrent = _recipeRepository.GetRecipe( recipeId, true );
+
+            recipeCurrent.Title = recipe.Title;
+            recipeCurrent.Description = recipe.Description;
+            recipeCurrent.Tags = recipe.Tags;
+            recipeCurrent.ImagePath = recipe.ImagePath;
+            recipeCurrent.TimeInMin = recipe.TimeInMin;
+            recipeCurrent.PersonCount = recipe.PersonCount;
+            recipeCurrent.Ingredients = recipe.Ingredients;
+            recipeCurrent.Steps = recipe.Steps;
         }
     }
 }

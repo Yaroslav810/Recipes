@@ -13,7 +13,7 @@ import { RecipesComponent } from './pages/recipes/recipes.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { RecipeComponent } from './pages/recipe/recipe.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { AddRecipeComponent } from './pages/add-recipe/add-recipe.component';
+import { EditRecipeComponent } from './pages/edit-recipe/edit-recipe.component';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -45,7 +45,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     NotFoundComponent,
     RecipeComponent,
     StepCardComponent,
-    AddRecipeComponent,
+    EditRecipeComponent,
     DataLossModalComponent,
     IdentificationWindowModalComponent,
     LoginComponent,

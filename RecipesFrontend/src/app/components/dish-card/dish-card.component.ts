@@ -12,10 +12,9 @@ export class DishCardComponent implements OnInit {
   @Input() card: DishCard;
   @Input() onOpenDishCard: Function;
 
-  constructor(private recipeService: RecipeService) { }
+  constructor(private recipeService: RecipeService) {  }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {  }
 
   public onStarButtonClick(event): void {
     event.stopPropagation();

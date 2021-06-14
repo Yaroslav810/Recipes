@@ -123,8 +123,9 @@
   padding: 40px 0 0;
 }
 
-.not-found {
-  margin: 10px 0 0;
+.text-error {
+  max-width: 450px;
+  margin: 10px auto 0;
   font: normal bold 24px/30px 'Montserrat', sans-serif;
   text-align: center;
   color: #808080;
@@ -144,6 +145,15 @@
   color: #fdb100;
 }
 
-.hidden {
-  display: none;
+.server-error {
+  margin-top: 45px;
+}
+
+.try-again__button {
+  margin-top: 25px;
+  border-color: #808080;
+}
+
+.try-again__button span {
+  color: #808080;
 }

@@ -54,7 +54,9 @@ namespace Recipes.Api.Controllers
         public RecipeDetailDto GetRecipe( int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
-            return recipe.MapToDetail();
+            return ( recipe != null )
+                ? recipe.MapToDetail()
+                : null;
         }
 
         // GET api/recipe/{recipeId}/add-like
@@ -89,11 +91,35 @@ namespace Recipes.Api.Controllers
             _unitOfWork.Commit();
         }
 
-        // POST api/recipe
-        [HttpPost]
-        public void Post( [FromBody] RecipeDetailDto recipeDetailDto )
+        // GET api/recipe/{recipeId}/edit
+        [HttpGet( "{recipeId}/edit" )]
+        public EditRecipeDto GetRecipeForEdit( int recipeId )
         {
-            _recipesService.CreateRecipe( recipeDetailDto.Map() );
+            Recipe recipe = _recipesService.GetRecipe( recipeId );
+            return ( recipe != null )
+                ? recipe.MapToEdit()
+                : null;
+        }
+
+        // POST api/recipe/add
+        [HttpPost( "add" )]
+        public void Post( [FromBody] EditRecipeDto editRecipeDto )
+        {
+            Recipe recipe = editRecipeDto.MapToRecipe();
+            // TODO: Нужна ли проверка на ошибку конвертации?
+
+            _recipesService.CreateRecipe( recipe );
+            _unitOfWork.Commit();
+        }
+
+        // POST api/recipe/{recipeId}/update
+        [HttpPost( "{recipeId}/update" )]
+        public void Post( int recipeId, [FromBody] EditRecipeDto editRecipeDto )
+        {
+            Recipe recipe = editRecipeDto.MapToRecipe();
+            // TODO: Нужна ли проверка на ошибку конвертации?
+
+            _recipesService.UpdateRecipe( recipeId, recipe );
             _unitOfWork.Commit();
         }
     }

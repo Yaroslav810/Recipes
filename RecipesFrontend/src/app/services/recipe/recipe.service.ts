@@ -1,22 +1,27 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { RecipeDto } from '../../dto/recipe/recipe-dto';
-import { Mapper } from '../converters/mapper';
-import { RecipeDetailDto } from 'src/app/dto/recipe-detail/recipe-detail-dto';
-import { Recipe } from 'src/app/pages/recipe/recipe';
+import { EditRecipeDto } from 'src/app/dto/edit-recipe/edit-recipe-dto';
+
+import { RecipeApi } from '../../constants/RecipeApi';
+import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipeService {
   
-  private readonly recipeUrl = 'http://localhost:5000/api/recipe';
+  private readonly recipeUrl = RecipeApi.baseUrl + '/api/recipe';
 
   constructor(private httpClient: HttpClient) { }
 
-  public async getRecipeDetail(recipeId: number): Promise<Recipe> {
+  public async getRecipeDetail(recipeId: number): Promise<RecipeDetailDto> {
     const recipe = await this.getRecipeDetailRequest(recipeId);
-    return recipe ? Mapper.convertToRecipe(recipe) : null;
+    return recipe ?? null;
+  }
+
+  public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDto> {
+    const recipe = this.getRecipeForEditRequest(recipeId);
+    return recipe ?? null;
   }
 
   public async addLike(recipeId: number): Promise<void> {
@@ -47,10 +52,31 @@ export class RecipeService {
       .toPromise();
   }
 
+  public async addRecipe(recipe: EditRecipeDto): Promise<void> {
+    const url = `${this.recipeUrl}/add`;
+    await this.httpClient
+      .post(url, recipe)
+      .toPromise();
+  }
+
+  public async updateRecipe(recipeId: number, editRecipe: EditRecipeDto): Promise<void> {
+    const url = `${this.recipeUrl}/${recipeId}/update`;
+    await this.httpClient
+      .post(url, editRecipe)
+      .toPromise();
+  }
+
   private async getRecipeDetailRequest(recipeId: number): Promise<RecipeDetailDto> {
     const url = `${this.recipeUrl}/${recipeId}`;
     return await this.httpClient
       .get<RecipeDetailDto>(url)
+      .toPromise();
+  }
+
+  private async getRecipeForEditRequest(recipeId: number): Promise<EditRecipeDto> {
+    const url = `${this.recipeUrl}/${recipeId}/edit`;
+    return await this.httpClient
+      .get<EditRecipeDto>(url)
       .toPromise();
   }
 }

@@ -8,7 +8,7 @@ export interface Step {
   value: string,
 }
 
-export interface AddRecipe {
+export interface EditRecipe {
   title: string,
   description: string,
   keywords: string[],

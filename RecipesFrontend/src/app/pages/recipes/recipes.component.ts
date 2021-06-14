@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SimpleCard } from '../../components/simple-card/simple-card';
+import { DishCard } from '../../components/dish-card/dish-card';
+import { Mapper } from '../../services/recipes/recipes-mapper';
 import { RecipesService } from '../../services/recipes/recipes.service';
-import { DishCard } from 'src/app/components/dish-card/dish-card';
+import { RecipeDto } from '../../dto/recipe/recipe-dto';
+
 
 @Component({
   selector: 'app-recipes',
@@ -13,18 +17,20 @@ import { DishCard } from 'src/app/components/dish-card/dish-card';
 export class RecipesComponent implements OnInit {
 
   public cards: SimpleCard[];
-  public dishTags: string[];
   public dishCards: DishCard[] = null;
 
   public searchDishes: string = '';
+  public dishTags: string[];
   public isButtonActive: boolean = false;
+  public isLoadingActive: boolean = true;
 
   private take: number = 2;
 
   constructor(
     private router: Router, 
     private activatedRoute: ActivatedRoute, 
-    private recipesService: RecipesService
+    private recipesService: RecipesService,
+    private snackBar: MatSnackBar
   ) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
@@ -32,12 +38,8 @@ export class RecipesComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      const searchString = params['search'] || '';
-      this.searchDishes = searchString;
-      this.recipesService.getRecipes(searchString, this.take, 0).then((dishCard: DishCard[]) => {
-        this.dishCards = dishCard;
-        this.isButtonActive = dishCard.length === this.take;
-      });
+      this.searchDishes = params['search'] || '';
+      this.updateRecipes('get');   
     });
   }
 
@@ -58,10 +60,11 @@ export class RecipesComponent implements OnInit {
   }
 
   public loadAdditionalCards(): void {
-    this.recipesService.getRecipes(this.searchDishes, this.take, this.dishCards.length).then((dishCard: DishCard[]) => {
-      this.dishCards = this.dishCards.concat(dishCard);
-      this.isButtonActive = dishCard.length === this.take;
-    });
+    this.updateRecipes('update');
+  }
+
+  public tryLoadAgain(): void {
+    this.updateRecipes('get');  
   }
 
   public openRecipes(card: DishCard): void {
@@ -69,7 +72,7 @@ export class RecipesComponent implements OnInit {
   }
 
   public onAddRecipe(): void {
-    this.router.navigate(['/add']);
+    this.router.navigate(['/edit']);
   }
 
   private getAdvantagesCards(): SimpleCard[] {
@@ -106,5 +109,35 @@ export class RecipesComponent implements OnInit {
       'пост',
       'пасха2021',
     ];
+  }
+
+  private updateRecipes(action: string): void {
+    const searchString = this.searchDishes.trim();
+    const length = (this.dishCards && action !== 'get')? this.dishCards.length : 0;
+
+    this.isLoadingActive = true;
+    this.recipesService.getRecipes(searchString, this.take, length)
+      .then((dishCard: RecipeDto[]) => {
+        const recipes = dishCard.map((recipeDto: RecipeDto) => Mapper.convertToDishCard(recipeDto));
+        switch (action) {
+          case 'get':
+            this.dishCards = recipes
+            break;
+          case 'update': 
+            this.dishCards = this.dishCards.concat(recipes)
+            break;
+        };    
+        this.isButtonActive = dishCard.length === this.take;
+      })
+      .catch(() => {
+        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        })
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+      });
   }
 }
