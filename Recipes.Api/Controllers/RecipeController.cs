@@ -51,7 +51,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}
         [HttpGet( "{recipeId}" )]
-        public RecipeDetailDto GetRecipe( int recipeId )
+        public RecipeDetailDto GetRecipe( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
@@ -61,7 +61,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/add-like
         [HttpGet( "{recipeId}/add-like" )]
-        public void AddLike( int recipeId )
+        public void AddLike( [FromRoute] int recipeId )
         {
             _recipesService.AddLike( recipeId );
             _unitOfWork.Commit();
@@ -69,7 +69,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/remove-like
         [HttpGet( "{recipeId}/remove-like" )]
-        public void RemoveLike( int recipeId )
+        public void RemoveLike( [FromRoute] int recipeId )
         {
             _recipesService.RemoveLike( recipeId );
             _unitOfWork.Commit();
@@ -77,7 +77,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/add-favourite
         [HttpGet( "{recipeId}/add-favourite" )]
-        public void AddFavourite( int recipeId )
+        public void AddFavourite( [FromRoute] int recipeId )
         {
             _recipesService.AddFavourite( recipeId );
             _unitOfWork.Commit();
@@ -85,7 +85,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/remove-favourite
         [HttpGet( "{recipeId}/remove-favourite" )]
-        public void RemoveFavourite( int recipeId )
+        public void RemoveFavourite( [FromRoute] int recipeId )
         {
             _recipesService.RemoveFavourite( recipeId );
             _unitOfWork.Commit();
@@ -93,7 +93,7 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/edit
         [HttpGet( "{recipeId}/edit" )]
-        public EditRecipeDto GetRecipeForEdit( int recipeId )
+        public EditRecipeDto GetRecipeForEdit( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
@@ -103,9 +103,9 @@ namespace Recipes.Api.Controllers
 
         // POST api/recipe/add
         [HttpPost( "add" )]
-        public void Post( [FromBody] EditRecipeDto editRecipeDto )
+        public void Post( [FromBody] EditRecipeDto сreateRecipeDto )
         {
-            Recipe recipe = editRecipeDto.MapToRecipe();
+            Recipe recipe = сreateRecipeDto.MapToRecipe();
             // TODO: Нужна ли проверка на ошибку конвертации?
 
             _recipesService.CreateRecipe( recipe );
@@ -114,7 +114,7 @@ namespace Recipes.Api.Controllers
 
         // POST api/recipe/{recipeId}/update
         [HttpPost( "{recipeId}/update" )]
-        public void Post( int recipeId, [FromBody] EditRecipeDto editRecipeDto )
+        public void Post( [FromRoute] int recipeId, [FromBody] EditRecipeDto editRecipeDto )
         {
             Recipe recipe = editRecipeDto.MapToRecipe();
             // TODO: Нужна ли проверка на ошибку конвертации?

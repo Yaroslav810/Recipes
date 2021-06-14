@@ -15,12 +15,18 @@ export class RecipeService {
   constructor(private httpClient: HttpClient) { }
 
   public async getRecipeDetail(recipeId: number): Promise<RecipeDetailDto> {
-    const recipe = await this.getRecipeDetailRequest(recipeId);
+    const url = `${this.recipeUrl}/${recipeId}`;
+    const recipe = await this.httpClient
+                    .get<RecipeDetailDto>(url)
+                    .toPromise();
     return recipe ?? null;
   }
 
   public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDto> {
-    const recipe = this.getRecipeForEditRequest(recipeId);
+    const url = `${this.recipeUrl}/${recipeId}/edit`;
+    const recipe = await this.httpClient
+                    .get<EditRecipeDto>(url)
+                    .toPromise();
     return recipe ?? null;
   }
 
@@ -63,20 +69,6 @@ export class RecipeService {
     const url = `${this.recipeUrl}/${recipeId}/update`;
     await this.httpClient
       .post(url, editRecipe)
-      .toPromise();
-  }
-
-  private async getRecipeDetailRequest(recipeId: number): Promise<RecipeDetailDto> {
-    const url = `${this.recipeUrl}/${recipeId}`;
-    return await this.httpClient
-      .get<RecipeDetailDto>(url)
-      .toPromise();
-  }
-
-  private async getRecipeForEditRequest(recipeId: number): Promise<EditRecipeDto> {
-    const url = `${this.recipeUrl}/${recipeId}/edit`;
-    return await this.httpClient
-      .get<EditRecipeDto>(url)
       .toPromise();
   }
 }

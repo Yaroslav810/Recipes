@@ -135,16 +135,17 @@ namespace Recipes.Api.Application.Services
 
         private void UpdateСurrentRecipe( int recipeId, Recipe recipe )
         {
-            Recipe recipeCurrent = _recipeRepository.GetRecipe( recipeId, true );
+            Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
+            if ( currentRecipe == null ) throw new Exception();
 
-            recipeCurrent.Title = recipe.Title;
-            recipeCurrent.Description = recipe.Description;
-            recipeCurrent.Tags = recipe.Tags;
-            recipeCurrent.ImagePath = recipe.ImagePath;
-            recipeCurrent.TimeInMin = recipe.TimeInMin;
-            recipeCurrent.PersonCount = recipe.PersonCount;
-            recipeCurrent.Ingredients = recipe.Ingredients;
-            recipeCurrent.Steps = recipe.Steps;
+            currentRecipe.Title = recipe.Title;
+            currentRecipe.Description = recipe.Description;
+            currentRecipe.Tags = recipe.Tags;
+            currentRecipe.ImagePath = recipe.ImagePath;
+            currentRecipe.TimeInMin = recipe.TimeInMin;
+            currentRecipe.PersonCount = recipe.PersonCount;
+            currentRecipe.Ingredients = recipe.Ingredients;
+            currentRecipe.Steps = recipe.Steps;
         }
     }
 }

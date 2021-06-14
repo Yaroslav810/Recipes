@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SimpleCard } from '../../components/simple-card/simple-card';
 import { DishCard } from '../../components/dish-card/dish-card';
-import { Mapper } from '../../services/recipes/recipes-mapper';
 import { RecipesService } from '../../services/recipes/recipes.service';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
 
@@ -118,7 +117,7 @@ export class RecipesComponent implements OnInit {
     this.isLoadingActive = true;
     this.recipesService.getRecipes(searchString, this.take, length)
       .then((dishCard: RecipeDto[]) => {
-        const recipes = dishCard.map((recipeDto: RecipeDto) => Mapper.convertToDishCard(recipeDto));
+        const recipes = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
         switch (action) {
           case 'get':
             this.dishCards = recipes
@@ -139,5 +138,22 @@ export class RecipesComponent implements OnInit {
       .finally(() => {
         this.isLoadingActive = false;
       });
+  }
+
+  private convertToDishCard(recipeDto: RecipeDto): DishCard {
+    return {
+      id: recipeDto.id,
+      title: recipeDto.title,
+      description: recipeDto.description,
+      keywords: recipeDto.keywords,
+      author: recipeDto.author,
+      likesCount: recipeDto.likesCount,
+      starsCount: recipeDto.starsCount,
+      time: recipeDto.timeInMin + ' минут',
+      personsCount: recipeDto.personCount + ' человек',
+      image: recipeDto.imagePath,
+      isStarSet: recipeDto.isStarSet,
+      isLikeSet: recipeDto.isLikeSet,
+    } as DishCard;
   }
 }

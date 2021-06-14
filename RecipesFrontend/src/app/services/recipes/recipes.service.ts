@@ -14,16 +14,13 @@ export class RecipesService {
   constructor(private httpClient: HttpClient) { }
 
   public async getRecipes(searchString: string, take: number, skip: number): Promise<RecipeDto[]> {
-    return await this.getRecipesRequest(searchString, take ,skip);
-  }
-
-  private async getRecipesRequest(searchString: string, take: number, skip: number): Promise<RecipeDto[]> {
     const params = new HttpParams()
       .set('searchString', searchString)
       .set('take', take.toString())
       .set('skip', skip.toString());
+      
     return await this.httpClient
-      .get<RecipeDto[]>(this.recipesUrl, { params })
-      .toPromise();
+            .get<RecipeDto[]>(this.recipesUrl, { params })
+            .toPromise();
   }
 }
