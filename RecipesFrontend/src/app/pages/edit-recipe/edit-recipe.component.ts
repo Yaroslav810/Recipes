@@ -329,6 +329,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
       })
       .finally(() => {
         this.isLoadingActive = false;
+        this.formData.reset(this.formData.value);
       });
   }
 }

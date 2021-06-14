@@ -106,7 +106,6 @@ namespace Recipes.Api.Controllers
         public void Post( [FromBody] EditRecipeDto сreateRecipeDto )
         {
             Recipe recipe = сreateRecipeDto.MapToRecipe();
-            // TODO: Нужна ли проверка на ошибку конвертации?
 
             _recipesService.CreateRecipe( recipe );
             _unitOfWork.Commit();
@@ -117,7 +116,6 @@ namespace Recipes.Api.Controllers
         public void Post( [FromRoute] int recipeId, [FromBody] EditRecipeDto editRecipeDto )
         {
             Recipe recipe = editRecipeDto.MapToRecipe();
-            // TODO: Нужна ли проверка на ошибку конвертации?
 
             _recipesService.UpdateRecipe( recipeId, recipe );
             _unitOfWork.Commit();

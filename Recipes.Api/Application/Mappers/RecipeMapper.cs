@@ -123,6 +123,10 @@ namespace Recipes.Api.Application.Mappers
                         Description = x.Description,
                     } )
                     .ToList(),
+                Author = "Elon Musk",
+                CreationDateTime = DateTime.Now,
+                LikesCount = 0,
+                StarsCount = 0,
             };
         }
 
