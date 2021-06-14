@@ -17,10 +17,14 @@
 
 .card-image {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 430px;
   height: 430px;
   border-radius: 72px 0;
   overflow: hidden;
+  background: radial-gradient(transparent, #fff4d8);
   transition: .5s;
 }
 
@@ -36,12 +40,18 @@
   object-fit: cover;
 }
 
+.card-image .default-image {
+  height: auto;
+  width: 80%;
+}
+
 .card-author {
   position: absolute;
   left: 0;
   bottom: 38px;
   padding: 2px 16px;
   background: #fff;
+  border-radius: 0 5px 5px 0;
 }
 
 .author {
@@ -51,6 +61,9 @@
 }
 
 .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   flex: 1;
   padding: 36px 30px 36px 70px
 }

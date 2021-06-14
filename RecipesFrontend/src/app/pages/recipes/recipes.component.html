@@ -1,5 +1,4 @@
 <div class="recipes">
-  
   <section class="recipes-block">
     <h2 class="recipes-block__title">Рецепты</h2>
     <button mat-flat-button color="accent" class="button" (click)="onAddRecipe()">
@@ -35,9 +34,19 @@
     </div>
     <div class="search__results">
       <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
-      <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()" [class.hidden]="!isButtonActive">
-        <span>Загрузить ещё</span>
-      </button>
+      <app-loader *ngIf="isLoadingActive"></app-loader>
+      <p *ngIf="dishCards && dishCards.length === 0 && !isLoadingActive" class="text-error">Оооопс.... Ничего не найдено</p>
+      <div *ngIf="!dishCards && !isLoadingActive" class="server-error">
+        <p class="text-error">Кажется что-то пошло не так, но мы уже работаем над этим!</p>
+        <button mat-stroked-button color="accent" class="stroked-button try-again__button" (click)="tryLoadAgain()">
+          <span>Повторить попытку</span>
+        </button>
+      </div>
+      <div *ngIf="isButtonActive">
+        <button mat-stroked-button color="accent" class="stroked-button" (click)="loadAdditionalCards()">
+          <span>Загрузить ещё</span>
+        </button>
+      </div>
     </div>
   </section>
 </div>

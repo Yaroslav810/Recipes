@@ -7,6 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DragDropModule } from '@angular/cdk/drag-drop'; 
 
 @NgModule({
   exports: [
@@ -18,6 +21,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSelectModule,
     MatInputModule,
     MatDialogModule,
+    MatProgressBarModule,
+    MatSnackBarModule,
+    DragDropModule,
   ]
 })
 export class MaterialModule { }

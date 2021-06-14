@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { SimpleCard } from '../../components/simple-card/simple-card';
 import { DishCard } from '../../components/dish-card/dish-card';
+import { RecipesService } from '../../services/recipes/recipes.service';
+import { RecipeDto } from '../../dto/recipe/recipe-dto';
 
 
 @Component({
@@ -12,24 +16,29 @@ import { DishCard } from '../../components/dish-card/dish-card';
 export class RecipesComponent implements OnInit {
 
   public cards: SimpleCard[];
+  public dishCards: DishCard[] = null;
+
+  public searchDishes: string = '';
   public dishTags: string[];
-  public dishCards: DishCard[];
+  public isButtonActive: boolean = false;
+  public isLoadingActive: boolean = true;
 
-  public searchDishes = '';
-  public isButtonActive = false;
+  private take: number = 2;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(
+    private router: Router, 
+    private activatedRoute: ActivatedRoute, 
+    private recipesService: RecipesService,
+    private snackBar: MatSnackBar
+  ) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
   }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      const searchString = params['search'];
-      this.searchDishes = searchString;
-      // TODO: Обращение к серверу за рецептами со строкой поиска
-      this.dishCards = this.getDishCards();
-      this.isButtonActive = this.dishCards.length !== 0;
+      this.searchDishes = params['search'] || '';
+      this.updateRecipes('get');   
     });
   }
 
@@ -50,38 +59,11 @@ export class RecipesComponent implements OnInit {
   }
 
   public loadAdditionalCards(): void {
-    let response = [
-      {
-        id: 6,
-        title: 'Клубничная панна-котта',
-        description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
-        keywords: ['десерты', 'клубника', 'сливки'],
-        author: 'glazest',
-        likesCount: 8,
-        starsCount: 10,
-        time: '35  мин',
-        personsCount: '5 персон',
-        image: './assets/images/strawberry-panna-cotta.png', 
-        isStarSet: true,
-        isLikeSet: false,
-      },
-      {
-        id: 17,
-        title: 'Мясные фрикадельки',
-        description: 'Мясные фрикадельки в томатном соусе - несложное и вкусное блюдо, которым можно порадовать своих близких.',
-        keywords: ['вторые блюда', 'мясо', 'соевый соус'],
-        author: 'glazest',
-        likesCount: 7,
-        starsCount: 4,
-        time: '90  мин',
-        personsCount: '4 персоны',
-        image: './assets/images/meat-meatballs.png', 
-        isStarSet: false,
-        isLikeSet: false,
-      },
-    ];
-    this.isButtonActive = response.length !== 0;
-    this.dishCards = this.dishCards.concat(response);
+    this.updateRecipes('update');
+  }
+
+  public tryLoadAgain(): void {
+    this.updateRecipes('get');  
   }
 
   public openRecipes(card: DishCard): void {
@@ -89,7 +71,7 @@ export class RecipesComponent implements OnInit {
   }
 
   public onAddRecipe(): void {
-    this.router.navigate(['/add']);
+    this.router.navigate(['/edit']);
   }
 
   private getAdvantagesCards(): SimpleCard[] {
@@ -128,64 +110,50 @@ export class RecipesComponent implements OnInit {
     ];
   }
 
-  private getDishCards(): DishCard[] {
-    return [
-      {
-        id: 2,
-        title: 'Клубничная панна-котта',
-        description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
-        keywords: ['десерты', 'клубника', 'сливки'],
-        author: 'glazest',
-        likesCount: 8,
-        starsCount: 10,
-        time: '35  мин',
-        personsCount: '5 персон',
-        image: './assets/images/strawberry-panna-cotta.png', 
-        isStarSet: true,
-        isLikeSet: false,
-      },
-      {
-        id: 3,
-        title: 'Мясные фрикадельки',
-        description: 'Мясные фрикадельки в томатном соусе - несложное и вкусное блюдо, которым можно порадовать своих близких.',
-        keywords: ['вторые блюда', 'мясо', 'соевый соус'],
-        author: 'horilka',
-        likesCount: 7,
-        starsCount: 4,
-        time: '90  мин',
-        personsCount: '4 персоны',
-        image: './assets/images/meat-meatballs.png', 
-        isStarSet: false,
-        isLikeSet: false,
-      },
-      {
-        id: 4,
-        title: 'Панкейки',
-        description: 'Панкейки: меньше, чем блины, но больше, чем оладьи. Основное отличие — в тесте, оно должно быть воздушным, чтобы панкейки не растекались по сковородке...',
-        keywords: ['десерты', 'завтрак', 'блины'],
-        author: 'turum-pum-pum',
-        likesCount: 7,
-        starsCount: 25,
-        time: '40  мин',
-        personsCount: '3 персон',
-        image: './assets/images/pancakes.png', 
-        isStarSet: true,
-        isLikeSet: true,
-      },
-      {
-        id: 5,
-        title: 'Полезное мороженое без сахара',
-        description: 'Йогуртовое мороженое сочетает в себе нежный вкус и низкую калорийность, что будет особенно актуально для сладкоежек, соблюдающих диету.',
-        keywords: ['десерты', 'вишня', 'мороженое'],
-        author: 'sweet-girl',
-        likesCount: 7,
-        starsCount: 4,
-        time: '35  мин',
-        personsCount: '2 персоны',
-        image: './assets/images/healthy-ice-cream-without-sugar.png', 
-        isStarSet: false,
-        isLikeSet: false,
-      }
-    ];;
+  private updateRecipes(action: string): void {
+    const searchString = this.searchDishes.trim();
+    const length = (this.dishCards && action !== 'get')? this.dishCards.length : 0;
+
+    this.isLoadingActive = true;
+    this.recipesService.getRecipes(searchString, this.take, length)
+      .then((dishCard: RecipeDto[]) => {
+        const recipes = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
+        switch (action) {
+          case 'get':
+            this.dishCards = recipes
+            break;
+          case 'update': 
+            this.dishCards = this.dishCards.concat(recipes)
+            break;
+        };    
+        this.isButtonActive = dishCard.length === this.take;
+      })
+      .catch(() => {
+        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        })
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+      });
+  }
+
+  private convertToDishCard(recipeDto: RecipeDto): DishCard {
+    return {
+      id: recipeDto.id,
+      title: recipeDto.title,
+      description: recipeDto.description,
+      keywords: recipeDto.keywords,
+      author: recipeDto.author,
+      likesCount: recipeDto.likesCount,
+      starsCount: recipeDto.starsCount,
+      time: recipeDto.timeInMin + ' минут',
+      personsCount: recipeDto.personCount + ' человек',
+      image: recipeDto.imagePath,
+      isStarSet: recipeDto.isStarSet,
+      isLikeSet: recipeDto.isLikeSet,
+    } as DishCard;
   }
 }

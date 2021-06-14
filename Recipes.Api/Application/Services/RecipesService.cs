@@ -17,6 +17,7 @@ namespace Recipes.Api.Application.Services
         public void AddFavourite( int recipeId );
         public void RemoveFavourite( int recipeId );
         public void CreateRecipe( Recipe recipe );
+        public void UpdateRecipe( int recipeId, Recipe recipe );
     }
 
     public class RecipesService : IRecipesService
@@ -105,6 +106,21 @@ namespace Recipes.Api.Application.Services
         public void CreateRecipe( Recipe recipe )
         {
             _recipeRepository.CreateRecipe( recipe );
+        }
+
+        public void UpdateRecipe( int recipeId, Recipe recipe )
+        {
+            Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
+            if ( currentRecipe == null ) throw new Exception();
+
+            currentRecipe.Title = recipe.Title;
+            currentRecipe.Description = recipe.Description;
+            currentRecipe.Tags = recipe.Tags;
+            currentRecipe.ImagePath = recipe.ImagePath;
+            currentRecipe.TimeInMin = recipe.TimeInMin;
+            currentRecipe.PersonCount = recipe.PersonCount;
+            currentRecipe.Ingredients = recipe.Ingredients;
+            currentRecipe.Steps = recipe.Steps;
         }
     }
 }
