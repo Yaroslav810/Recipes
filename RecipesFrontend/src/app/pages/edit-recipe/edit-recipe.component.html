@@ -23,9 +23,9 @@
     </div>
     <mat-card class="card">
       <div class="card__image">
-        <div *ngIf="formData.controls.imagePath.value; then image else uploading"></div>    
+        <div *ngIf="previewImage; then image else uploading"></div>    
         <ng-template #image>
-          <img mat-card-image src="{{ formData.controls.imagePath.value }}">
+          <img mat-card-image src="{{ previewImage }}">
           <div class="image-delete" (click)="onDeleteImage()">
             <div class="cancel-icon"></div>
           </div>
@@ -42,7 +42,7 @@
             name="formImage" 
             id="formImage"
             class="image-input"
-            accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+            accept="image/jpeg,image/png,image/webp"
             (change)="onChangeImage($event)"
           />
         </ng-template>

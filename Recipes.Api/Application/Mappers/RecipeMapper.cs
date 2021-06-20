@@ -98,24 +98,24 @@ namespace Recipes.Api.Application.Mappers
             };
         }
 
-        public static Recipe MapToRecipe( this EditRecipeDto editRecipeDto )
+        public static Recipe MapToRecipe( this EditRecipeDetailDto editRecipeDetailDto )
         {
             return new Recipe
             {
-                Title = editRecipeDto.Title,
-                Description = editRecipeDto.Description,
-                Tags = editRecipeDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
-                ImagePath = editRecipeDto.ImagePath ?? null,
-                TimeInMin = editRecipeDto.TimeInMinutes,
-                PersonCount = editRecipeDto.PersonsCount,
-                Ingredients = editRecipeDto.Ingredients
+                Title = editRecipeDetailDto.Title,
+                Description = editRecipeDetailDto.Description,
+                Tags = editRecipeDetailDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
+                ImagePath = editRecipeDetailDto.ImagePath,
+                TimeInMin = editRecipeDetailDto.TimeInMinutes,
+                PersonCount = editRecipeDetailDto.PersonsCount,
+                Ingredients = editRecipeDetailDto.Ingredients
                     .Select( x => new Ingredient
                     {
                         Name = x.Title,
                         IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
                     } )
                     .ToList(),
-                Steps = editRecipeDto.Steps
+                Steps = editRecipeDetailDto.Steps
                     .OrderBy( x => x.Step )
                     .Select( x => new Step
                     {
@@ -130,9 +130,9 @@ namespace Recipes.Api.Application.Mappers
             };
         }
 
-        public static EditRecipeDto MapToEdit( this Recipe recipe )
+        public static EditRecipeDetailDto MapToEditDetail( this Recipe recipe )
         {
-            return new EditRecipeDto
+            return new EditRecipeDetailDto
             {
                 Title = recipe.Title,
                 Description = recipe.Description,
@@ -154,6 +154,53 @@ namespace Recipes.Api.Application.Mappers
                         Description = x.Description,
                     } )
                     .ToArray(),
+            };
+        }
+
+        public static EditRecipe MapToEdit( this EditRecipeDto editRecipeDto )
+        {
+            return new EditRecipe
+            {
+                Title = editRecipeDto.Title,
+                Description = editRecipeDto.Description,
+                Tags = editRecipeDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
+                TimeInMinutes = editRecipeDto.TimeInMinutes,
+                PersonsCount = editRecipeDto.PersonsCount,
+                Image = null,
+                Ingredients = editRecipeDto.Ingredients
+                    .Select( x => new Ingredient
+                    {
+                        Name = x.Title,
+                        IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
+                    } )
+                    .ToList(),
+                Steps = editRecipeDto.Steps
+                    .OrderBy( x => x.Step )
+                    .Select( x => new Step
+                    {
+                        StepNumber = x.Step,
+                        Description = x.Description,
+                    } )
+                    .ToList(),
+            };
+        }
+
+        public static Recipe MapToRecipe( this EditRecipe editRecipe )
+        {
+            return new Recipe
+            {
+                Title = editRecipe.Title,
+                Description = editRecipe.Description,
+                Tags = editRecipe.Tags,
+                TimeInMin = editRecipe.TimeInMinutes,
+                PersonCount = editRecipe.PersonsCount,
+                Ingredients = editRecipe.Ingredients,
+                Steps = editRecipe.Steps,
+                ImagePath = null,
+                Author = null,
+                CreationDateTime = DateTime.Now,
+                LikesCount = 0,
+                StarsCount = 0,
             };
         }
     }

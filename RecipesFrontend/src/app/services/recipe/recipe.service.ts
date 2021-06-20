@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EditRecipeDto } from 'src/app/dto/edit-recipe/edit-recipe-dto';
 
 import { RecipeApi } from '../../constants/RecipeApi';
 import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
+import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
+import { EditRecipeDetailDto } from '../../dto/edit-recipe-detail/edit-recipe-detail-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +23,10 @@ export class RecipeService {
     return recipe ?? null;
   }
 
-  public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDto> {
+  public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDetailDto> {
     const url = `${this.recipeUrl}/${recipeId}/edit`;
     const recipe = await this.httpClient
-                    .get<EditRecipeDto>(url)
+                    .get<EditRecipeDetailDto>(url)
                     .toPromise();
     return recipe ?? null;
   }
@@ -58,17 +59,53 @@ export class RecipeService {
       .toPromise();
   }
 
-  public async addRecipe(recipe: EditRecipeDto): Promise<void> {
+  public async addRecipe(addRecipe: EditRecipeDto): Promise<void> {
     const url = `${this.recipeUrl}/add`;
+
+    const formData = new FormData();
+    const data: string = JSON.stringify({
+      title: addRecipe.title,
+      description: addRecipe.description,
+      keywords: addRecipe.keywords,
+      timeInMinutes: addRecipe.timeInMinutes,
+      personsCount: addRecipe.personsCount,
+      ingredients: addRecipe.ingredients,
+      steps: addRecipe.steps,
+    });
+    formData.append('imageFile', addRecipe.imageFile);
+    formData.append('data', data);
+       
     await this.httpClient
-      .post(url, recipe)
+      .post(url, formData)
       .toPromise();
   }
 
-  public async updateRecipe(recipeId: number, editRecipe: EditRecipeDto): Promise<void> {
-    const url = `${this.recipeUrl}/${recipeId}/update`;
+  public async updateRecipeWithImage(recipeId: number, editRecipe: EditRecipeDto): Promise<void> {
+    const url = `${this.recipeUrl}/${recipeId}/update-with-image`;
+
+    const formData = new FormData();
+    const data: string = JSON.stringify({
+      title: editRecipe.title,
+      description: editRecipe.description,
+      keywords: editRecipe.keywords,
+      timeInMinutes: editRecipe.timeInMinutes,
+      personsCount: editRecipe.personsCount,
+      ingredients: editRecipe.ingredients,
+      steps: editRecipe.steps,
+    });
+    formData.append('imageFile', editRecipe.imageFile);
+    formData.append('data', data);
+
     await this.httpClient
-      .post(url, editRecipe)
+      .post(url, formData)
+      .toPromise();
+  }
+
+  public async updateRecipeWithOutImage(recipeId: number, editRecipeDetailDto: EditRecipeDetailDto): Promise<void> {
+    const url = `${this.recipeUrl}/${recipeId}/update-without-image`;
+
+    await this.httpClient
+      .post(url, editRecipeDetailDto)
       .toPromise();
   }
 }

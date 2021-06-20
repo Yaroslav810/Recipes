@@ -49,7 +49,7 @@ namespace Recipes.Api.Infrastructure.Repositories
                 recipeQuery = recipeQuery
                     .Include( x => x.Ingredients )
                         .ThenInclude( y => y.IngredientItems )
-                    .Include( x => x.Steps );
+                    .Include( x => x.Steps.OrderBy( y => y.StepNumber ) );
             }
             return recipeQuery.FirstOrDefault( x => x.Id == recipeId );
         }
