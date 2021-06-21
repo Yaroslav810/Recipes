@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Recipes.Api.Application;
 using Recipes.Api.Application.Repositories;
@@ -14,10 +12,6 @@ using Recipes.Api.Infrastructure;
 using Recipes.Api.Infrastructure.Dbcontext;
 using Recipes.Api.Infrastructure.Repositories;
 using Recipes.Api.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Recipes.Api
 {

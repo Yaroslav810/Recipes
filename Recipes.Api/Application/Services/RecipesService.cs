@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Entities;
 using Recipes.Api.Application.Mappers;
 using Recipes.Api.Application.Repositories;
@@ -46,64 +44,56 @@ namespace Recipes.Api.Application.Services
         public void AddLike( int recipeId )
         {
             Recipe recipe = _recipeRepository.GetRecipe( recipeId, false );
-            if ( recipe != null )
+            if ( recipe == null ) return;
+            // TODO: Получение строки UserRating WHERE RecipeId = recipeId
+            if ( true ) // TODO: CanPutLike = (): bool => (UserRating != null) || (isLikeSet != 1) 
             {
-                // TODO: Получение строки UserRating WHERE RecipeId = recipeId
-                if ( true ) // TODO: CanPutLike = (): bool => (UserRating != null) || (isLikeSet != 1) 
-                {
-                    // TODO: Обновить сущность UserRating
+                // TODO: Обновить сущность UserRating
 
-                    // TODO: Получить обновлённый Recipe
-                    recipe.LikesCount++;
-                }
+                // TODO: Получить обновлённый Recipe
+                recipe.LikesCount++;
             }
         }
 
         public void RemoveLike( int recipeId )
         {
             Recipe recipe = _recipeRepository.GetRecipe( recipeId, false );
-            if ( recipe != null )
+            if ( recipe == null ) return;
+            // TODO: Получение строки UserRating WHERE RecipeId = recipeId
+            if ( true ) // TODO: CanRemoveLike = (): bool => (UserRating != null) || (isLikeSet != 0) 
             {
-                // TODO: Получение строки UserRating WHERE RecipeId = recipeId
-                if ( true ) // TODO: CanRemoveLike = (): bool => (UserRating != null) || (isLikeSet != 0) 
-                {
-                    // TODO: Обновить сущность UserRating
+                // TODO: Обновить сущность UserRating
 
-                    // TODO: Получить обновлённый Recipe
-                    recipe.LikesCount--;
-                }
+                // TODO: Получить обновлённый Recipe
+                recipe.LikesCount--;
             }
         }
 
         public void AddFavourite( int recipeId )
         {
             Recipe recipe = _recipeRepository.GetRecipe( recipeId, false );
-            if ( recipe != null )
+            if ( recipe == null ) return;
+            // TODO: Получение строки UserRating WHERE RecipeId = recipeId
+            if ( true ) // TODO: CanAddToFav = (): bool => (UserRating != null) || (inFavourite != 1) 
             {
-                // TODO: Получение строки UserRating WHERE RecipeId = recipeId
-                if ( true ) // TODO: CanAddToFav = (): bool => (UserRating != null) || (inFavourite != 1) 
-                {
-                    // TODO: Обновить сущность UserRating
+                // TODO: Обновить сущность UserRating
 
-                    // TODO: Получить обновлённый Recipe
-                    recipe.StarsCount++;
-                }
+                // TODO: Получить обновлённый Recipe
+                recipe.StarsCount++;
             }
         }
 
         public void RemoveFavourite( int recipeId )
         {
             Recipe recipe = _recipeRepository.GetRecipe( recipeId, false );
-            if ( recipe != null )
+            if ( recipe == null ) return;
+            // TODO: Получение строки UserRating WHERE RecipeId = recipeId
+            if ( true ) // TODO: CanRemoveFromFav = (): bool => (UserRating != null) || (inFavourite != 0) 
             {
-                // TODO: Получение строки UserRating WHERE RecipeId = recipeId
-                if ( true ) // TODO: CanRemoveFromFav = (): bool => (UserRating != null) || (inFavourite != 0) 
-                {
-                    // TODO: Обновить сущность UserRating
+                // TODO: Обновить сущность UserRating
 
-                    // TODO: Получить обновлённый Recipe
-                    recipe.StarsCount--;
-                }
+                // TODO: Получить обновлённый Recipe
+                recipe.StarsCount--;
             }
         }
 
@@ -111,14 +101,14 @@ namespace Recipes.Api.Application.Services
         {
             if ( !_fileService.IsValidImage( editRecipe.Image ) )
             {
-                throw new Exception();
+                throw new Exception( "File validation error" );
             };
 
             Image image = _fileService.CreateImage( editRecipe.Image );
 
             Recipe recipe = editRecipe.MapToRecipe();
-            recipe.Author = "Elon Musk";
-            recipe.ImagePath = $"/{image.DirectorySave}/{image.Name}";
+            recipe.Author = "Elon Musk"; // TODO: Do Author Id
+            recipe.ImagePath = $"/{image.DirectoryName}/{image.Name}";
 
             await _fileService.SaveImageAsync( image );
             _recipeRepository.CreateRecipe( recipe );
@@ -129,10 +119,10 @@ namespace Recipes.Api.Application.Services
             Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
             if ( currentRecipe == null )
             {
-                throw new Exception();
+                throw new Exception( "Отсутствует рецепт с таким Id" );
             }
 
-            Image image = _fileService.CreateImage( editRecipe.Image );
+            Image image = ( editRecipe.Image != null ) ? _fileService.CreateImage( editRecipe.Image ) : null;
             Recipe recipe = editRecipe.MapToRecipe();
             if ( currentRecipe.ImagePath != null )
             {
@@ -142,7 +132,7 @@ namespace Recipes.Api.Application.Services
             currentRecipe.Title = recipe.Title;
             currentRecipe.Description = recipe.Description;
             currentRecipe.Tags = recipe.Tags;
-            currentRecipe.ImagePath = ( image != null ) ? $"/{image.DirectorySave}/{image.Name}" : null;
+            currentRecipe.ImagePath = ( image != null ) ? $"/{image.DirectoryName}/{image.Name}" : null;
             currentRecipe.TimeInMin = recipe.TimeInMin;
             currentRecipe.PersonCount = recipe.PersonCount;
             currentRecipe.Ingredients = recipe.Ingredients;

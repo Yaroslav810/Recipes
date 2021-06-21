@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Recipes.Api.Application.Entities;
@@ -20,20 +18,18 @@ namespace Recipes.Api.Infrastructure.Repositories
 
         public async Task SaveImageAsync( Image image )
         {
-            string fullDirectory = $"{_imageStorageSettings.BaseUri}\\{image.DirectorySave}";
+            string fullDirectory = $"{_imageStorageSettings.BaseUri}\\{image.DirectoryName}";
             string fullPath = $"{fullDirectory}\\{image.Name}";
 
             Directory.CreateDirectory( fullDirectory );
 
-            using ( FileStream fileStram = new FileStream( fullPath, FileMode.Create ) )
-            {
-                await fileStram.WriteAsync( image.Content );
-            }
+            await using FileStream fileStream = new FileStream( fullPath, FileMode.Create );
+            await fileStream.WriteAsync( image.Content );
         }
 
         public async Task<Image> GetImageAsync( string imagePath )
         {
-            string directorySave = imagePath.Split( '/' ).First();
+            string directoryName = imagePath.Split( '/' ).First();
             string imageName = imagePath.Split( '/', 2 ).Last();
             string imageType = imageName.Split( '.' ).Last();
             string fullPath = $"{_imageStorageSettings.BaseUri}\\{imagePath}";
@@ -43,15 +39,15 @@ namespace Recipes.Api.Infrastructure.Repositories
                 return null;
             }
 
-            using FileStream fileStram = File.OpenRead( fullPath );
-            byte[] bytes = new byte[ fileStram.Length ];
-            await fileStram.ReadAsync( bytes, 0, bytes.Length );
+            await using FileStream fileStream = File.OpenRead( fullPath );
+            byte[] bytes = new byte[ fileStream.Length ];
+            await fileStream.ReadAsync( bytes, 0, bytes.Length );
 
             return new Image
             {
                 Name = imageName,
                 Type = imageType,
-                DirectorySave = directorySave,
+                DirectoryName = directoryName,
                 Content = bytes,
             };
         }
@@ -60,8 +56,7 @@ namespace Recipes.Api.Infrastructure.Repositories
         {
             string fullPath = $"{_imageStorageSettings.BaseUri}\\{imagePath}";
 
-            if ( File.Exists( fullPath ) )
-                File.Delete( fullPath );
+            File.Delete( fullPath );
         }
     }
 }

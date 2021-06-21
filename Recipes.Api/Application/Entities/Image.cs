@@ -9,7 +9,7 @@ namespace Recipes.Api.Application.Entities
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public string DirectorySave { get; set; }
+        public string DirectoryName { get; set; }
         public byte[] Content { get; set; }
     }
 }

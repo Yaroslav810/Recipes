@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,12 +51,12 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}
         [HttpGet( "{recipeId}" )]
-        public RecipeDetailDto GetRecipe( [FromRoute] int recipeId )
+        public IActionResult GetRecipe( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
-                ? recipe.MapToDetail()
-                : null;
+                ? Ok( recipe?.MapToRecipeDetailDto() )
+                : BadRequest();
         }
 
         // GET api/recipe/{recipeId}/add-like
@@ -95,24 +93,24 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/edit
         [HttpGet( "{recipeId}/edit" )]
-        public EditRecipeDetailDto GetRecipeForEdit( [FromRoute] int recipeId )
+        public IActionResult GetRecipeForEdit( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
-                ? recipe.MapToEditDetail()
-                : null;
+                ? Ok( recipe.MapToEditDetail() )
+                : BadRequest();
         }
 
         // POST api/recipe/add
         [HttpPost( "add" )]
-        public async Task<IActionResult> PostAsync()
+        public async Task<IActionResult> AddRecipeAsync()
         {
             try
             {
                 IFormFile file = Request.Form.Files.GetFile( "imageFile" );
                 EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-                EditRecipe addRecipeDto = editRecipeDto.MapToEdit();
+                EditRecipe addRecipeDto = editRecipeDto.MapToEditRecipe();
                 addRecipeDto.Image = file ?? null;
 
                 await _recipesService.CreateRecipeAsync( addRecipeDto );
@@ -123,20 +121,18 @@ namespace Recipes.Api.Controllers
             {
                 return BadRequest();
             }
-
-
         }
 
         // POST api/recipe/{recipeId}/update-with-image
         [HttpPost( "{recipeId}/update-with-image" )]
-        public async Task<IActionResult> PostAsync( [FromRoute] int recipeId )
+        public async Task<IActionResult> UpdateRecipeWithImageAsync( [FromRoute] int recipeId )
         {
             try
             {
                 IFormFile file = Request.Form.Files.GetFile( "imageFile" );
                 EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-                EditRecipe editRecipe = editRecipeDto.MapToEdit();
+                EditRecipe editRecipe = editRecipeDto.MapToEditRecipe();
                 editRecipe.Image = file ?? null;
 
                 await _recipesService.UpdateRecipeWithImageAsync( recipeId, editRecipe );
@@ -152,11 +148,12 @@ namespace Recipes.Api.Controllers
 
         // POST api/recipe/{recipeId}/update-without-image
         [HttpPost( "{recipeId}/update-without-image" )]
-        public IActionResult PostWithOutImageAsync( [FromRoute] int recipeId, [FromBody] EditRecipeDetailDto editRecipeDetailDto )
+        public IActionResult UpdateRecipeWithoutImage( [FromRoute] int recipeId, [FromBody] EditRecipeDetailDto editRecipeDetailDto )
         {
             try
             {
                 Recipe recipe = editRecipeDetailDto.MapToRecipe();
+                recipe.Author = "Elon Musk"; // TODO: Do author ID
                 _recipesService.UpdateRecipeWithOutImage( recipeId, recipe );
                 _unitOfWork.Commit();
 

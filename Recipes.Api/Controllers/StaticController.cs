@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Recipes.Api.Application.Entities;
 using Recipes.Api.Application.Services;
@@ -19,19 +18,17 @@ namespace Recipes.Api.Controllers
 
         // GET: static/images/{directory}/{name}
         [HttpGet( "images/{directory}/{name}" )]
-        public async Task<IActionResult> GetAsync( string directory, string name )
+        public async Task<IActionResult> GetImageAsync( string directory, string name )
         {
             string fullPath = $"{directory}/{name}";
             Image image = await _fileService.GetImageAsync( fullPath );
 
-            if ( image != null )
-            {
-                return File( image.Content, $"image/{image.Type}", image.Name );
-            }
-            else
+            if ( image == null )
             {
                 return BadRequest();
             }
+
+            return File( image.Content, $"image/{image.Type}", image.Name );
         }
     }
 }

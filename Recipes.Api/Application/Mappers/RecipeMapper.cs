@@ -8,11 +8,8 @@ namespace Recipes.Api.Application.Mappers
 {
     public static class RecipeMapper
     {
-        public static List<RecipeDto> Map( this List<Recipe> recipe )
+        public static List<RecipeDto> MapToRecipeDto( this List<Recipe> recipe )
         {
-            if ( recipe == null )
-                return null;
-
             return recipe.ConvertAll( x => new RecipeDto
             {
                 Id = x.Id,
@@ -30,9 +27,9 @@ namespace Recipes.Api.Application.Mappers
             } );
         }
 
-        public static RecipeDetailDto MapToDetail( this Recipe recipe )
+        public static RecipeDetailDto MapToRecipeDetailDto( this Recipe recipe )
         {
-            return new RecipeDetailDto
+            return new()
             {
                 Id = recipe.Id,
                 Title = recipe.Title,
@@ -64,43 +61,9 @@ namespace Recipes.Api.Application.Mappers
             };
         }
 
-        public static Recipe Map( this RecipeDetailDto recipeDetailDto )
-        {
-            if ( recipeDetailDto == null )
-                return null;
-
-            return new Recipe
-            {
-                Title = recipeDetailDto.Title,
-                Description = recipeDetailDto.Description,
-                Author = recipeDetailDto.Author,
-                Tags = recipeDetailDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
-                ImagePath = recipeDetailDto.ImagePath ?? null,
-                TimeInMin = recipeDetailDto.TimeInMin,
-                PersonCount = recipeDetailDto.PersonCount,
-                LikesCount = recipeDetailDto.LikesCount | 0,
-                StarsCount = recipeDetailDto.StarsCount | 0,
-                CreationDateTime = DateTime.Now,
-                Ingredients = recipeDetailDto.Ingredients
-                    .Select( x => new Ingredient
-                    {
-                        Name = x.Title,
-                        IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
-                    } )
-                    .ToList(),
-                Steps = recipeDetailDto.Steps
-                    .OrderBy( x => x.Step )
-                    .Select( x => new Step
-                    {
-                        StepNumber = x.Step,
-                        Description = x.Description,
-                    } ).ToList(),
-            };
-        }
-
         public static Recipe MapToRecipe( this EditRecipeDetailDto editRecipeDetailDto )
         {
-            return new Recipe
+            return new()
             {
                 Title = editRecipeDetailDto.Title,
                 Description = editRecipeDetailDto.Description,
@@ -123,7 +86,6 @@ namespace Recipes.Api.Application.Mappers
                         Description = x.Description,
                     } )
                     .ToList(),
-                Author = "Elon Musk",
                 CreationDateTime = DateTime.Now,
                 LikesCount = 0,
                 StarsCount = 0,
@@ -132,7 +94,7 @@ namespace Recipes.Api.Application.Mappers
 
         public static EditRecipeDetailDto MapToEditDetail( this Recipe recipe )
         {
-            return new EditRecipeDetailDto
+            return new()
             {
                 Title = recipe.Title,
                 Description = recipe.Description,
@@ -157,9 +119,9 @@ namespace Recipes.Api.Application.Mappers
             };
         }
 
-        public static EditRecipe MapToEdit( this EditRecipeDto editRecipeDto )
+        public static EditRecipe MapToEditRecipe( this EditRecipeDto editRecipeDto )
         {
-            return new EditRecipe
+            return new()
             {
                 Title = editRecipeDto.Title,
                 Description = editRecipeDto.Description,
@@ -187,7 +149,7 @@ namespace Recipes.Api.Application.Mappers
 
         public static Recipe MapToRecipe( this EditRecipe editRecipe )
         {
-            return new Recipe
+            return new()
             {
                 Title = editRecipe.Title,
                 Description = editRecipe.Description,

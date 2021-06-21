@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Recipes.Api.Application.Entities;
 using Recipes.Api.Application.Repositories;
 
@@ -30,7 +29,7 @@ namespace Recipes.Api.Application.Services
 
         public bool IsValidImage( IFormFile image )
         {
-            if ( string.IsNullOrEmpty( image.FileName ) || image == null || image.Length == 0 )
+            if ( image == null || string.IsNullOrEmpty( image.FileName ) || image.Length == 0 )
             {
                 return false;
             }
@@ -54,7 +53,7 @@ namespace Recipes.Api.Application.Services
         {
             if ( image == null )
             {
-                return null;
+                throw new Exception( "Отсутствует файл" );
             }
 
             string imageType = image.ContentType.Split( '/' ).Last();
@@ -64,7 +63,7 @@ namespace Recipes.Api.Application.Services
             {
                 Name = imageName,
                 Type = imageType,
-                DirectorySave = $"{ DateTime.Now.Month }_{ DateTime.Now.Year }",
+                DirectoryName = $"{ DateTime.Now.Month }_{ DateTime.Now.Year }",
                 Content = FileToBytes( image ),
             };
         }
