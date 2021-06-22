@@ -3,16 +3,13 @@ import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { IFormBuilder, IFormGroup } from '@rxweb/types';
 
 import { DishCard } from '../../components/dish-card/dish-card';
+import { StatisticCard } from '../../components/statistic-card/statistic-card';
 import { UserDto } from '../../dto/user/user-dto';
-
-export interface Statistic {
-  title: string,
-  icon: string,
-  value: string,
-}
+import { PasswordChangeWindowModalComponent } from '../../components/password-change-window-modal/password-change-window-modal.component';
 
 @Component({
   selector: 'app-user',
@@ -20,10 +17,8 @@ export interface Statistic {
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-
-  public passwordHide: boolean = true;
-  public isEditing: boolean = false;
-  public statistics: Statistic[] = [];
+  public isEditing: boolean = true;
+  public statistics: StatisticCard[] = [];
   public recipes: DishCard[];
   public userForm: IFormGroup<UserDto>;
   private formBuilder: IFormBuilder;
@@ -32,26 +27,10 @@ export class UserComponent implements OnInit {
     private location: Location,
     private router: Router,
     private snackBar: MatSnackBar,
-    formBuilder: FormBuilder,
+    private dialog: MatDialog,
+    formBuilder: FormBuilder
   ) { 
     this.formBuilder = formBuilder;
-    this.statistics = [
-      {
-        title: 'Всего рецептов',
-        icon: 'book.svg',
-        value: '...',
-      },
-      {
-        title: 'Всего лайков',
-        icon: 'book.svg',
-        value: '...',
-      },
-      {
-        title: 'В избранных',
-        icon: 'book.svg',
-        value: '...',
-      }
-    ];
   }
 
   ngOnInit(): void {
@@ -65,9 +44,14 @@ export class UserComponent implements OnInit {
   public onSaveUserData(): void {
     console.log(this.userForm.value);
     if (this.userForm.valid) {
-      this.isEditing = false;
+      console.log('Ты: ', this.userForm.value);
+      this.snackBar.open('Данные успешно обновлены!', 'Закрыть', {
+        duration: 5000,
+        horizontalPosition: 'end',
+        verticalPosition: 'top',
+      });
     } else {
-      this.snackBar.open('Пожалуйста, заполните все обязательные поля', 'Закрыть', {
+      this.snackBar.open('Ошибка заполнения полей!', 'Закрыть', {
         duration: 5000,
         horizontalPosition: 'end',
         verticalPosition: 'top',
@@ -77,6 +61,12 @@ export class UserComponent implements OnInit {
 
   public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
+  }
+
+  public onChangePassword(): void {
+    const modal = this.dialog.open(PasswordChangeWindowModalComponent, {
+      autoFocus: false
+    });
   }
 
   private displayData(): void {
@@ -94,14 +84,21 @@ export class UserComponent implements OnInit {
     } as UserDto;
 
     return this.formBuilder.group<UserDto>({
-      name: [userData.name, [Validators.required]],
-      login: [userData.login, Validators.required],
-      password: [''],
+      name: [userData.name, [
+        Validators.required, 
+        Validators.minLength(2),
+        Validators.pattern(/^([а-яё][А-ЯЁ]+|[a-z][A-Z]+)$/i)
+      ]],
+      login: [userData.login, [
+        Validators.required, 
+        Validators.minLength(3),
+        Validators.pattern(/^([a-zA-Z0-9]+)$/i)
+      ]],
       about: [userData.about]
     });
   }
 
-  private getStatistics(): Statistic[] {
+  private getStatistics(): StatisticCard[] {
     const userData = {
       recipesCount: 15,
       likesCount: 15,
@@ -112,17 +109,17 @@ export class UserComponent implements OnInit {
       {
         title: 'Всего рецептов',
         icon: 'book.svg',
-        value: userData.recipesCount.toString(),
+        value: userData.recipesCount,
       },
       {
         title: 'Всего лайков',
         icon: 'book.svg',
-        value: userData.likesCount.toString(),
+        value: userData.likesCount,
       },
       {
         title: 'В избранных',
         icon: 'book.svg',
-        value: userData.starsCount.toString(),
+        value: userData.starsCount,
       }
     ];
   }

@@ -8,8 +8,7 @@
       <button 
         mat-icon-button 
         (click)="isEditing = !isEditing" 
-        class="pencil-button"
-      >
+        class="pencil-button">
         <div class="pencil-icon"></div>
       </button>
       <div class="card__part">
@@ -21,8 +20,22 @@
             name="formName"
             formControlName="name"
             autocomplete="off"
-            [readonly]="!isEditing"
-          />
+            [readonly]="!isEditing" />
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.name.hasError('required') && userForm.controls.name.touched">
+            У тебя рили имени нет?
+          </mat-error>
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.name.hasError('minlength') && userForm.controls.name.touched">
+            Твоё имя точно {{ userForm.controls.name.value }}?
+          </mat-error>
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.name.hasError('pattern') && userForm.controls.name.touched">
+            У тебя брат C-3PO?
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="fill" class="form-field">
           <mat-label class="form-label">Логин</mat-label>
@@ -32,40 +45,26 @@
             name="formLogin"
             formControlName="login"
             autocomplete="off"
-            [readonly]="!isEditing"
-          />
+            [readonly]="!isEditing" />
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.login.hasError('required') && userForm.controls.login.touched">
+            Логин не может быть пустым
+          </mat-error>
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.login.hasError('minlength') && userForm.controls.login.touched">
+            Логин должен содержать не менее 3 символов
+          </mat-error>
+          <mat-error 
+            class="input-error"
+            *ngIf="userForm.controls.login.hasError('pattern') && userForm.controls.login.touched">
+            Логин может состоять только из цифр и латинских букв
+          </mat-error>
         </mat-form-field>
-        <div class="form-field" *ngIf="isEditing">
-          <input
-            matInput
-            [type]="passwordHide ? 'password' : 'text'"
-            class="form-input"
-            name="formPasssword"
-            formControlName="password"
-            placeholder="Пароль"
-            autocomplete="off"
-          />
-          <button 
-            mat-icon-button 
-            matSuffix 
-            class="password-button"
-            (click)="passwordHide = !passwordHide" 
-            [attr.aria-label]="'Hide password'" 
-            [attr.aria-pressed]="passwordHide"
-          >
-            <mat-icon>{{passwordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
-        </div>
-        <!-- <div class="form-field">
-          <input
-            matInput
-            class="form-input"
-            name="formName" 
-            placeholder="Имя"
-            formControlName="name"
-            autocomplete="off"
-          />
-        </div> -->
+        <button mat-stroked-button color="accent" class="stroked-button change-password" *ngIf="isEditing" (click)="onChangePassword()">
+          <span>Сменить пароль</span>
+        </button>
       </div>
       <div class="card__part">
         <div class="form-field">
@@ -75,24 +74,22 @@
             placeholder="Напишите немного о себе"
             formControlName="about"
             autocomplete="off"
-            [readonly]="!isEditing"
-          ></textarea>
+            [readonly]="!isEditing"></textarea>
         </div>
-        <button mat-stroked-button color="accent" class="stroked-button" *ngIf="isEditing" (click)="onSaveUserData()">
+        <button 
+          mat-stroked-button 
+          color="accent" 
+          class="stroked-button"
+          [class.disabled-button]="userForm.invalid"
+          *ngIf="isEditing" 
+          (click)="onSaveUserData()"
+          [disabled]="userForm.invalid">
           <span>Сохранить</span>
         </button>
       </div>
     </div>
     <div class="statistics">
-      <div class="statistic" *ngFor="let statistic of statistics">
-        <div>
-          <div class="statistic__icon">
-            <img src="./assets/images/{{ statistic.icon }}" />
-          </div>
-          <h3 class="statistic__title">{{ statistic.title }}</h3>
-        </div>
-        <div class="statistic__value">{{ statistic.value }}</div>
-      </div>
+      <app-statistic-card *ngFor="let statistic of statistics" [card]="statistic" class="statistic"></app-statistic-card>
     </div>
   </section>
   <section class="favourite" [hidden]="recipes.length == 0">
