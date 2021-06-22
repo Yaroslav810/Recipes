@@ -119,7 +119,7 @@ namespace Recipes.Api.Application.Services
             Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
             if ( currentRecipe == null )
             {
-                throw new Exception( "Отсутствует рецепт с таким Id" );
+                throw new Exception( "There is no recipe with this Id" );
             }
 
             Image image = ( editRecipe.Image != null ) ? _fileService.CreateImage( editRecipe.Image ) : null;
@@ -147,7 +147,7 @@ namespace Recipes.Api.Application.Services
         public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe )
         {
             Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
-            if ( currentRecipe == null ) throw new Exception();
+            if ( currentRecipe == null ) throw new Exception( "There is no recipe with this Id" );
 
             currentRecipe.Title = recipe.Title;
             currentRecipe.Description = recipe.Description;
