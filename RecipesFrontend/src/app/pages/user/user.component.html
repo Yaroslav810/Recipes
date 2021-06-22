@@ -1,0 +1,102 @@
+<div class="user">
+  <p class="back" (click)="goBack()">
+    Назад
+  </p>
+  <section class="main">
+    <h2 class="title">Мой профиль</h2>
+    <div class="card" [formGroup]="userForm">
+      <button 
+        mat-icon-button 
+        (click)="isEditing = !isEditing" 
+        class="pencil-button"
+      >
+        <div class="pencil-icon"></div>
+      </button>
+      <div class="card__part">
+        <mat-form-field appearance="fill"  class="form-field">
+          <mat-label class="form-label">Имя</mat-label>
+          <input 
+            matInput
+            class="form-field__input"
+            name="formName"
+            formControlName="name"
+            autocomplete="off"
+            [readonly]="!isEditing"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="form-field">
+          <mat-label class="form-label">Логин</mat-label>
+          <input 
+            matInput
+            class="form-field__input" 
+            name="formLogin"
+            formControlName="login"
+            autocomplete="off"
+            [readonly]="!isEditing"
+          />
+        </mat-form-field>
+        <div class="form-field" *ngIf="isEditing">
+          <input
+            matInput
+            [type]="passwordHide ? 'password' : 'text'"
+            class="form-input"
+            name="formPasssword"
+            formControlName="password"
+            placeholder="Пароль"
+            autocomplete="off"
+          />
+          <button 
+            mat-icon-button 
+            matSuffix 
+            class="password-button"
+            (click)="passwordHide = !passwordHide" 
+            [attr.aria-label]="'Hide password'" 
+            [attr.aria-pressed]="passwordHide"
+          >
+            <mat-icon>{{passwordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </div>
+        <!-- <div class="form-field">
+          <input
+            matInput
+            class="form-input"
+            name="formName" 
+            placeholder="Имя"
+            formControlName="name"
+            autocomplete="off"
+          />
+        </div> -->
+      </div>
+      <div class="card__part">
+        <div class="form-field">
+          <textarea 
+            class="form-input form-textarea" 
+            name="formAbout" 
+            placeholder="Напишите немного о себе"
+            formControlName="about"
+            autocomplete="off"
+            [readonly]="!isEditing"
+          ></textarea>
+        </div>
+        <button mat-stroked-button color="accent" class="stroked-button" *ngIf="isEditing" (click)="onSaveUserData()">
+          <span>Сохранить</span>
+        </button>
+      </div>
+    </div>
+    <div class="statistics">
+      <div class="statistic" *ngFor="let statistic of statistics">
+        <div>
+          <div class="statistic__icon">
+            <img src="./assets/images/{{ statistic.icon }}" />
+          </div>
+          <h3 class="statistic__title">{{ statistic.title }}</h3>
+        </div>
+        <div class="statistic__value">{{ statistic.value }}</div>
+      </div>
+    </div>
+  </section>
+  <section class="favourite" [hidden]="recipes.length == 0">
+    <h3 class="favourite__title">Мои рецепты</h3>
+    <app-dish-card *ngFor="let recipe of recipes" [card]="recipe" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
+  </section>
+</div>
