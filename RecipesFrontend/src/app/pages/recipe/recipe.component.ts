@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 
 import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipeService } from '../../services/recipe/recipe.service';
+import { ImageService } from '../../services/image/image.service';
 import { Ingredient, Recipe } from './recipe';
 import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
@@ -25,7 +26,8 @@ export class RecipeComponent implements OnInit {
     private location: Location,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private imageService: ImageService,
   ) {  }
 
   ngOnInit(): void {
@@ -74,7 +76,7 @@ export class RecipeComponent implements OnInit {
       description: recipeDetailDto.description,
       keywords: recipeDetailDto.keywords,
       author: recipeDetailDto.author,
-      image: recipeDetailDto.imagePath, 
+      image: this.imageService.buildFullPath(recipeDetailDto.imagePath), 
       time: recipeDetailDto.timeInMin + ' мин',
       personsCount: recipeDetailDto.personCount + ' человек',
       likesCount: recipeDetailDto.likesCount,

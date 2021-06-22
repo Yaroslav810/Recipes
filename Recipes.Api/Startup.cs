@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Recipes.Api.Application;
 using Recipes.Api.Application.Repositories;
@@ -13,10 +11,7 @@ using Recipes.Api.Application.Services;
 using Recipes.Api.Infrastructure;
 using Recipes.Api.Infrastructure.Dbcontext;
 using Recipes.Api.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Recipes.Api.Settings;
 
 namespace Recipes.Api
 {
@@ -48,15 +43,18 @@ namespace Recipes.Api
              {
                  c.SwaggerDoc( "v1", new OpenApiInfo { Title = "apiRecipes", Version = "v1" } );
              } );
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IRecipesService, RecipesService>();
             services.AddScoped<IRecipesRepository, RecipesRepository>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IFileRepository, FileRepository>();
+            services.AddSingleton( Configuration.GetSection( "ImageStorageSettings" ).Get<ImageStorageSettings>() );
             services.AddDbContext<RecipeContext>( opts => opts.UseSqlServer( @"Server=MSI\SQLEXPRESS;Database=Recipes;Trusted_Connection=True;" ) );
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public void Configure( IApplicationBuilder app, IWebHostEnvironment env, RecipeContext context )
         {
-            if ( env.IsDevelopment() )
+            if ( env.IsDevelopment() || env.IsEnvironment( "Yaroslav" ) )
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -66,6 +64,8 @@ namespace Recipes.Api
             app.UseCors();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 

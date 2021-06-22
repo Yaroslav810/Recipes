@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Recipes.Api.Application;
 using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Entities;
@@ -51,12 +51,12 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}
         [HttpGet( "{recipeId}" )]
-        public RecipeDetailDto GetRecipe( [FromRoute] int recipeId )
+        public IActionResult GetRecipe( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
-                ? recipe.MapToDetail()
-                : null;
+                ? Ok( recipe?.MapToRecipeDetailDto() )
+                : BadRequest();
         }
 
         // GET api/recipe/{recipeId}/add-like
@@ -93,32 +93,76 @@ namespace Recipes.Api.Controllers
 
         // GET api/recipe/{recipeId}/edit
         [HttpGet( "{recipeId}/edit" )]
-        public EditRecipeDto GetRecipeForEdit( [FromRoute] int recipeId )
+        public IActionResult GetRecipeForEdit( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
             return ( recipe != null )
-                ? recipe.MapToEdit()
-                : null;
+                ? Ok( recipe.MapToEditDetail() )
+                : BadRequest();
         }
 
         // POST api/recipe/add
         [HttpPost( "add" )]
-        public void Post( [FromBody] EditRecipeDto сreateRecipeDto )
+        public async Task<IActionResult> AddRecipeAsync()
         {
-            Recipe recipe = сreateRecipeDto.MapToRecipe();
+            try
+            {
+                IFormFile file = Request.Form.Files.GetFile( "imageFile" );
+                EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-            _recipesService.CreateRecipe( recipe );
-            _unitOfWork.Commit();
+                EditRecipe addRecipeDto = editRecipeDto.MapToEditRecipe();
+                addRecipeDto.Image = file ?? null;
+
+                await _recipesService.CreateRecipeAsync( addRecipeDto );
+                _unitOfWork.Commit();
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
-        // POST api/recipe/{recipeId}/update
-        [HttpPost( "{recipeId}/update" )]
-        public void Post( [FromRoute] int recipeId, [FromBody] EditRecipeDto editRecipeDto )
+        // POST api/recipe/{recipeId}/update-with-image
+        [HttpPost( "{recipeId}/update-with-image" )]
+        public async Task<IActionResult> UpdateRecipeWithImageAsync( [FromRoute] int recipeId )
         {
-            Recipe recipe = editRecipeDto.MapToRecipe();
+            try
+            {
+                IFormFile file = Request.Form.Files.GetFile( "imageFile" );
+                EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-            _recipesService.UpdateRecipe( recipeId, recipe );
-            _unitOfWork.Commit();
+                EditRecipe editRecipe = editRecipeDto.MapToEditRecipe();
+                editRecipe.Image = file ?? null;
+
+                await _recipesService.UpdateRecipeWithImageAsync( recipeId, editRecipe );
+                _unitOfWork.Commit();
+
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        // POST api/recipe/{recipeId}/update-without-image
+        [HttpPost( "{recipeId}/update-without-image" )]
+        public IActionResult UpdateRecipeWithoutImage( [FromRoute] int recipeId, [FromBody] EditRecipeDetailDto editRecipeDetailDto )
+        {
+            try
+            {
+                Recipe recipe = editRecipeDetailDto.MapToRecipe();
+                recipe.Author = "Elon Musk"; // TODO: Do author ID
+                _recipesService.UpdateRecipeWithOutImage( recipeId, recipe );
+                _unitOfWork.Commit();
+
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }

@@ -12,10 +12,12 @@ import { IFormGroup, IFormBuilder, IFormArray } from '@rxweb/types';
 
 import { DataLossModalComponent } from '../../components/data-loss-modal/data-loss-modal.component';
 import { IComponentCanDeactivate } from '../../guards/user-data-deactivate.guard';
-import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
 import { RecipeService } from '../../services/recipe/recipe.service';
+import { ImageService } from '../../services/image/image.service';
+import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
 import { StepDto } from '../../dto/step/step-dto';
+import { EditRecipeDetailDto } from '../../dto/edit-recipe-detail/edit-recipe-detail-dto';
 
 
 @Component({
@@ -27,8 +29,10 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
 
   public timeValue: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120];
   public personValue: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  public typeFile: string[] = ['image/png', 'image/jpeg', 'image/webp'];
   public isLoadingActive: boolean = true;
   public isError: boolean = false;
+  public previewImage: string = null;
   public formData: IFormGroup<EditRecipeDto>;
   private formBuilder: IFormBuilder;
   private recipeId: number;
@@ -38,6 +42,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private recipeService: RecipeService,
+    private imageService: ImageService,
     private snackBar: MatSnackBar,
     formBuilder: FormBuilder,
   ) {
@@ -72,18 +77,31 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
   }
 
   public onChangeImage($event: any): void {
-    const reader = new FileReader();
-    const file = $event.target.files[0];
+    const files = $event.target.files;
 
-    reader.onloadend = () => {
-      this.formData.patchValue({ imagePath: reader.result.toString() });
+    if (files.length > 0) {
+      const file = files.item(0);
+      if (this.typeFile.indexOf(file.type) !== -1) {
+        this.getBase64(file)
+          .then(base64string => {
+            this.previewImage = base64string.toString();
+            this.formData.controls.imageFile.patchValue(file);
+          });
+      } else {
+        this.snackBar.open(`«Единственная реально ценная вещь – это интуиция» - 
+        Альберт Эйнштейн. Попробуй ещё, у тебя обязательно получится! 
+        Хочешь загружать не только картинки? https://clck.ru/VcNKK`, 'Закрыть', {
+          duration: 10000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      }
     }
-
-    reader.readAsDataURL(file);
   }
 
   public onDeleteImage(): void {
-    this.formData.patchValue({ imagePath: null });
+    this.previewImage = null;
+    this.formData.patchValue({ imageFile: null });
   }
 
   public addKeyword(event: MatChipInputEvent): void {
@@ -207,8 +225,8 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
       this.isLoadingActive = false;
     } else {
       this.recipeService.getRecipeForEdit(this.recipeId)
-        .then((editRecipe: EditRecipeDto) => {
-          this.updateFormData(editRecipe);        
+        .then((editRecipe: EditRecipeDetailDto) => {
+          this.updateFormData(editRecipe);       
         })
         .catch(() => {
           this.snackBar.open('Не удалось загрузить рецепт', 'Закрыть', {
@@ -231,7 +249,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
       keywords: this.formBuilder.array<string>([]),
       timeInMinutes: [null, Validators.required],
       personsCount: [null, Validators.required],
-      imagePath: [null],
+      imageFile: [null],
       ingredients: this.formBuilder.array([
         this.buildIngredientGroup()
       ]),
@@ -241,19 +259,19 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
     });
   }
 
-  private updateFormData(editRecipe: EditRecipeDto): void {
-    this.formData.controls.title.patchValue(editRecipe.title);
-    this.formData.controls.description.patchValue(editRecipe.description);
+  private updateFormData(editRecipeDetail: EditRecipeDetailDto): void {
+    this.formData.controls.title.patchValue(editRecipeDetail.title);
+    this.formData.controls.description.patchValue(editRecipeDetail.description);
     let keywords = this.formData.controls.keywords;
-    editRecipe.keywords.forEach(keyword => {
+    editRecipeDetail.keywords.forEach(keyword => {
       (keywords as IFormArray<string>).push(new FormControl(keyword));
     });
-    this.formData.controls.timeInMinutes.patchValue(editRecipe.timeInMinutes);
-    this.formData.controls.personsCount.patchValue(editRecipe.personsCount);
-    this.formData.controls.imagePath.patchValue(editRecipe.imagePath);
+    this.formData.controls.timeInMinutes.patchValue(editRecipeDetail.timeInMinutes);
+    this.formData.controls.personsCount.patchValue(editRecipeDetail.personsCount);
+    this.formData.controls.imageFile.patchValue(null);
     (this.formData.controls.ingredients as IFormArray<IngredientDto>).clear();
     let ingredients = this.formData.controls.ingredients;
-    editRecipe.ingredients.forEach(ingredient => {
+    editRecipeDetail.ingredients.forEach(ingredient => {
       const fb = this.buildIngredientGroup();
       fb.patchValue(ingredient);
       ingredient.items.forEach(item => {
@@ -263,11 +281,12 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
     });
     (this.formData.controls.steps as IFormArray<StepDto>).clear();
     let steps = this.formData.controls.steps;
-    editRecipe.steps.forEach(step => {
+    editRecipeDetail.steps.forEach(step => {
       const fb = this.buildStepGroup();
       fb.patchValue(step);
       (steps as IFormArray<StepDto>).push(fb);
     });
+    this.previewImage = this.imageService.buildFullPath(editRecipeDetail.imagePath);
   }
 
   private buildIngredientGroup(): IFormGroup<IngredientDto> {
@@ -293,7 +312,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
           verticalPosition: 'top',
         });
         this.formData = this.initializationForm();
-        // TODO: Редирект на страницу профиля
+        this.previewImage = null;
       })
       .catch(() => {
         this.snackBar.open(
@@ -310,7 +329,15 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
   }
 
   private onUpdateRecipe(): void {
-    this.recipeService.updateRecipe(this.recipeId, this.formData.value)
+    if (this.formData.value.imageFile === null && this.previewImage !== null) {
+      this.onUpdateRecipeWithOutImage();
+    } else {
+      this.onUpdateRecipeWithImage();
+    }
+  }
+
+  private onUpdateRecipeWithImage(): void {
+    this.recipeService.updateRecipeWithImage(this.recipeId, this.formData.value)
       .then(() => {
         this.snackBar.open('Рецепт успешно обновлён!', 'Закрыть', {
           duration: 5000,
@@ -331,5 +358,48 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
         this.isLoadingActive = false;
         this.formData.reset(this.formData.value);
       });
+  }
+
+  private onUpdateRecipeWithOutImage(): void {
+    const editRecipeDetailDto: EditRecipeDetailDto = {
+      title: this.formData.value.title,
+      description: this.formData.value.description,
+      keywords: this.formData.value.keywords,
+      imagePath: this.previewImage, 
+      timeInMinutes: this.formData.value.timeInMinutes,
+      personsCount: this.formData.value.personsCount,
+      ingredients: this.formData.value.ingredients,
+      steps: this.formData.value.steps,
+    } as EditRecipeDetailDto;
+
+    this.recipeService.updateRecipeWithOutImage(this.recipeId, editRecipeDetailDto)
+      .then(() => {
+        this.snackBar.open('Рецепт успешно обновлён!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      })
+      .catch(() => {
+        this.snackBar.open(
+          `- Как дела? - Проблема исправлена, таблицы теперь вообще нет.
+          - Ок - Нет таблицы, нет проблем) Да ладно, просто однажды Эрнест 
+          Херменгувей поспорил... For sale, baby shoes, never worn`, 'Закрыть', {
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        })
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+        this.formData.reset(this.formData.value);
+      });
+  }
+
+  private getBase64(file: File) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.toString());
+    });
   }
 }

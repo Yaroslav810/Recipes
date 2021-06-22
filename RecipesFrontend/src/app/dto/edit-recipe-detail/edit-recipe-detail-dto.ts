@@ -1,11 +1,11 @@
 import { IngredientDto } from "../ingredient/ingredient-dto";
 import { StepDto } from "../step/step-dto";
 
-export interface EditRecipeDto {
+export interface EditRecipeDetailDto {
   title: string,
   description: string,
   keywords: string[],
-  imageFile: File, 
+  imagePath: string, 
   timeInMinutes: number,
   personsCount: number,
   ingredients: IngredientDto[],

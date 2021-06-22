@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Application.Repositories;
 using Recipes.Api.Infrastructure.Dbcontext;
@@ -49,7 +47,7 @@ namespace Recipes.Api.Infrastructure.Repositories
                 recipeQuery = recipeQuery
                     .Include( x => x.Ingredients )
                         .ThenInclude( y => y.IngredientItems )
-                    .Include( x => x.Steps );
+                    .Include( x => x.Steps.OrderBy( y => y.StepNumber ) );
             }
             return recipeQuery.FirstOrDefault( x => x.Id == recipeId );
         }

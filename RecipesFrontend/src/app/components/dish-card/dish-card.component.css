@@ -55,9 +55,13 @@
 }
 
 .author {
+  max-width: 165px;
   margin: 0;
   font: normal 600 16px/28px 'Montserrat', sans-serif;
   color: #FDB100;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-content {

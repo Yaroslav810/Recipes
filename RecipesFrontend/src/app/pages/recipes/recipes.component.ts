@@ -6,6 +6,7 @@ import { SimpleCard } from '../../components/simple-card/simple-card';
 import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipesService } from '../../services/recipes/recipes.service';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
+import { ImageService } from 'src/app/services/image/image.service';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class RecipesComponent implements OnInit {
     private router: Router, 
     private activatedRoute: ActivatedRoute, 
     private recipesService: RecipesService,
+    private imageService: ImageService,
     private snackBar: MatSnackBar
   ) {
     this.cards = this.getAdvantagesCards();
@@ -151,7 +153,7 @@ export class RecipesComponent implements OnInit {
       starsCount: recipeDto.starsCount,
       time: recipeDto.timeInMin + ' минут',
       personsCount: recipeDto.personCount + ' человек',
-      image: recipeDto.imagePath,
+      image: this.imageService.buildFullPath(recipeDto.imagePath),
       isStarSet: recipeDto.isStarSet,
       isLikeSet: recipeDto.isLikeSet,
     } as DishCard;

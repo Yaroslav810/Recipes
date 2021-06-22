@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'recipe/:id', component: RecipeComponent },
   { path: 'favorites', component: FavoritesComponent },
   { path: 'edit', component: EditRecipeComponent, canDeactivate: [UserDataDeactivateGuard], children: [
-    { path: ':id', component: EditRecipeComponent } // TODO: Добавить canDeactivate
+    { path: ':id', component: EditRecipeComponent }
   ] },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404' },

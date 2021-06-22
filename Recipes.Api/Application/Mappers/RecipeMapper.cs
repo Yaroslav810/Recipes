@@ -8,11 +8,8 @@ namespace Recipes.Api.Application.Mappers
 {
     public static class RecipeMapper
     {
-        public static List<RecipeDto> Map( this List<Recipe> recipe )
+        public static List<RecipeDto> MapToRecipeDto( this List<Recipe> recipe )
         {
-            if ( recipe == null )
-                return null;
-
             return recipe.ConvertAll( x => new RecipeDto
             {
                 Id = x.Id,
@@ -30,9 +27,9 @@ namespace Recipes.Api.Application.Mappers
             } );
         }
 
-        public static RecipeDetailDto MapToDetail( this Recipe recipe )
+        public static RecipeDetailDto MapToRecipeDetailDto( this Recipe recipe )
         {
-            return new RecipeDetailDto
+            return new()
             {
                 Id = recipe.Id,
                 Title = recipe.Title,
@@ -64,58 +61,24 @@ namespace Recipes.Api.Application.Mappers
             };
         }
 
-        public static Recipe Map( this RecipeDetailDto recipeDetailDto )
+        public static Recipe MapToRecipe( this EditRecipeDetailDto editRecipeDetailDto )
         {
-            if ( recipeDetailDto == null )
-                return null;
-
-            return new Recipe
+            return new()
             {
-                Title = recipeDetailDto.Title,
-                Description = recipeDetailDto.Description,
-                Author = recipeDetailDto.Author,
-                Tags = recipeDetailDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
-                ImagePath = recipeDetailDto.ImagePath ?? null,
-                TimeInMin = recipeDetailDto.TimeInMin,
-                PersonCount = recipeDetailDto.PersonCount,
-                LikesCount = recipeDetailDto.LikesCount | 0,
-                StarsCount = recipeDetailDto.StarsCount | 0,
-                CreationDateTime = DateTime.Now,
-                Ingredients = recipeDetailDto.Ingredients
+                Title = editRecipeDetailDto.Title,
+                Description = editRecipeDetailDto.Description,
+                Tags = editRecipeDetailDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
+                ImagePath = editRecipeDetailDto.ImagePath,
+                TimeInMin = editRecipeDetailDto.TimeInMinutes,
+                PersonCount = editRecipeDetailDto.PersonsCount,
+                Ingredients = editRecipeDetailDto.Ingredients
                     .Select( x => new Ingredient
                     {
                         Name = x.Title,
                         IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
                     } )
                     .ToList(),
-                Steps = recipeDetailDto.Steps
-                    .OrderBy( x => x.Step )
-                    .Select( x => new Step
-                    {
-                        StepNumber = x.Step,
-                        Description = x.Description,
-                    } ).ToList(),
-            };
-        }
-
-        public static Recipe MapToRecipe( this EditRecipeDto editRecipeDto )
-        {
-            return new Recipe
-            {
-                Title = editRecipeDto.Title,
-                Description = editRecipeDto.Description,
-                Tags = editRecipeDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
-                ImagePath = editRecipeDto.ImagePath ?? null,
-                TimeInMin = editRecipeDto.TimeInMinutes,
-                PersonCount = editRecipeDto.PersonsCount,
-                Ingredients = editRecipeDto.Ingredients
-                    .Select( x => new Ingredient
-                    {
-                        Name = x.Title,
-                        IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
-                    } )
-                    .ToList(),
-                Steps = editRecipeDto.Steps
+                Steps = editRecipeDetailDto.Steps
                     .OrderBy( x => x.Step )
                     .Select( x => new Step
                     {
@@ -123,16 +86,15 @@ namespace Recipes.Api.Application.Mappers
                         Description = x.Description,
                     } )
                     .ToList(),
-                Author = "Elon Musk",
                 CreationDateTime = DateTime.Now,
                 LikesCount = 0,
                 StarsCount = 0,
             };
         }
 
-        public static EditRecipeDto MapToEdit( this Recipe recipe )
+        public static EditRecipeDetailDto MapToEditDetail( this Recipe recipe )
         {
-            return new EditRecipeDto
+            return new()
             {
                 Title = recipe.Title,
                 Description = recipe.Description,
@@ -154,6 +116,53 @@ namespace Recipes.Api.Application.Mappers
                         Description = x.Description,
                     } )
                     .ToArray(),
+            };
+        }
+
+        public static EditRecipe MapToEditRecipe( this EditRecipeDto editRecipeDto )
+        {
+            return new()
+            {
+                Title = editRecipeDto.Title,
+                Description = editRecipeDto.Description,
+                Tags = editRecipeDto.Keywords.Select( x => new RecipeTag { Name = x } ).ToList(),
+                TimeInMinutes = editRecipeDto.TimeInMinutes,
+                PersonsCount = editRecipeDto.PersonsCount,
+                Image = null,
+                Ingredients = editRecipeDto.Ingredients
+                    .Select( x => new Ingredient
+                    {
+                        Name = x.Title,
+                        IngredientItems = x.Items.Select( y => new IngredientItem { Name = y } ).ToList(),
+                    } )
+                    .ToList(),
+                Steps = editRecipeDto.Steps
+                    .OrderBy( x => x.Step )
+                    .Select( x => new Step
+                    {
+                        StepNumber = x.Step,
+                        Description = x.Description,
+                    } )
+                    .ToList(),
+            };
+        }
+
+        public static Recipe MapToRecipe( this EditRecipe editRecipe )
+        {
+            return new()
+            {
+                Title = editRecipe.Title,
+                Description = editRecipe.Description,
+                Tags = editRecipe.Tags,
+                TimeInMin = editRecipe.TimeInMinutes,
+                PersonCount = editRecipe.PersonsCount,
+                Ingredients = editRecipe.Ingredients,
+                Steps = editRecipe.Steps,
+                ImagePath = null,
+                Author = null,
+                CreationDateTime = DateTime.Now,
+                LikesCount = 0,
+                StarsCount = 0,
             };
         }
     }

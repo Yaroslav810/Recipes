@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Recipes.Api.Application;
 using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Mappers;
 using Recipes.Api.Application.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Recipes.Api.Application.Entities;
 
 namespace Recipes.Api.Controllers
 {
@@ -28,18 +25,18 @@ namespace Recipes.Api.Controllers
              [FromQuery] int take = 10,
              [FromQuery] int skip = 0 )
         {
-            return _recipesService
-                .GetRecipes( searchString, take, skip )
-                .Map();
+            List<Recipe> recipes = _recipesService
+                .GetRecipes( searchString, take, skip );
+            return recipes?.MapToRecipeDto();
         }
 
         // GET: api/recipes/recipe-of-day
         [HttpGet( "recipe-of-day" )]
-        public List<RecipeDto> Get()
+        public List<RecipeDto> GetRecipeOfDay()
         {
             return _recipesService
                 .GetRecipes( "", 1, 2 )
-                .Map(); // TODO: Сделать _recipeService.GetRecipeOfDay();
+                .MapToRecipeDto(); // TODO: Do _recipeService.GetRecipeOfDay();
         }
     }
 }
