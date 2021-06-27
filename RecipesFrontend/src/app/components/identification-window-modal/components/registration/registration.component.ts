@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { RegistrationDto } from 'src/app/dto/registration/registration-dto';
+import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'app-registration',
@@ -12,7 +14,10 @@ export class RegistrationComponent implements OnInit {
 
   public formGroup: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(
+    private formBuilder: FormBuilder,
+    private accountService: AccountService
+  ) { 
     this.formGroup = this.formBuilder.group({
       "name": ["", [
         Validators.required, 
@@ -33,6 +38,18 @@ export class RegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  public onRegistration(): void {
+    console.log('Давайте зарегестрируемся!');
+    this.formGroup.disable();
+    
+    const registrationDto: RegistrationDto = {
+      name: this.formGroup.value.name,
+      login: this.formGroup.value.login,
+      password: this.formGroup.value.password,
+    } as RegistrationDto;
+    this.accountService.registration(registrationDto);
   }
 
   private checkPasswords(group: FormGroup) {

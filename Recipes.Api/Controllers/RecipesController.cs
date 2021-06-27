@@ -9,13 +9,15 @@ namespace Recipes.Api.Controllers
 {
     [Route( "api/recipes" )]
     [ApiController]
-    public class RecipesController : ControllerBase
+    public class RecipesController : BaseController
     {
         protected readonly IRecipesService _recipesService;
+        private readonly IAccountService _accountService;
 
-        public RecipesController( IRecipesService recipesService )
+        public RecipesController( IRecipesService recipesService, IAccountService accountService )
         {
             _recipesService = recipesService;
+            _accountService = accountService;
         }
 
         // GET: api/recipes
@@ -27,6 +29,7 @@ namespace Recipes.Api.Controllers
         {
             List<Recipe> recipes = _recipesService
                 .GetRecipes( searchString, take, skip );
+
             return recipes?.MapToRecipeDto();
         }
 

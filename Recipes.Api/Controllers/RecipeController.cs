@@ -13,14 +13,16 @@ namespace Recipes.Api.Controllers
 {
     [Route( "api/recipe" )]
     [ApiController]
-    public class RecipeController : ControllerBase
+    public class RecipeController : BaseController
     {
         private readonly IRecipesService _recipesService;
+        private readonly IAccountService _accountService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RecipeController( IRecipesService recipesService, IUnitOfWork unitOfWork )
+        public RecipeController( IRecipesService recipesService, IUnitOfWork unitOfWork, IAccountService accountService )
         {
             _recipesService = recipesService;
+            _accountService = accountService;
             _unitOfWork = unitOfWork;
         }
 
@@ -54,9 +56,14 @@ namespace Recipes.Api.Controllers
         public IActionResult GetRecipe( [FromRoute] int recipeId )
         {
             Recipe recipe = _recipesService.GetRecipe( recipeId );
-            return ( recipe != null )
-                ? Ok( recipe?.MapToRecipeDetailDto() )
-                : BadRequest();
+            if ( recipe == null )
+                return BadRequest();
+
+            RecipeDetailDto recipeDetailDto = recipe.MapToRecipeDetailDto();
+            string userLogin = _accountService.GetUserById( UserId )?.Login;
+            recipeDetailDto.Author = userLogin;
+
+            return Ok( recipeDetailDto );
         }
 
         // GET api/recipe/{recipeId}/add-like
@@ -115,6 +122,7 @@ namespace Recipes.Api.Controllers
 
                 await _recipesService.CreateRecipeAsync( addRecipeDto );
                 _unitOfWork.Commit();
+
                 return Ok();
             }
             catch
@@ -153,7 +161,7 @@ namespace Recipes.Api.Controllers
             try
             {
                 Recipe recipe = editRecipeDetailDto.MapToRecipe();
-                recipe.Author = "Elon Musk"; // TODO: Do author ID
+                recipe.AuthorId = UserId;
                 _recipesService.UpdateRecipeWithOutImage( recipeId, recipe );
                 _unitOfWork.Commit();
 

@@ -3,9 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
 
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './modules/material-design-module';
+import { reducer } from './store/store.reducer';
 
 import { AppComponent } from './app.component';
 import { MainComponent } from './pages/main/main.component';
@@ -26,9 +28,6 @@ import { IdentificationWindowModalComponent } from './components/identification-
 import { LoginComponent } from './components/identification-window-modal/components/login/login.component';
 import { RegistrationComponent } from './components/identification-window-modal/components/registration/registration.component';
 import { DefaultComponent } from './components/identification-window-modal/components/default/default.component';
-
-import { RecipesService } from './services/recipes/recipes.service';
-import { RecipeService } from './services/recipe/recipe.service';
 import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
@@ -61,11 +60,9 @@ import { LoaderComponent } from './components/loader/loader.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    StoreModule.forRoot({ state: reducer }),
   ],
-  providers: [
-    RecipesService,
-    RecipeService,
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

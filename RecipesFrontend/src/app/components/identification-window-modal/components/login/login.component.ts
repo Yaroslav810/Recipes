@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { AuthenticationDto } from 'src/app/dto/authentication/authentication-dto';
+import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +14,10 @@ export class LoginComponent implements OnInit {
 
   public formGroup: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(
+    private formBuilder: FormBuilder,
+    private accountService: AccountService,
+  ) { 
     this.formGroup = this.formBuilder.group({
       "login": ["", [
         Validators.required, 
@@ -27,6 +32,22 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  public onAuthentication(): void {
+    this.formGroup.disable();
+    
+    const authenticationDto: AuthenticationDto = this.formGroup.value;
+    this.accountService.authentication(authenticationDto)
+      .then(() => {
+        console.log('Auth пройдена');
+      })
+      .catch(() => {
+        console.log('error');
+      })
+      .finally(() => {
+        this.formGroup.enable();
+      });
   }
 
   public clickButton(path: string): void {

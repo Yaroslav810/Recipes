@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 
 import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
+import { User } from 'src/app/store/store.reducer';
+import { StoreSelectors } from 'src/app/store/store.selectors';
+import { Observable } from 'rxjs';
+import { filter, map, take } from 'rxjs/operators';
 
 export interface IHeaderLinks {
   title: string,
@@ -25,10 +30,15 @@ export class HeaderComponent implements OnInit {
 
   public links: IHeaderLinks[];
   public accountButtons: IAccountButtons[];
+  private user: User;
 
-  constructor(private router: Router, private dialog: MatDialog) { 
+  constructor(
+    private router: Router, 
+    private dialog: MatDialog,
+    private store$: Store,
+  ) { 
     this.links = this.getHeaderNavigation();
-    this.accountButtons = this.getAccountButtons();
+    this.showAccountButtons();
   }
 
   ngOnInit(): void {
@@ -51,42 +61,46 @@ export class HeaderComponent implements OnInit {
     ];
   }
 
-  private getAccountButtons = (): IAccountButtons[] => {
-    if (false) {
-      return [
-        {
-          title: 'Привет, Татьяна',
-          icon: 'user.svg',
-          onAction: ($event) => {
-            $event.preventDefault();
-            console.log('Ого! Ну зачем тыкать на своё имя?');
-          }
-        },
-        {
-          title: '',
-          icon: 'exit.svg',
-          onAction: ($event) => {
-            $event.preventDefault();
-            console.log('Зачем выходить?');
-          }
-        },
-      ];
-    } else {
-      return [
-        {
-          title: 'Войти',
-          icon: 'user.svg',
-          onAction: ($event) => {
-            $event.preventDefault();
-            console.log('Ого! Ну войдите войдите');
-            const modal = this.dialog.open(IdentificationWindowModalComponent, {
-              autoFocus: false,
-              data: '',
-            });
-          }
-        },
-      ];
-    }
+  private showAccountButtons = (): void => {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+
+    user.subscribe(user => {
+      if (user) {
+        this.accountButtons = [
+          {
+            title: `Привет, ${user.name}`,
+            icon: 'user.svg',
+            onAction: ($event) => {
+              $event.preventDefault();
+              console.log('Ого! Ну зачем тыкать на своё имя?');
+            }
+          },
+          {
+            title: '',
+            icon: 'exit.svg',
+            onAction: ($event) => {
+              $event.preventDefault();
+              console.log('Зачем выходить?');
+            }
+          },
+        ];
+      } else {
+        this.accountButtons = [
+          {
+            title: 'Войти',
+            icon: 'user.svg',
+            onAction: ($event) => {
+              $event.preventDefault();
+              console.log('Ого! Ну войдите войдите');
+              const modal = this.dialog.open(IdentificationWindowModalComponent, {
+                autoFocus: false,
+                data: '',
+              });
+            }
+          },
+        ];
+      }
+    });
   }
 
   public isLinkActive(url: string): boolean {

@@ -1,5 +1,9 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,15 +32,18 @@ namespace Recipes.Api
         {
             services.AddCors( options =>
             {
-                options.AddDefaultPolicy(
-                    builder =>
+                options
+                    .AddDefaultPolicy( builder =>
                     {
-                        builder.WithOrigins( "http://localhost:4200" )
-                            .AllowAnyOrigin()
+                        builder
+                            .WithOrigins( "http://localhost:4200" )
                             .AllowAnyMethod()
-                            .AllowAnyHeader();
+                            .AllowAnyHeader()
+                            .AllowCredentials();
                     } );
             } );
+
+            AddAuthentication( services );
 
             services.AddControllers();
             services.AddSwaggerGen( c =>
@@ -48,6 +55,8 @@ namespace Recipes.Api
             services.AddScoped<IRecipesRepository, RecipesRepository>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IFileRepository, FileRepository>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddSingleton( Configuration.GetSection( "ImageStorageSettings" ).Get<ImageStorageSettings>() );
             services.AddDbContext<RecipeContext>( opts => opts.UseSqlServer( @"Server=MSI\SQLEXPRESS;Database=Recipes;Trusted_Connection=True;" ) );
         }
@@ -61,18 +70,39 @@ namespace Recipes.Api
                 app.UseSwaggerUI( c => c.SwaggerEndpoint( "/swagger/v1/swagger.json", "apiRecipes v1" ) );
             }
 
-            app.UseCors();
-
-            app.UseRouting();
+            app.UseCors( policy =>
+            {
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.SetIsOriginAllowed( origin => true );
+                policy.AllowCredentials();
+            } );
 
             app.UseStaticFiles();
 
-            app.UseAuthorization();
+            app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseEndpoints( endpoints =>
             {
                 endpoints.MapControllers();
             } );
         }
-    }
+
+        private void AddAuthentication( IServiceCollection services )
+        {
+            services
+                .AddAuthentication( sharedOptions =>
+                     sharedOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme
+                )
+                .AddCookie(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        Configuration.Bind( "CookieSettings", options );
+                    } );
+        }
+    };
 }
+
