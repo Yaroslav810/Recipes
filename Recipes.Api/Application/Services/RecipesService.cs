@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Recipes.Api.Application.Entities;
@@ -10,14 +11,14 @@ namespace Recipes.Api.Application.Services
     public interface IRecipesService
     {
         public List<Recipe> GetRecipes( string searchString, int take, int skip );
-        public Recipe GetRecipe( int recipeId );
+        public Recipe? GetRecipe( int recipeId );
         public void AddLike( int recipeId );
         public void RemoveLike( int recipeId );
         public void AddFavourite( int recipeId );
         public void RemoveFavourite( int recipeId );
-        public Task CreateRecipeAsync( EditRecipe editRecipe );
-        public Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe );
-        public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe );
+        public Task CreateRecipeAsync( EditRecipe editRecipe, int userId );
+        public Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe, int userId );
+        public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe, int userId );
     }
 
     public class RecipesService : IRecipesService
@@ -36,9 +37,9 @@ namespace Recipes.Api.Application.Services
             return _recipeRepository.GetRecipes( searchString, take, skip );
         }
 
-        public Recipe GetRecipe( int recipeId )
+        public Recipe? GetRecipe( int recipeId )
         {
-            return _recipeRepository.GetRecipe( recipeId );
+            return _recipeRepository.GetRecipe( recipeId ) ?? null;
         }
 
         public void AddLike( int recipeId )
@@ -97,57 +98,64 @@ namespace Recipes.Api.Application.Services
             }
         }
 
-        public async Task CreateRecipeAsync( EditRecipe editRecipe )
+        public async Task CreateRecipeAsync( EditRecipe editRecipe, int userId )
         {
-            if ( !_fileService.IsValidImage( editRecipe.Image ) )
+            string? imagePath = null;
+            if ( editRecipe.Image != null )
             {
-                throw new Exception( "File validation error" );
-            };
+                if ( !_fileService.IsValidImage( editRecipe.Image ) )
+                    throw new Exception( "Ошибка валидации файла" );
 
-            Image image = _fileService.CreateImage( editRecipe.Image );
+                Image image = _fileService.CreateImage( editRecipe.Image );
+                imagePath = $"/{image.DirectoryName}/{image.Name}";
+                await _fileService.SaveImageAsync( image );
+            }
 
-            Recipe recipe = editRecipe.MapToRecipe();
-            recipe.Author = "Elon Musk"; // TODO: Do Author Id
-            recipe.ImagePath = $"/{image.DirectoryName}/{image.Name}";
+            DateTime creationDateTime = DateTime.Now;
+            Recipe recipe = editRecipe.MapToRecipe( userId, imagePath, creationDateTime );
 
-            await _fileService.SaveImageAsync( image );
             _recipeRepository.CreateRecipe( recipe );
         }
 
-        public async Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe )
+        public async Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe, int userId )
         {
             Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
             if ( currentRecipe == null )
-            {
-                throw new Exception( "There is no recipe with this Id" );
-            }
+                throw new Exception( "Нет рецепта с таким идентификатором" );
 
-            Image image = ( editRecipe.Image != null ) ? _fileService.CreateImage( editRecipe.Image ) : null;
-            Recipe recipe = editRecipe.MapToRecipe();
+            if ( currentRecipe.AuthorId != userId )
+                throw new Exception( "Нет доступа к ресурсу" );
+
             if ( currentRecipe.ImagePath != null )
-            {
                 _fileService.DeleteImage( currentRecipe.ImagePath );
-            }
 
-            currentRecipe.Title = recipe.Title;
-            currentRecipe.Description = recipe.Description;
-            currentRecipe.Tags = recipe.Tags;
-            currentRecipe.ImagePath = ( image != null ) ? $"/{image.DirectoryName}/{image.Name}" : null;
-            currentRecipe.TimeInMin = recipe.TimeInMin;
-            currentRecipe.PersonCount = recipe.PersonCount;
-            currentRecipe.Ingredients = recipe.Ingredients;
-            currentRecipe.Steps = recipe.Steps;
-
-            if ( image != null )
+            string? imagePath = null;
+            if ( editRecipe.Image != null )
             {
+                Image image = _fileService.CreateImage( editRecipe.Image );
                 await _fileService.SaveImageAsync( image );
+                imagePath = $"/{image.DirectoryName}/{image.Name}";
             }
+
+            currentRecipe.Title = editRecipe.Title;
+            currentRecipe.Description = editRecipe.Description;
+            currentRecipe.Tags = editRecipe.Tags;
+            currentRecipe.ImagePath = imagePath;
+            currentRecipe.TimeInMin = editRecipe.TimeInMinutes;
+            currentRecipe.PersonCount = editRecipe.PersonsCount;
+            currentRecipe.Ingredients = editRecipe.Ingredients;
+            currentRecipe.Steps = editRecipe.Steps;
         }
 
-        public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe )
+
+        public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe, int userId )
         {
             Recipe currentRecipe = _recipeRepository.GetRecipe( recipeId, includeIngredientsAndSteps: true );
-            if ( currentRecipe == null ) throw new Exception( "There is no recipe with this Id" );
+            if ( currentRecipe == null )
+                throw new Exception( "Нет рецепта с таким идентификатором" );
+
+            if ( currentRecipe.AuthorId != userId )
+                throw new Exception( "Нет доступа к ресурсу" );
 
             currentRecipe.Title = recipe.Title;
             currentRecipe.Description = recipe.Description;

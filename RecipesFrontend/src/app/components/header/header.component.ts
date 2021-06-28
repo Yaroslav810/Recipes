@@ -8,6 +8,8 @@ import { User } from 'src/app/store/store.reducer';
 import { StoreSelectors } from 'src/app/store/store.selectors';
 import { Observable } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
+import { AccountService } from 'src/app/services/account/account.service';
+import { StoreActions } from 'src/app/store/store.actions';
 
 export interface IHeaderLinks {
   title: string,
@@ -36,6 +38,7 @@ export class HeaderComponent implements OnInit {
     private router: Router, 
     private dialog: MatDialog,
     private store$: Store,
+    private accountService: AccountService,
   ) { 
     this.links = this.getHeaderNavigation();
     this.showAccountButtons();
@@ -80,7 +83,13 @@ export class HeaderComponent implements OnInit {
             icon: 'exit.svg',
             onAction: ($event) => {
               $event.preventDefault();
-              console.log('Зачем выходить?');
+              this.accountService.logout()
+                .then(() => {
+                  this.accountService.getCurrentUser()
+                    .then(user => {
+                      this.store$.dispatch(StoreActions.setUser({user}));
+                    })
+                });
             }
           },
         ];

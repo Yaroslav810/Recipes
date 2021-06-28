@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormControl, Validators, FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Observable } from "rxjs";
-import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import { IFormGroup, IFormBuilder, IFormArray } from '@rxweb/types';
+import { Observable, Subscription } from "rxjs";
+import { map } from 'rxjs/operators';
 
 import { DataLossModalComponent } from '../../components/data-loss-modal/data-loss-modal.component';
 import { IComponentCanDeactivate } from '../../guards/user-data-deactivate.guard';
@@ -18,6 +19,8 @@ import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
 import { StepDto } from '../../dto/step/step-dto';
 import { EditRecipeDetailDto } from '../../dto/edit-recipe-detail/edit-recipe-detail-dto';
+import { User } from '../../store/store.reducer';
+import { StoreSelectors } from '../../store/store.selectors';
 
 
 @Component({
@@ -34,23 +37,30 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
   public isError: boolean = false;
   public previewImage: string = null;
   public formData: IFormGroup<EditRecipeDto>;
+  private sub: Subscription;
   private formBuilder: IFormBuilder;
   private recipeId: number;
 
   constructor(
     private location: Location, 
     public dialog: MatDialog,
+    private router: Router, 
     private activatedRoute: ActivatedRoute,
     private recipeService: RecipeService,
     private imageService: ImageService,
     private snackBar: MatSnackBar,
     formBuilder: FormBuilder,
+    private store$: Store,
   ) {
     this.formBuilder = formBuilder;
   }
 
   ngOnInit(): void {
-    this.displayForm();
+    this.checkUser(); 
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   public canDeactivate() {
@@ -228,18 +238,35 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
         .then((editRecipe: EditRecipeDetailDto) => {
           this.updateFormData(editRecipe);       
         })
-        .catch(() => {
-          this.snackBar.open('Не удалось загрузить рецепт', 'Закрыть', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
+        .catch((response) => {
           this.isError = true;
+          switch(response.status) {
+            case 401: {
+              this.snackBar.open(`Для доступа к этому ресурсу, необходимо
+              войти в аккаунт`, 'Закрыть', {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+              });
+              break;
+            }
+            case 403: {
+              this.router.navigate(['/recipe', this.recipeId]);
+              break;
+            }
+            default: {
+              this.snackBar.open('Не удалось загрузить рецепт', 'Закрыть', {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+              });
+            }
+          }
         })
         .finally(() => {
           this.isLoadingActive = false;
         });
-    } 
+    }
   }
 
   private initializationForm(): IFormGroup<EditRecipeDto> {
@@ -314,11 +341,17 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
         this.formData = this.initializationForm();
         this.previewImage = null;
       })
-      .catch(() => {
-        this.snackBar.open(
-          `- Как дела? - Проблема исправлена, таблицы теперь вообще нет.
+      .catch((response) => {
+        let errorText;
+        if (response.status === 401) {
+          errorText = `Пожалуйста, войдите в свой аккаунт!`;
+        } else {
+          errorText = `- Как дела? - Проблема исправлена, таблицы теперь вообще нет.
           - Ок - Нет таблицы, нет проблем) Да ладно, просто однажды Эрнест 
-          Херменгувей поспорил... For sale, baby shoes, never worn`, 'Закрыть', {
+          Херменгувей поспорил... For sale, baby shoes, never worn`;
+        }
+        this.snackBar.open(
+          errorText, 'Закрыть', {
           horizontalPosition: 'end',
           verticalPosition: 'top',
         })
@@ -400,6 +433,14 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result.toString());
+    });
+  }
+
+  private checkUser(): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.sub = user.subscribe(() => {
+      this.loadRecipe();
     });
   }
 }

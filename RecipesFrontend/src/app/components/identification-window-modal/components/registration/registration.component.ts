@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { RegistrationDto } from 'src/app/dto/registration/registration-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 
@@ -16,7 +18,8 @@ export class RegistrationComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private snackBar: MatSnackBar,
   ) { 
     this.formGroup = this.formBuilder.group({
       "name": ["", [
@@ -49,7 +52,28 @@ export class RegistrationComponent implements OnInit {
       login: this.formGroup.value.login,
       password: this.formGroup.value.password,
     } as RegistrationDto;
-    this.accountService.registration(registrationDto);
+    this.accountService.registration(registrationDto)
+      .then((response) => {
+        if (response) {
+          this.changePage('login');
+        } else {
+          this.snackBar.open(`Такой логин уже есть в системе`, 'Закрыть', {
+          duration: 10000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+        }
+      })
+      .catch(() => {
+        this.snackBar.open(`Оооппсс... Непредвиденная ошибка`, 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      })
+      .finally(() => {
+        this.formGroup.enable();
+      });
   }
 
   private checkPasswords(group: FormGroup) {

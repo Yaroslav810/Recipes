@@ -15,18 +15,22 @@ export class AccountService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public async registration(registrationDto: RegistrationDto): Promise<void> {
+  public async registration(registrationDto: RegistrationDto): Promise<boolean> {
     const url = `${this.accountUrl}/registration`;
 
-    const response = await this.httpClient.post(url, registrationDto).toPromise();
-    console.log(response);
+    return await this.httpClient.post<boolean>(url, registrationDto).toPromise();
   }
 
-  public async authentication(authenticationDto: AuthenticationDto): Promise<void> {
+  public async authentication(authenticationDto: AuthenticationDto): Promise<boolean> {
     const url = `${this.accountUrl}/authentication`;
 
-    const response = await this.httpClient.post(url, authenticationDto).toPromise();
-    console.log(response);
+    return await this.httpClient.post<boolean>(url, authenticationDto).toPromise();
+  }
+
+  public async logout(): Promise<void> {
+    const url = `${this.accountUrl}/logout`;
+
+    const response = await this.httpClient.post(url, {}).toPromise();
   }
 
   public async getCurrentUser(): Promise<UserDataDto> {

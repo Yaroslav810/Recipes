@@ -14,6 +14,7 @@ export interface RecipeDetailDto {
   starsCount: number,
   isStarSet: boolean,
   isLikeSet: boolean,
+  isEditable: boolean,
   ingredients: IngredientDto[],
   steps: StepDto[],
 }

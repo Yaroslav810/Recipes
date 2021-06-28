@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Recipes.Api.Application.Entities;
@@ -11,8 +12,9 @@ namespace Recipes.Api.Application.Services
     {
         public bool TryRegistrationUser( User user );
         public User? GetUserIfValid( User user );
-        public User? GetUserById( int userId );
-        public User? GetUserByLogin( string login );
+        public User GetUserById( int userId );
+        public User GetUserByLogin( string login );
+        public List<User> GetUsersByUserIds( List<int> userIds );
     }
 
     public class AccountService : IAccountService
@@ -50,14 +52,27 @@ namespace Recipes.Api.Application.Services
 
         }
 
-        public User? GetUserById( int userId )
+        public User GetUserById( int userId )
         {
-            return _accountRepository.GetUserById( userId ) ?? null;
+            User user = _accountRepository.GetUserById( userId );
+            if ( user == null )
+                throw new ApplicationException( "Ошибка получения пользователя" );
+
+            return user;
         }
 
-        public User? GetUserByLogin( string login )
+        public User GetUserByLogin( string login )
         {
-            return _accountRepository.GetUserByLogin( login ) ?? null;
+            User user = _accountRepository.GetUserByLogin( login );
+            if ( user == null )
+                throw new ApplicationException( "Ошибка получения пользователя" );
+
+            return user;
+        }
+
+        public List<User> GetUsersByUserIds( List<int> userIds )
+        {
+            return userIds.Select( x => _accountRepository.GetUserById( x ) ).ToList();
         }
 
         private string HashPassword( string password )

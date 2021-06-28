@@ -23,6 +23,13 @@ export class RecipeService {
     return recipe ?? null;
   }
 
+  public async isRecipeEditable(recipeId: number): Promise<boolean> {
+    const url = `${this.recipeUrl}/${recipeId}/is-editable`;
+    return await this.httpClient
+                    .get<boolean>(url)
+                    .toPromise();
+  }
+
   public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDetailDto> {
     const url = `${this.recipeUrl}/${recipeId}/edit`;
     const recipe = await this.httpClient

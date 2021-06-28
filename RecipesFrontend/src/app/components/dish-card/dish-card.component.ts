@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RecipeService } from 'src/app/services/recipe/recipe.service';
 import { DishCard } from './dish-card';
 
@@ -12,18 +13,55 @@ export class DishCardComponent implements OnInit {
   @Input() card: DishCard;
   @Input() onOpenDishCard: Function;
 
-  constructor(private recipeService: RecipeService) {  }
+  constructor(
+    private recipeService: RecipeService,
+    private snackBar: MatSnackBar
+  ) {  }
 
   ngOnInit(): void {  }
 
   public onStarButtonClick(event): void {
     event.stopPropagation();
     if (this.card.isStarSet) {
-      this.recipeService.removeFromFavourite(this.card.id);
       this.card.starsCount = --this.card.starsCount;
+      this.recipeService.removeFromFavourite(this.card.id)
+        .catch((response) => {
+          this.card.starsCount = ++this.card.starsCount;
+          this.card.isStarSet = !this.card.isStarSet;
+          if (response.status === 401) {
+            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.snackBar.open('Ошибка!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        });
     } else {
-      this.recipeService.addToFavourite(this.card.id);
       this.card.starsCount = ++this.card.starsCount;
+      this.recipeService.addToFavourite(this.card.id)
+        .catch((response) => {
+          this.card.starsCount = --this.card.starsCount;
+          this.card.isStarSet = !this.card.isStarSet;
+          if (response.status === 401) {
+            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.snackBar.open('Ошибка!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        });
     }
     this.card.isStarSet = !this.card.isStarSet;
   }
@@ -31,11 +69,45 @@ export class DishCardComponent implements OnInit {
   public onLikeButtonClick(event): void {
     event.stopPropagation()
     if (this.card.isLikeSet) {
-      this.recipeService.removeLike(this.card.id);
       this.card.likesCount = --this.card.likesCount;
+      this.recipeService.removeLike(this.card.id)
+        .catch((response) => {
+          this.card.likesCount = ++this.card.likesCount;
+          this.card.isLikeSet = !this.card.isLikeSet;
+          if (response.status === 401) {
+            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.snackBar.open('Ошибка!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        }); 
     } else {
-      this.recipeService.addLike(this.card.id);
       this.card.likesCount = ++this.card.likesCount;
+      this.recipeService.addLike(this.card.id)
+        .catch((response) => {
+          this.card.likesCount = --this.card.likesCount;
+          this.card.isLikeSet = !this.card.isLikeSet;
+          if (response.status === 401) {
+            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          } else {
+            this.snackBar.open('Ошибка!', 'Закрыть', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        });
     }
     this.card.isLikeSet = !this.card.isLikeSet;
   }

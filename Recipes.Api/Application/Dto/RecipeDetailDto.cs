@@ -20,6 +20,7 @@ namespace Recipes.Api.Application.Dto
         public int StarsCount { get; set; }
         public bool IsStarSet { get; set; }
         public bool IsLikeSet { get; set; }
+        public bool IsEditable { get; set; }
         public IngredientDto[] Ingredients { get; set; }
         public StepDto[] Steps { get; set; }
     }

@@ -10,8 +10,8 @@ using Recipes.Api.Infrastructure.Dbcontext;
 namespace Recipes.Api.Migrations
 {
     [DbContext(typeof(RecipeContext))]
-    [Migration("20210623180020_AlterUser_AddedRequiredForPassword")]
-    partial class AlterUser_AddedRequiredForPassword
+    [Migration("20210628083733_Updated the database")]
+    partial class Updatedthedatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -78,10 +78,8 @@ namespace Recipes.Api.Migrations
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreationDateTime")
                         .HasColumnType("datetime2");
@@ -115,6 +113,8 @@ namespace Recipes.Api.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Recipe");
                 });
@@ -220,6 +220,15 @@ namespace Recipes.Api.Migrations
                     b.HasOne("Recipes.Api.Application.Entities.Ingredient", null)
                         .WithMany("IngredientItems")
                         .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.Recipe", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

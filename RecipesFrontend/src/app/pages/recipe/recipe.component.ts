@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -10,17 +10,23 @@ import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
 import { StepDto } from '../../dto/step/step-dto';
 import { StepCard } from '../../components/step-card/step-card';
+import { User } from 'src/app/store/store.reducer';
+import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { StoreSelectors } from 'src/app/store/store.selectors';
 
 @Component({
   selector: 'app-recipe',
   templateUrl: './recipe.component.html',
   styleUrls: ['./recipe.component.css']
 })  
-export class RecipeComponent implements OnInit {
+export class RecipeComponent implements OnInit, OnDestroy  {
   
   public recipeDetails: Recipe = null;
   public card: DishCard = null;
   public isLoadingActive: boolean = true;
+  public isShowControlButtons: boolean = false;
+  private sub: Subscription;
 
   constructor(
     private location: Location,
@@ -28,10 +34,17 @@ export class RecipeComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private recipeService: RecipeService,
     private imageService: ImageService,
+    private store$: Store,
   ) {  }
 
   ngOnInit(): void {
-    this.loadRecipe();
+    const recipeId: number = this.getRecipeIdFromQuery();
+
+    this.loadRecipe(recipeId);
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   public goBack(): void {
@@ -40,8 +53,7 @@ export class RecipeComponent implements OnInit {
 
   public openCard(): void {  }
 
-  public loadRecipe(): void {
-    const recipeId: number = this.getRecipeIdFromQuery();
+  public loadRecipe(recipeId: number): void {
     this.updateRecipe(recipeId);
   }
 
@@ -57,12 +69,15 @@ export class RecipeComponent implements OnInit {
     this.isLoadingActive = true;
     this.recipeService.getRecipeDetail(recipeId)
       .then((recipeDetails: RecipeDetailDto) => {
-        if (recipeDetails === null) {
-          this.router.navigate(['/404']);
-        } else {
-          this.recipeDetails = this.convertToRecipe(recipeDetails);
+        this.recipeDetails = this.convertToRecipe(recipeDetails);
           this.card = this.convertRecipeForCard(this.recipeDetails);
-        }
+          this.isShowControlButtons = recipeDetails.isEditable;
+          this.checkUser(recipeId);
+      })
+      .catch((response) => {
+        if (response.status === 404) {
+          this.router.navigate(['/404']);
+        };
       })
       .finally(() => {
         this.isLoadingActive = false;
@@ -108,5 +123,16 @@ export class RecipeComponent implements OnInit {
       isStarSet: recipeDetails.isStarSet,
       isLikeSet: recipeDetails.isLikeSet,
     } as DishCard;
+  }
+
+  private checkUser(recipeId: number): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.sub = user.subscribe(() => {
+      this.recipeService.isRecipeEditable(recipeId)
+        .then((isEditable: boolean) => {
+          this.isShowControlButtons = isEditable;
+        });
+    });
   }
 }

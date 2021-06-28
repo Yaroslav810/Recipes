@@ -12,7 +12,7 @@ namespace Recipes.Api.Controllers
         {
             string userIdString = User.FindFirst( "UserId" )?.Value;
             if ( string.IsNullOrEmpty( userIdString ) )
-                throw new Exception( "The user with this id was not found" );
+                throw new ApplicationException( "No user ID detected" );
 
             return int.Parse( userIdString );
         }
