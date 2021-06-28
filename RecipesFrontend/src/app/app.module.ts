@@ -16,6 +16,7 @@ import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { RecipeComponent } from './pages/recipe/recipe.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { EditRecipeComponent } from './pages/edit-recipe/edit-recipe.component';
+import { UserComponent } from './pages/user/user.component';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -29,6 +30,11 @@ import { LoginComponent } from './components/identification-window-modal/compone
 import { RegistrationComponent } from './components/identification-window-modal/components/registration/registration.component';
 import { DefaultComponent } from './components/identification-window-modal/components/default/default.component';
 import { LoaderComponent } from './components/loader/loader.component';
+
+import { RecipesService } from './services/recipes/recipes.service';
+import { RecipeService } from './services/recipe/recipe.service';
+import { StatisticCardComponent } from './components/statistic-card/statistic-card.component';
+import { PasswordChangeWindowModalComponent } from './components/password-change-window-modal/password-change-window-modal.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +57,9 @@ import { LoaderComponent } from './components/loader/loader.component';
     RegistrationComponent,
     DefaultComponent,
     LoaderComponent,
+    UserComponent,
+    StatisticCardComponent,
+    PasswordChangeWindowModalComponent,
   ],
   imports: [
     BrowserModule,

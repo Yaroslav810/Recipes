@@ -19,7 +19,7 @@
     <div class="account__links" *ngFor="let accountButton of accountButtons">
       <a href="/" class="account__link" (click)="accountButton.onAction($event)">
         <div class="account-image">
-          <img src="./assets/images/{{ accountButton.icon }}">
+          <img src="./assets/images/{{ accountButton.icon }}" />
         </div>
         <div class="account-text" title="{{ accountButton.title }}">{{ accountButton.title }}</div>
       </a>
