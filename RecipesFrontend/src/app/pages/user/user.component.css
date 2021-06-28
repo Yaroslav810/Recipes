@@ -1,0 +1,153 @@
+.user {
+  width: 85%;
+  max-width: 1200px;
+  margin: 38px auto 0;
+}
+
+.back {
+  display: inline-block;
+  margin: 0;
+  font: normal 500 18px/22px 'Montserrat', sans-serif;
+  color: #fdb100;
+  cursor: pointer;
+}
+
+.back::before {
+  content: url('/assets/images/leftArrow.svg');
+  margin-right: 13px;
+}
+
+.title {
+  margin: 11px 0 0;
+  font: normal bold 42px/62px 'Montserrat', sans-serif;
+  color: #25292d;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 50px;
+  padding: 60px 73px;
+  background: #fff;
+  box-shadow: 0px 16px 72px rgba(34, 39, 47, 0.05);
+  border-radius: 24px;
+}
+
+.card__part {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pencil-button {
+  position: absolute;
+  top: 23px;
+  right: 23px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pencil-icon {
+  width: 19px;
+  height: 19px;
+  background: url('/assets/images/pencil_grey.svg');
+}
+
+.form-field {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  margin-top: 30px;
+}
+
+.form-field::ng-deep .mat-form-field-wrapper {
+  width: 100% !important;
+  padding: 0;
+}
+
+.form-field::ng-deep .mat-form-field-flex {
+  padding: .75em 26px 0 !important;
+  border: 1px solid rgba(145, 150, 161, 0.4) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+}
+
+.form-field::ng-deep .mat-form-field-underline {
+  display: none !important;
+}
+
+.form-label, .form-input::placeholder {
+  color: #25292d;
+  opacity: .5;
+}
+
+.form-label {
+  font: normal normal 16px 'Montserrat', sans-serif;
+}
+
+.form-field__input {
+  color: rgba(37, 41, 45, 0.5);
+  font: normal normal 16px 'Montserrat', sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px 62px 17px 24px;
+  font: normal normal 16px/28px 'Montserrat', sans-serif;
+  border: 1px solid rgba(145, 150, 161, 0.4);
+  border-radius: 16px;
+  color: rgba(37, 41, 45, 0.5);
+  outline: none;
+}
+
+.form-textarea {
+  resize: none;
+}
+
+.input-error {
+  margin-top: 15px;
+}
+
+.stroked-button {
+  margin: 30px auto 0;
+  padding: 12px 50px;
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+}
+
+.stroked-button span {
+  font: normal 600 18px/28px 'Montserrat', sans-serif;
+  color: #fdb100;
+}
+
+.disabled-button span {
+  color: rgba(0,0,0,.26);
+}
+
+.change-password span {
+  color: rgba(37, 41, 45, 0.5);
+}
+
+.statistics {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-top: 30px;
+}
+
+.statistic {
+  flex: 1;
+}
+
+.favourite__title {
+  margin: 40px 0 0;
+  font: normal bold 24px/30px 'Montserrat', sans-serif;
+  color: #25292D;
+}

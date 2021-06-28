@@ -54,5 +54,4 @@ export class FavoritesComponent implements OnInit {
   public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
   }
-
 }
