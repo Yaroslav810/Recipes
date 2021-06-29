@@ -34,7 +34,7 @@
       />
     </div>
     <div class="buttons">
-      <button mat-flat-button color="accent" class="button" [disabled]="formGroup.invalid">
+      <button mat-flat-button color="accent" class="button" [disabled]="formGroup.invalid || formGroup.disabled" (click)="onRegistration()">
         <span>Зарегистрироваться</span>
       </button>
       <button mat-stroked-button color="accent" class="button stroked-button" [mat-dialog-close]>

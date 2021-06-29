@@ -6,7 +6,7 @@
     <div class="main">
       <div class="main__header">
         <h2 class="title">{{ recipeDetails?.title }}</h2>
-        <div class="сontrol-buttons">
+        <div class="сontrol-buttons" *ngIf="isShowControlButtons">
           <button mat-stroked-button class="stroked-button">
             <div class="basket-icon"></div>
           </button>

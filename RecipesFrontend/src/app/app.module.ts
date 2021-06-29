@@ -3,9 +3,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
 
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from './modules/material-design-module';
+import { reducer } from './store/store.reducer';
 
 import { AppComponent } from './app.component';
 import { MainComponent } from './pages/main/main.component';
@@ -28,9 +30,6 @@ import { LoginComponent } from './components/identification-window-modal/compone
 import { RegistrationComponent } from './components/identification-window-modal/components/registration/registration.component';
 import { DefaultComponent } from './components/identification-window-modal/components/default/default.component';
 import { LoaderComponent } from './components/loader/loader.component';
-
-import { RecipesService } from './services/recipes/recipes.service';
-import { RecipeService } from './services/recipe/recipe.service';
 import { StatisticCardComponent } from './components/statistic-card/statistic-card.component';
 import { PasswordChangeWindowModalComponent } from './components/password-change-window-modal/password-change-window-modal.component';
 
@@ -67,11 +66,9 @@ import { PasswordChangeWindowModalComponent } from './components/password-change
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    StoreModule.forRoot({ state: reducer }),
   ],
-  providers: [
-    RecipesService,
-    RecipeService,
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

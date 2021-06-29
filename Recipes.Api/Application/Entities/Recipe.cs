@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Recipes.Api.Application.Entities
 {
@@ -12,7 +8,7 @@ namespace Recipes.Api.Application.Entities
         public int Id { get; protected set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string Author { get; set; }
+        public int AuthorId { get; set; }
         public int LikesCount { get; set; }
         public int StarsCount { get; set; }
         public int TimeInMin { get; set; }

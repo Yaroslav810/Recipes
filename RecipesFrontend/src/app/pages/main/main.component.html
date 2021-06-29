@@ -11,7 +11,7 @@
         <span class="plus"></span>
         <span>Добавить рецепт</span>
       </button>
-      <button mat-stroked-button color="accent" class="button stroked-button" (click)="showModalWindow()">
+      <button mat-stroked-button color="accent" class="button stroked-button" *ngIf="isShowLoginButton" (click)="showModalWindow()">
         <span>Войти</span>
       </button>
     </div>

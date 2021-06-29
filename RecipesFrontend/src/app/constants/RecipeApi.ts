@@ -1,4 +1,4 @@
-export enum RecipeApi {
-  baseUrl = 'http://localhost:5000',
-  staticUrl = 'http://localhost:5000/static/', 
+export class RecipeApi {
+  static baseUrl = '';
+  static staticUrl = `${RecipeApi.baseUrl}/static/`;
 }

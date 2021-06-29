@@ -135,7 +135,7 @@ export class RecipesComponent implements OnInit {
           duration: 5000,
           horizontalPosition: 'end',
           verticalPosition: 'top',
-        })
+        });
       })
       .finally(() => {
         this.isLoadingActive = false;

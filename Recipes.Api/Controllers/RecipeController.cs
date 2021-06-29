@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Recipes.Api.Application;
+using Recipes.Api.Application.Builders;
 using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Entities;
 using Recipes.Api.Application.Mappers;
@@ -13,14 +15,16 @@ namespace Recipes.Api.Controllers
 {
     [Route( "api/recipe" )]
     [ApiController]
-    public class RecipeController : ControllerBase
+    public class RecipeController : BaseController
     {
-        private readonly IRecipesService _recipesService;
-        private readonly IUnitOfWork _unitOfWork;
+        protected readonly IRecipesService _recipesService;
+        protected readonly IDtoBuilder _dtoBuilder;
+        protected readonly IUnitOfWork _unitOfWork;
 
-        public RecipeController( IRecipesService recipesService, IUnitOfWork unitOfWork )
+        public RecipeController( IRecipesService recipesService, IDtoBuilder dtoBuilder, IUnitOfWork unitOfWork )
         {
             _recipesService = recipesService;
+            _dtoBuilder = dtoBuilder;
             _unitOfWork = unitOfWork;
         }
 
@@ -53,73 +57,120 @@ namespace Recipes.Api.Controllers
         [HttpGet( "{recipeId}" )]
         public IActionResult GetRecipe( [FromRoute] int recipeId )
         {
+            Recipe? recipe = _recipesService.GetRecipe( recipeId );
+            if ( recipe == null )
+                return NotFound();
+
+            int? userId = ( User.Identity is { IsAuthenticated: true } ) ? UserId : null;
+
+            return Ok( _dtoBuilder.BuildToRecipeDetailDto( recipe, userId ) );
+        }
+
+        // GET api/recipe/{recipeId}/is-editable
+        [HttpGet( "{recipeId}/is-editable" )]
+        public IActionResult IsRecipeEditable( [FromRoute] int recipeId )
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Ok( false );
+
             Recipe recipe = _recipesService.GetRecipe( recipeId );
-            return ( recipe != null )
-                ? Ok( recipe?.MapToRecipeDetailDto() )
-                : BadRequest();
+            if ( recipe == null )
+                return BadRequest();
+
+            return Ok( UserId == recipe.AuthorId );
         }
 
         // GET api/recipe/{recipeId}/add-like
         [HttpGet( "{recipeId}/add-like" )]
-        public void AddLike( [FromRoute] int recipeId )
+        public IActionResult AddLike( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             _recipesService.AddLike( recipeId );
             _unitOfWork.Commit();
+
+            return Ok();
         }
 
         // GET api/recipe/{recipeId}/remove-like
         [HttpGet( "{recipeId}/remove-like" )]
-        public void RemoveLike( [FromRoute] int recipeId )
+        public IActionResult RemoveLike( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             _recipesService.RemoveLike( recipeId );
             _unitOfWork.Commit();
+
+            return Ok();
         }
 
         // GET api/recipe/{recipeId}/add-favourite
         [HttpGet( "{recipeId}/add-favourite" )]
-        public void AddFavourite( [FromRoute] int recipeId )
+        public IActionResult AddFavourite( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             _recipesService.AddFavourite( recipeId );
             _unitOfWork.Commit();
+
+            return Ok();
         }
 
         // GET api/recipe/{recipeId}/remove-favourite
         [HttpGet( "{recipeId}/remove-favourite" )]
-        public void RemoveFavourite( [FromRoute] int recipeId )
+        public IActionResult RemoveFavourite( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             _recipesService.RemoveFavourite( recipeId );
             _unitOfWork.Commit();
+
+            return Ok();
         }
 
         // GET api/recipe/{recipeId}/edit
         [HttpGet( "{recipeId}/edit" )]
         public IActionResult GetRecipeForEdit( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             Recipe recipe = _recipesService.GetRecipe( recipeId );
-            return ( recipe != null )
-                ? Ok( recipe.MapToEditDetail() )
-                : BadRequest();
+            if ( recipe == null )
+                return NotFound();
+
+            if ( recipe.AuthorId != UserId )
+                return StatusCode( ( int )HttpStatusCode.Forbidden );
+
+            return Ok( recipe.MapToEditDetail() );
         }
 
         // POST api/recipe/add
         [HttpPost( "add" )]
         public async Task<IActionResult> AddRecipeAsync()
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             try
             {
                 IFormFile file = Request.Form.Files.GetFile( "imageFile" );
                 EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-                EditRecipe addRecipeDto = editRecipeDto.MapToEditRecipe();
-                addRecipeDto.Image = file ?? null;
+                EditRecipe addRecipeDto = editRecipeDto.MapToEditRecipe( file );
 
-                await _recipesService.CreateRecipeAsync( addRecipeDto );
+                await _recipesService.CreateRecipeAsync( addRecipeDto, UserId );
                 _unitOfWork.Commit();
+
                 return Ok();
             }
-            catch
+            catch ( Exception error )
             {
-                return BadRequest();
+                return BadRequest( error.Message );
             }
         }
 
@@ -127,22 +178,24 @@ namespace Recipes.Api.Controllers
         [HttpPost( "{recipeId}/update-with-image" )]
         public async Task<IActionResult> UpdateRecipeWithImageAsync( [FromRoute] int recipeId )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             try
             {
                 IFormFile file = Request.Form.Files.GetFile( "imageFile" );
                 EditRecipeDto editRecipeDto = JsonConvert.DeserializeObject<EditRecipeDto>( Request.Form[ "data" ].ToString() );
 
-                EditRecipe editRecipe = editRecipeDto.MapToEditRecipe();
-                editRecipe.Image = file ?? null;
+                EditRecipe editRecipe = editRecipeDto.MapToEditRecipe( file );
 
-                await _recipesService.UpdateRecipeWithImageAsync( recipeId, editRecipe );
+                await _recipesService.UpdateRecipeWithImageAsync( recipeId, editRecipe, UserId );
                 _unitOfWork.Commit();
 
                 return Ok();
             }
-            catch
+            catch ( Exception error )
             {
-                return BadRequest();
+                return BadRequest( error.Message );
             }
         }
 
@@ -150,18 +203,20 @@ namespace Recipes.Api.Controllers
         [HttpPost( "{recipeId}/update-without-image" )]
         public IActionResult UpdateRecipeWithoutImage( [FromRoute] int recipeId, [FromBody] EditRecipeDetailDto editRecipeDetailDto )
         {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
             try
             {
                 Recipe recipe = editRecipeDetailDto.MapToRecipe();
-                recipe.Author = "Elon Musk"; // TODO: Do author ID
-                _recipesService.UpdateRecipeWithOutImage( recipeId, recipe );
+                _recipesService.UpdateRecipeWithOutImage( recipeId, recipe, UserId );
                 _unitOfWork.Commit();
 
                 return Ok();
             }
-            catch
+            catch ( Exception error )
             {
-                return BadRequest();
+                return BadRequest( error.Message );
             }
         }
     }

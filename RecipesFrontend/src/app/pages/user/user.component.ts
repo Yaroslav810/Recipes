@@ -1,40 +1,57 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { IFormBuilder, IFormGroup } from '@rxweb/types';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 
 import { DishCard } from '../../components/dish-card/dish-card';
 import { StatisticCard } from '../../components/statistic-card/statistic-card';
-import { UserDto } from '../../dto/user/user-dto';
 import { PasswordChangeWindowModalComponent } from '../../components/password-change-window-modal/password-change-window-modal.component';
+import { UserDto } from '../../dto/user/user-dto';
+import { AccountService } from '../../services/account/account.service';
+
+import { User } from '../../store/store.reducer';
+import { StoreSelectors } from '../../store/store.selectors';
+import { StoreActions } from '../../store/store.actions';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements OnInit {
-  public isEditing: boolean = true;
+export class UserComponent implements OnInit, OnDestroy {
+  public isEditing: boolean = false;
+  public isLoadingActive: boolean = true;
+  public isError: boolean = false;
   public statistics: StatisticCard[] = [];
   public recipes: DishCard[];
-  public userForm: IFormGroup<UserDto>;
+  public userForm: IFormGroup<UserDto> = null;
   private formBuilder: IFormBuilder;
+  private sub: Subscription;
 
   constructor(
     private location: Location,
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    formBuilder: FormBuilder
+    private store$: Store,
+    private accountService: AccountService,
+    formBuilder: FormBuilder,
   ) { 
     this.formBuilder = formBuilder;
   }
 
   ngOnInit(): void {
     this.displayData();
+    this.checkUser();
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   public goBack(): void {
@@ -42,14 +59,33 @@ export class UserComponent implements OnInit {
   }
 
   public onSaveUserData(): void {
-    console.log(this.userForm.value);
     if (this.userForm.valid) {
-      console.log('Ты: ', this.userForm.value);
-      this.snackBar.open('Данные успешно обновлены!', 'Закрыть', {
-        duration: 5000,
-        horizontalPosition: 'end',
-        verticalPosition: 'top',
-      });
+      this.isLoadingActive = true;
+      this.accountService.onChangeUserData(this.userForm.value)
+        .then((response) => {
+          if (response) {
+            this.snackBar.open('Данные успешно обновлены!', 'Закрыть', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+            const user = {
+              name: this.userForm.value.name,
+              login: this.userForm.value.login,
+              about: this.userForm.value.about,
+            } as User;
+            this.store$.dispatch(StoreActions.setUser({user}));
+          } else {
+            this.snackBar.open('Такой логин уже есть в системе', 'Закрыть', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        })
+        .finally(() => {
+          this.isLoadingActive = false;
+        })
     } else {
       this.snackBar.open('Ошибка заполнения полей!', 'Закрыть', {
         duration: 5000,
@@ -70,32 +106,52 @@ export class UserComponent implements OnInit {
   }
 
   private displayData(): void {
-    this.userForm = this.initializationData();
+    this.initializationData();
     this.statistics = this.getStatistics();
     this.recipes = this.getUserRecipes();
   }
 
-  private initializationData(): IFormGroup<UserDto> {
-    const userData: UserDto = {
-      name: 'Yaroslav',
-      login: 'Yaroslav',
-      password: '',
-      about: ':)',
-    } as UserDto;
+  private initializationData(): void {
+    this.isError = false;
+    this.isLoadingActive = true;
+    this.accountService.getCurrentUser()
+      .then(user => {
+        if (user === null){
+          this.isError = true;
+          this.snackBar.open(`Для доступа к этому ресурсу, необходимо
+              войти в аккаунт`, 'Закрыть', {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+              });
+        } else {
+          this.updateUserInfo(user);
+        }
+      })
+      .catch(() => {
+        this.isError = true;
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+      });
+  }
 
-    return this.formBuilder.group<UserDto>({
-      name: [userData.name, [
-        Validators.required, 
-        Validators.minLength(2),
-        Validators.pattern(/^([а-яё][А-ЯЁ]+|[a-z][A-Z]+)$/i)
-      ]],
-      login: [userData.login, [
-        Validators.required, 
-        Validators.minLength(3),
-        Validators.pattern(/^([a-zA-Z0-9]+)$/i)
-      ]],
-      about: [userData.about]
-    });
+  private updateUserInfo(user): void {
+    if (user !== null) {
+      this.userForm = this.formBuilder.group<UserDto>({
+        name: [user.name, [
+          Validators.required, 
+          Validators.minLength(2),
+          Validators.pattern(/^([а-яё][А-ЯЁ]+|[a-z][A-Z]+)$/i)
+        ]],
+        login: [user.login, [
+          Validators.required, 
+          Validators.minLength(3),
+          Validators.pattern(/^([a-zA-Z0-9]+)$/i)
+        ]],
+        about: [user.about]
+      });
+    };
   }
 
   private getStatistics(): StatisticCard[] {
@@ -155,5 +211,13 @@ export class UserComponent implements OnInit {
         isLikeSet: true,
       },
     ];
+  }
+
+  private checkUser(): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.sub = user.subscribe(() => {
+      this.initializationData();
+    });
   }
 }

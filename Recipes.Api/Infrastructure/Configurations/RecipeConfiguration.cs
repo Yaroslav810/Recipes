@@ -21,9 +21,9 @@ namespace Recipes.Api.Infrastructure.Configurations
             builder.Property( item => item.Description )
                 .HasMaxLength( 512 );
 
-            builder.Property( item => item.Author )
-                .HasMaxLength( 256 )
-                .IsRequired();
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey( item => item.AuthorId );
 
             builder.Property( item => item.LikesCount )
                 .HasColumnName( "LikeCount" )
