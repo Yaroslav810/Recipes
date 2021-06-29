@@ -8,5 +8,7 @@ namespace Recipes.Api.Application.Repositories
         public List<Recipe> GetRecipes( string searchString, int take, int skip );
         public Recipe GetRecipe( int recipeId, bool includeIngredientsAndSteps = true );
         public void CreateRecipe( Recipe recipe );
+        public void CreateUserRating( UserRating userRating );
+        public UserRating GetUserRating( int recipeId, int userId );
     }
 }

@@ -58,5 +58,19 @@ namespace Recipes.Api.Infrastructure.Repositories
                 .Set<Recipe>()
                 .Add( recipe );
         }
+
+        public void CreateUserRating( UserRating userRating )
+        {
+            _recipeContext
+                .Set<UserRating>()
+                .Add( userRating );
+        }
+
+        public UserRating GetUserRating( int recipeId, int userId )
+        {
+            return _recipeContext
+                .Set<UserRating>()
+                .FirstOrDefault( x => ( x.RecipeId == recipeId && x.UserId == userId ) );
+        }
     }
 }

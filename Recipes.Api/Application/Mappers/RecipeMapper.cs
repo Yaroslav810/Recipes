@@ -28,7 +28,7 @@ namespace Recipes.Api.Application.Mappers
             } );
         }
 
-        public static RecipeDto MapToRecipeDto( this Recipe recipe, string userLogin )
+        public static RecipeDto MapToRecipeDto( this Recipe recipe, string userLogin, bool isLikeSet, bool isFavouriteSet )
         {
             return new()
             {
@@ -42,12 +42,17 @@ namespace Recipes.Api.Application.Mappers
                 PersonCount = recipe.PersonCount,
                 LikesCount = recipe.LikesCount,
                 StarsCount = recipe.StarsCount,
-                IsStarSet = false,
-                IsLikeSet = false,
+                IsStarSet = isFavouriteSet,
+                IsLikeSet = isLikeSet,
             };
         }
 
-        public static RecipeDetailDto MapToRecipeDetailDto( this Recipe recipe, string userLogin, bool isEditable )
+        public static RecipeDetailDto MapToRecipeDetailDto(
+            this Recipe recipe,
+            string userLogin,
+            bool isEditable,
+            bool isLikeSet,
+            bool isFavouriteSet )
         {
             return new()
             {
@@ -61,8 +66,8 @@ namespace Recipes.Api.Application.Mappers
                 PersonCount = recipe.PersonCount,
                 LikesCount = recipe.LikesCount,
                 StarsCount = recipe.StarsCount,
-                IsStarSet = false,
-                IsLikeSet = false,
+                IsStarSet = isFavouriteSet,
+                IsLikeSet = isLikeSet,
                 IsEditable = isEditable,
                 Ingredients = recipe.Ingredients
                     .Select( x => new IngredientDto

@@ -31,7 +31,8 @@ namespace Recipes.Api.Controllers
             List<Recipe> recipes = _recipesService
                 .GetRecipes( searchString, take, skip );
 
-            return _dtoBuilder.BuildToListRecipeDetailDto( recipes );
+            int? userId = ( ( User.Identity is { IsAuthenticated: true } ) ) ? UserId : null;
+            return _dtoBuilder.BuildToListRecipeDetailDto( recipes, userId );
         }
 
         // GET: api/recipes/recipe-of-day

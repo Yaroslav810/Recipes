@@ -87,10 +87,14 @@ namespace Recipes.Api.Controllers
             if ( !( User.Identity is { IsAuthenticated: true } ) )
                 return Unauthorized();
 
-            _recipesService.AddLike( recipeId );
-            _unitOfWork.Commit();
+            bool status = _recipesService.AddLike( recipeId, UserId );
+            if ( status )
+            {
+                _unitOfWork.Commit();
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest();
         }
 
         // GET api/recipe/{recipeId}/remove-like
@@ -100,10 +104,14 @@ namespace Recipes.Api.Controllers
             if ( !( User.Identity is { IsAuthenticated: true } ) )
                 return Unauthorized();
 
-            _recipesService.RemoveLike( recipeId );
-            _unitOfWork.Commit();
+            bool status = _recipesService.RemoveLike( recipeId, UserId );
+            if ( status )
+            {
+                _unitOfWork.Commit();
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest();
         }
 
         // GET api/recipe/{recipeId}/add-favourite
@@ -113,10 +121,14 @@ namespace Recipes.Api.Controllers
             if ( !( User.Identity is { IsAuthenticated: true } ) )
                 return Unauthorized();
 
-            _recipesService.AddFavourite( recipeId );
-            _unitOfWork.Commit();
+            bool status = _recipesService.AddFavourite( recipeId, UserId );
+            if ( status )
+            {
+                _unitOfWork.Commit();
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest();
         }
 
         // GET api/recipe/{recipeId}/remove-favourite
@@ -126,10 +138,14 @@ namespace Recipes.Api.Controllers
             if ( !( User.Identity is { IsAuthenticated: true } ) )
                 return Unauthorized();
 
-            _recipesService.RemoveFavourite( recipeId );
-            _unitOfWork.Commit();
+            bool status = _recipesService.RemoveFavourite( recipeId, UserId );
+            if ( status )
+            {
+                _unitOfWork.Commit();
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest();
         }
 
         // GET api/recipe/{recipeId}/edit
