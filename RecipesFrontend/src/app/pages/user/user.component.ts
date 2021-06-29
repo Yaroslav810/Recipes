@@ -24,7 +24,7 @@ import { StoreActions } from '../../store/store.actions';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit, OnDestroy {
-  public isEditing: boolean = true;
+  public isEditing: boolean = false;
   public isLoadingActive: boolean = true;
   public isError: boolean = false;
   public statistics: StatisticCard[] = [];
