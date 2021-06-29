@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 
 import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipeService } from '../../services/recipe/recipe.service';
@@ -10,10 +12,8 @@ import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
 import { StepDto } from '../../dto/step/step-dto';
 import { StepCard } from '../../components/step-card/step-card';
-import { User } from 'src/app/store/store.reducer';
-import { Observable, Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { StoreSelectors } from 'src/app/store/store.selectors';
+import { User } from '../../store/store.reducer';
+import { StoreSelectors } from '../../store/store.selectors';
 
 @Component({
   selector: 'app-recipe',
@@ -70,9 +70,9 @@ export class RecipeComponent implements OnInit, OnDestroy  {
     this.recipeService.getRecipeDetail(recipeId)
       .then((recipeDetails: RecipeDetailDto) => {
         this.recipeDetails = this.convertToRecipe(recipeDetails);
-          this.card = this.convertRecipeForCard(this.recipeDetails);
-          this.isShowControlButtons = recipeDetails.isEditable;
-          this.checkUser(recipeId);
+        this.card = this.convertRecipeForCard(this.recipeDetails);
+        this.isShowControlButtons = recipeDetails.isEditable;
+        this.checkUser(recipeId);
       })
       .catch((response) => {
         if (response.status === 404) {

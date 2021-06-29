@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { AccountService } from '../../services/account/account.service';
 import { PasswordDto } from '../../dto/password/password-dto';
 
 @Component({
@@ -17,6 +18,7 @@ export class PasswordChangeWindowModalComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
+    private accountService: AccountService,
     public dialogRef: MatDialogRef<PasswordChangeWindowModalComponent>
   ) { 
     this.formGroup = this.initializationForm();
@@ -26,18 +28,37 @@ export class PasswordChangeWindowModalComponent implements OnInit {
   }
 
   public onChangePassword(): void {
-    const value = this.formGroup.value as PasswordDto;
-    console.log(value);
-
-    if (true) {
-      this.snackBar.open('Пароль успешно изменён', 'Закрыть', {
-        duration: 5000,
-        horizontalPosition: 'end',
-        verticalPosition: 'top',
-      });
-      this.dialogRef.close();
+    if (this.formGroup.valid) {
+      const value = {
+        currentPassword: this.formGroup.value.currentPassword,
+        newPassword: this.formGroup.value.newPassword,
+      } as PasswordDto;
+      this.formGroup.disable();
+      this.accountService.onChangePassword(value)
+        .then((response) => {
+          console.log(response);
+          if (response) {
+            this.snackBar.open('Пароль успешно изменён!', 'Закрыть', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+            this.dialogRef.close();
+          } else {
+            this.snackBar.open('Введён неправильный пароль', 'Закрыть', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          }
+        })
+        .finally(() => {
+          setTimeout(() => {
+            this.formGroup.enable();
+          }, 3000);
+        })
     } else {
-      this.snackBar.open('Ошибка!', 'Закрыть', {
+      this.snackBar.open('Проверьте введённые данные', 'Закрыть', {
         duration: 5000,
         horizontalPosition: 'end',
         verticalPosition: 'top',

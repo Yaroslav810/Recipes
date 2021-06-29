@@ -81,16 +81,44 @@ namespace Recipes.Api.Controllers
 
         // POST api/account/change-user-data
         [HttpPost( "change-user-data" )]
-        public async Task<bool> ChangeUserData( [FromBody] UserDataDto userDataDto )
+        public IActionResult ChangeUserData( [FromBody] UserDto userDto )
         {
-            return true;
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            if ( userDto == null )
+                return BadRequest();
+
+            User user = userDto.MapToUser();
+            bool status = _accountService.ChangeUserData( user, UserId );
+            if ( status )
+                _unitOfWork.Commit();
+
+            return Ok( status );
         }
 
         // POST api/account/change-user-password
         [HttpPost( "change-user-password" )]
-        public async Task<bool> ChangeUserPassword( [FromBody] AuthenticationDto authenticationDto )
+        public IActionResult ChangeUserPassword( [FromBody] PasswordDto passwordDto )
         {
-            return true;
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            if ( passwordDto == null )
+                return BadRequest();
+
+            try
+            {
+                bool status = _accountService.ChangeUserPassword( passwordDto, UserId );
+                if ( status )
+                    _unitOfWork.Commit();
+
+                return Ok( status );
+            }
+            catch ( Exception error )
+            {
+                return BadRequest( error.Message );
+            }
         }
 
         // POST api/account/logout

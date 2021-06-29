@@ -43,5 +43,15 @@ namespace Recipes.Api.Application.Mappers
                 About = user.About,
             };
         }
+
+        public static User MapToUser( this UserDto userDto )
+        {
+            return new User()
+            {
+                FirstName = userDto.Name,
+                Login = userDto.Login,
+                About = userDto.About,
+            };
+        }
     }
 }

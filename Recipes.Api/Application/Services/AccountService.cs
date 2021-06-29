@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using Recipes.Api.Application.Dto;
 using Recipes.Api.Application.Entities;
 using Recipes.Api.Application.Repositories;
 
@@ -13,6 +14,8 @@ namespace Recipes.Api.Application.Services
         public bool TryRegistrationUser( User user );
         public User? GetUserIfValid( User user );
         public User GetUserById( int userId );
+        public bool ChangeUserData( User user, int userId );
+        public bool ChangeUserPassword( PasswordDto passwordDto, int userId );
         public User GetUserByLogin( string login );
         public List<User> GetUsersByUserIds( List<int> userIds );
     }
@@ -61,6 +64,37 @@ namespace Recipes.Api.Application.Services
             return user;
         }
 
+        public bool ChangeUserData( User user, int userId )
+        {
+            User currentUser = _accountRepository.GetUserById( userId );
+            if ( currentUser == null )
+                throw new Exception( "Нет пользователя с таким идентификатором" );
+
+            User sameLogin = _accountRepository.GetUserByLogin( user.Login );
+            if ( sameLogin != null && sameLogin.Id != userId )
+                return false;
+
+            currentUser.FirstName = user.FirstName;
+            currentUser.Login = user.Login;
+            currentUser.About = user.About;
+
+            return true;
+        }
+
+        public bool ChangeUserPassword( PasswordDto passwordDto, int userId )
+        {
+            User currentUser = _accountRepository.GetUserById( userId );
+            if ( currentUser == null )
+                throw new Exception( "Нет пользователя с таким идентификатором" );
+
+            bool isPasswordSame = CheckPassword( currentUser.Password, passwordDto.CurrentPassword );
+            if ( !isPasswordSame )
+                return false;
+
+            currentUser.Password = HashPassword( passwordDto.NewPassword );
+            return true;
+        }
+
         public User GetUserByLogin( string login )
         {
             User user = _accountRepository.GetUserByLogin( login );
@@ -79,7 +113,7 @@ namespace Recipes.Api.Application.Services
         {
             if ( string.IsNullOrEmpty( password ) )
             {
-                throw new Exception( "Empty password" );
+                throw new Exception( "Пустой пароль" );
             }
 
             byte[] salt;
@@ -100,7 +134,7 @@ namespace Recipes.Api.Application.Services
         private bool CheckPassword( string hashedPassword, string password )
         {
             if ( password == null )
-                throw new Exception( "Empty password" );
+                throw new Exception( "Пустой пароль" );
 
             if ( hashedPassword == null )
                 return false;

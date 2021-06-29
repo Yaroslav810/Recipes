@@ -5,6 +5,8 @@ import { RecipeApi } from '../../constants/RecipeApi';
 import { RegistrationDto } from '../../dto/registration/registration-dto';
 import { AuthenticationDto } from '../../dto/authentication/authentication-dto';
 import { UserDataDto } from '../../dto/user-data/user-data-dto';
+import { UserDto } from '../../dto/user/user-dto';
+import { PasswordDto } from '../../dto/password/password-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -36,9 +38,19 @@ export class AccountService {
   public async getCurrentUser(): Promise<UserDataDto> {
     const url = `${this.accountUrl}/get-current-user`;
 
-    const user = await this.httpClient.get<UserDataDto>(url, {
-      withCredentials: true,
-    }).toPromise();
+    const user = await this.httpClient.get<UserDataDto>(url).toPromise();
     return user ?? null;
+  }
+
+  public async onChangeUserData(userDto: UserDto): Promise<boolean> {
+    const url = `${this.accountUrl}/change-user-data`;
+
+    return await this.httpClient.post<boolean>(url, userDto).toPromise();
+  }
+
+  public async onChangePassword(passwordDto: PasswordDto): Promise<boolean> {
+    const url = `${this.accountUrl}/change-user-password`;
+
+    return await this.httpClient.post<boolean>(url, passwordDto).toPromise();
   }
 }

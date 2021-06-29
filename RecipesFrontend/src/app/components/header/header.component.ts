@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
-import { User } from 'src/app/store/store.reducer';
-import { StoreSelectors } from 'src/app/store/store.selectors';
-import { Observable } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
-import { AccountService } from 'src/app/services/account/account.service';
-import { StoreActions } from 'src/app/store/store.actions';
+import { AccountService } from '../../services/account/account.service';
+
+import { User } from '../../store/store.reducer';
+import { StoreSelectors } from '../../store/store.selectors';
+import { StoreActions } from '../../store/store.actions';
 
 export interface IHeaderLinks {
   title: string,
@@ -74,7 +74,7 @@ export class HeaderComponent implements OnInit {
             icon: 'user.svg',
             onAction: ($event) => {
               $event.preventDefault();
-              console.log('Ого! Ну зачем тыкать на своё имя?');
+              this.router.navigate(['/user']);
             }
           },
           {
@@ -99,7 +99,6 @@ export class HeaderComponent implements OnInit {
             icon: 'user.svg',
             onAction: ($event) => {
               $event.preventDefault();
-              console.log('Ого! Ну войдите войдите');
               const modal = this.dialog.open(IdentificationWindowModalComponent, {
                 autoFocus: false,
                 data: '',
