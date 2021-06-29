@@ -15,6 +15,7 @@ namespace Recipes.Api.Infrastructure.Dbcontext
             modelBuilder.ApplyConfiguration( new IngredientItemConfiguration() );
             modelBuilder.ApplyConfiguration( new StepConfiguration() );
             modelBuilder.ApplyConfiguration( new UserConfiguration() );
+            modelBuilder.ApplyConfiguration( new UserRatingConfiguration() );
         }
     }
 }

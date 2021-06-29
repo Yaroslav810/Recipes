@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Recipes.Api.Migrations
 {
-    public partial class Updatedthedatabase : Migration
+    public partial class UpdatedDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +22,22 @@ namespace Recipes.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRating",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    IsLikeSet = table.Column<bool>(type: "bit", nullable: false),
+                    IsFavoritesSet = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRating", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -168,6 +184,9 @@ namespace Recipes.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Step");
+
+            migrationBuilder.DropTable(
+                name: "UserRating");
 
             migrationBuilder.DropTable(
                 name: "Ingredient");

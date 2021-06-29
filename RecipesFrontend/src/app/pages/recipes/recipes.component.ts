@@ -7,6 +7,10 @@ import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipesService } from '../../services/recipes/recipes.service';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
 import { ImageService } from 'src/app/services/image/image.service';
+import { Observable, Subscription } from 'rxjs';
+import { User } from 'src/app/store/store.reducer';
+import { StoreSelectors } from 'src/app/store/store.selectors';
+import { Store } from '@ngrx/store';
 
 
 @Component({
@@ -23,6 +27,8 @@ export class RecipesComponent implements OnInit {
   public dishTags: string[];
   public isButtonActive: boolean = false;
   public isLoadingActive: boolean = true;
+  public isShowAddButton: boolean = false;
+  public sub: Subscription;
 
   private take: number = 2;
 
@@ -31,7 +37,8 @@ export class RecipesComponent implements OnInit {
     private activatedRoute: ActivatedRoute, 
     private recipesService: RecipesService,
     private imageService: ImageService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private store$: Store,
   ) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
@@ -42,6 +49,7 @@ export class RecipesComponent implements OnInit {
       this.searchDishes = params['search'] || '';
       this.updateRecipes('get');   
     });
+    this.checkUser();
   }
 
   public changeQuery(): void {
@@ -157,5 +165,18 @@ export class RecipesComponent implements OnInit {
       isStarSet: recipeDto.isStarSet,
       isLikeSet: recipeDto.isLikeSet,
     } as DishCard;
+  }
+
+  private checkUser(): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.sub = user.subscribe((user) => {
+      if (user !== null) {
+        this.isShowAddButton = true;
+      } else {
+        this.isShowAddButton = false;
+      }
+      this.updateRecipes('get');
+    });
   }
 }

@@ -10,8 +10,8 @@ using Recipes.Api.Infrastructure.Dbcontext;
 namespace Recipes.Api.Migrations
 {
     [DbContext(typeof(RecipeContext))]
-    [Migration("20210628083733_Updated the database")]
-    partial class Updatedthedatabase
+    [Migration("20210629111347_AddedForeignKey")]
+    partial class AddedForeignKey
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -206,6 +206,36 @@ namespace Recipes.Api.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Recipes.Api.Application.Entities.UserRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsFavoritesSet")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLikeSet")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRating");
+                });
+
             modelBuilder.Entity("Recipes.Api.Application.Entities.Ingredient", b =>
                 {
                     b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
@@ -248,6 +278,21 @@ namespace Recipes.Api.Migrations
                         .WithMany("Steps")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.UserRating", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Recipes.Api.Application.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
