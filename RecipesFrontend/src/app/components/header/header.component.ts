@@ -31,7 +31,6 @@ export class HeaderComponent implements OnInit {
 
   public links: IHeaderLinks[];
   public accountButtons: IAccountButtons[];
-  private user: User;
 
   constructor(
     private router: Router, 

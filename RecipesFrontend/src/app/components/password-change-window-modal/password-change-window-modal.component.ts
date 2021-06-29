@@ -36,7 +36,6 @@ export class PasswordChangeWindowModalComponent implements OnInit {
       this.formGroup.disable();
       this.accountService.onChangePassword(value)
         .then((response) => {
-          console.log(response);
           if (response) {
             this.snackBar.open('Пароль успешно изменён!', 'Закрыть', {
               duration: 5000,

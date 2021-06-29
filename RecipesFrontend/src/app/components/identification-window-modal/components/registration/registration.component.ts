@@ -44,9 +44,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   public onRegistration(): void {
-    console.log('Давайте зарегестрируемся!');
     this.formGroup.disable();
-    
     const registrationDto: RegistrationDto = {
       name: this.formGroup.value.name,
       login: this.formGroup.value.login,

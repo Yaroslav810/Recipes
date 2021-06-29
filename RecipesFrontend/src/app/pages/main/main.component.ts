@@ -5,6 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { SimpleCard } from '../../components/simple-card/simple-card';
 import { MainCourseCard } from '../../components/main-course-card/main-course-card';
 import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
+import { Observable, Subscription } from 'rxjs';
+import { User } from 'src/app/store/store.reducer';
+import { Store } from '@ngrx/store';
+import { StoreSelectors } from 'src/app/store/store.selectors';
 
 @Component({
   selector: 'app-main',
@@ -13,16 +17,18 @@ import { IdentificationWindowModalComponent} from './../../components/identifica
 })
 
 export class MainComponent implements OnInit {
-
+  public isShowLoginButton: boolean = false;
   public cards: SimpleCard[];
   public mainCourseCard: MainCourseCard;
   public hintsDishes: string[];
+  public sub: Subscription;
 
   searchDishes = '';
 
   constructor(
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store$: Store,
   ) {
     this.cards = this.getAdvantagesCards();
     this.hintsDishes = this.getDishHints();
@@ -30,6 +36,7 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.mainCourseCard = this.getMainCourseCard();
+    this.checkUser();
   }
 
   private getAdvantagesCards = (): SimpleCard[] => {
@@ -108,6 +115,18 @@ export class MainComponent implements OnInit {
     const modal = this.dialog.open(IdentificationWindowModalComponent, {
       autoFocus: false,
       data: 'login',
+    });
+  }
+
+  private checkUser(): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.sub = user.subscribe((user) => {
+      if (user !== null) {
+        this.isShowLoginButton = false;
+      } else {
+        this.isShowLoginButton = true;
+      }
     });
   }
 }

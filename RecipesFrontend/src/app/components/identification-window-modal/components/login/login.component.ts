@@ -56,14 +56,18 @@ export class LoginComponent implements OnInit {
             })
         } else {
           this.snackBar.open(`Неправильный логин или пароль`, 'Закрыть', {
-                duration: 5000,
-                horizontalPosition: 'end',
-                verticalPosition: 'top',
-              });
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
         }
       })
       .catch(() => {
-        console.log('error');
+        this.snackBar.open(`Ошибка!`, 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
       })
       .finally(() => {
         this.formGroup.enable();
