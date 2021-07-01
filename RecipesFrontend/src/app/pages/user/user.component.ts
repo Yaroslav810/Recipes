@@ -12,7 +12,11 @@ import { DishCard } from '../../components/dish-card/dish-card';
 import { StatisticCard } from '../../components/statistic-card/statistic-card';
 import { PasswordChangeWindowModalComponent } from '../../components/password-change-window-modal/password-change-window-modal.component';
 import { UserDto } from '../../dto/user/user-dto';
+import { RecipeDto } from '../../dto/recipe/recipe-dto';
+import { UserStatisticsDto } from '../../dto/user-statistics/user-statistics-dto';
 import { AccountService } from '../../services/account/account.service';
+import { RecipesService } from '../../services/recipes/recipes.service';
+import { ImageService } from '../../services/image/image.service';
 
 import { User } from '../../store/store.reducer';
 import { StoreSelectors } from '../../store/store.selectors';
@@ -28,7 +32,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public isLoadingActive: boolean = true;
   public isError: boolean = false;
   public statistics: StatisticCard[] = [];
-  public recipes: DishCard[];
+  public recipes: DishCard[] = [];
   public userForm: IFormGroup<UserDto> = null;
   private formBuilder: IFormBuilder;
   private sub: Subscription;
@@ -40,6 +44,8 @@ export class UserComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private store$: Store,
     private accountService: AccountService,
+    private recipesService: RecipesService,
+    private imageService: ImageService,
     formBuilder: FormBuilder,
   ) { 
     this.formBuilder = formBuilder;
@@ -105,10 +111,18 @@ export class UserComponent implements OnInit, OnDestroy {
     });
   }
 
+  public onLikeClick(): void {
+    this.getStatistics();
+  }
+
+  public onStarClick(): void {
+    this.getStatistics();
+  }
+
   private displayData(): void {
     this.initializationData();
-    this.statistics = this.getStatistics();
-    this.recipes = this.getUserRecipes();
+    this.getStatistics();
+    this.getUserRecipes();
   }
 
   private initializationData(): void {
@@ -154,70 +168,65 @@ export class UserComponent implements OnInit, OnDestroy {
     };
   }
 
-  private getStatistics(): StatisticCard[] {
-    const userData = {
-      recipesCount: 15,
-      likesCount: 15,
-      starsCount: 15,
-    }
-
-    return [
-      {
-        title: 'Всего рецептов',
-        icon: 'book.svg',
-        value: userData.recipesCount,
-      },
-      {
-        title: 'Всего лайков',
-        icon: 'book.svg',
-        value: userData.likesCount,
-      },
-      {
-        title: 'В избранных',
-        icon: 'book.svg',
-        value: userData.starsCount,
-      }
-    ];
+  private getStatistics(): void {
+    this.accountService.getStatistics()
+      .then((userStatisticsDto: UserStatisticsDto) => {
+        this.statistics =  [
+          {
+            title: 'Всего рецептов',
+            icon: 'book.svg',
+            value: userStatisticsDto.recipesCount,
+          },
+          {
+            title: 'Всего лайков',
+            icon: 'book.svg',
+            value: userStatisticsDto.likesCount,
+          },
+          {
+            title: 'В избранных',
+            icon: 'book.svg',
+            value: userStatisticsDto.favouritesCount,
+          }
+        ];
+      });    
   }
 
-  private getUserRecipes(): DishCard[] {
-    return [
-      {
-        id: 2,
-        title: 'Клубничная панна-котта',
-        description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
-        keywords: ['десерты', 'клубника', 'сливки'],
-        author: 'glazest',
-        likesCount: 8,
-        starsCount: 10,
-        time: '35  мин',
-        personsCount: '5 персон',
-        image: './assets/images/strawberry-panna-cotta.png', 
-        isStarSet: true,
-        isLikeSet: false,
-      },
-      {
-        id: 4,
-        title: 'Панкейки',
-        description: 'Панкейки: меньше, чем блины, но больше, чем оладьи. Основное отличие — в тесте, оно должно быть воздушным, чтобы панкейки не растекались по сковородке...',
-        keywords: ['десерты', 'завтрак', 'блины'],
-        author: 'turum-pum-pum',
-        likesCount: 7,
-        starsCount: 25,
-        time: '40  мин',
-        personsCount: '3 персон',
-        image: './assets/images/pancakes.png', 
-        isStarSet: true,
-        isLikeSet: true,
-      },
-    ];
+  private getUserRecipes(): void {
+    this.recipesService.getUserRecipes()
+      .then((dishCard: RecipeDto[]) => {
+        this.recipes = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
+      })
+      .catch(() => {
+        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      });
+  }
+
+  private convertToDishCard(recipeDto: RecipeDto): DishCard {
+    return {
+      id: recipeDto.id,
+      title: recipeDto.title,
+      description: recipeDto.description,
+      keywords: recipeDto.keywords,
+      author: recipeDto.author,
+      likesCount: recipeDto.likesCount,
+      starsCount: recipeDto.starsCount,
+      time: recipeDto.timeInMin + ' минут',
+      personsCount: recipeDto.personCount + ' человек',
+      image: this.imageService.buildFullPath(recipeDto.imagePath),
+      isStarSet: recipeDto.isStarSet,
+      isLikeSet: recipeDto.isLikeSet,
+    } as DishCard;
   }
 
   private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
     this.sub = user.subscribe(() => {
-      this.initializationData();
+      this.displayData();
     });
   }
 }

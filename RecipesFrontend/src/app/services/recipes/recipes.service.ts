@@ -23,4 +23,20 @@ export class RecipesService {
             .get<RecipeDto[]>(this.recipesUrl, { params })
             .toPromise();
   }
+
+  public async getUserRecipes(): Promise<RecipeDto[]> {
+    const url = `${this.recipesUrl}/my`;
+
+    return await this.httpClient
+      .get<RecipeDto[]>(url)
+      .toPromise();
+  }
+
+  public async getFavouritesRecipes(): Promise<RecipeDto[]> {
+    const url = `${this.recipesUrl}/favourites`;
+
+    return await this.httpClient
+      .get<RecipeDto[]>(url)
+      .toPromise();
+  }
 }

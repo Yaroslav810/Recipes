@@ -84,6 +84,10 @@ export class RecipesComponent implements OnInit {
     this.router.navigate(['/edit']);
   }
 
+  public onLikeClick(): void { }
+
+  public onStarClick(): void { }
+
   private getAdvantagesCards(): SimpleCard[] {
     return [
       {

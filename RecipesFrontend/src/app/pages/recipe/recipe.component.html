@@ -7,7 +7,7 @@
       <div class="main__header">
         <h2 class="title">{{ recipeDetails?.title }}</h2>
         <div class="сontrol-buttons" *ngIf="isShowControlButtons">
-          <button mat-stroked-button class="stroked-button">
+          <button mat-stroked-button class="stroked-button" (click)="onDeleteRecipe()">
             <div class="basket-icon"></div>
           </button>
           <button mat-flat-button color="accent" class="button" (click)="openEditPage()">
@@ -16,7 +16,12 @@
           </button>
         </div>
       </div>
-      <app-dish-card [card]="card" [onOpenDishCard]="openCard"></app-dish-card>
+      <app-dish-card 
+        [card]="card" 
+        [onOpenDishCard]="openCard"
+        [onLikeClick]="onLikeClick"
+        [onStarClick]="onStarClick"
+      ></app-dish-card>
     </div>
     <div class="details">
       <div *ngIf="recipeDetails?.ingredients.length !== 0" class="ingredients">

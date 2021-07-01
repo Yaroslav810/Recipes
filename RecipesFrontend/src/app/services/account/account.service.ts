@@ -7,6 +7,7 @@ import { AuthenticationDto } from '../../dto/authentication/authentication-dto';
 import { UserDataDto } from '../../dto/user-data/user-data-dto';
 import { UserDto } from '../../dto/user/user-dto';
 import { PasswordDto } from '../../dto/password/password-dto';
+import { UserStatisticsDto } from '../../dto/user-statistics/user-statistics-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,12 @@ export class AccountService {
 
     const user = await this.httpClient.get<UserDataDto>(url).toPromise();
     return user ?? null;
+  }
+
+  public async getStatistics(): Promise<UserStatisticsDto> {
+    const url = `${this.accountUrl}/get-statistics`;
+
+    return await this.httpClient.get<UserStatisticsDto>(url).toPromise();
   }
 
   public async onChangeUserData(userDto: UserDto): Promise<boolean> {

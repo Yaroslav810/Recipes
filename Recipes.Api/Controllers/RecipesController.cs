@@ -35,6 +35,30 @@ namespace Recipes.Api.Controllers
             return _dtoBuilder.BuildToListRecipeDetailDto( recipes, userId );
         }
 
+        // GET: api/recipes/my
+        [HttpGet( "my" )]
+        public IActionResult GetMyRecipe()
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            List<Recipe> recipes = _recipesService.GetRecipesByAuthorId( UserId );
+
+            return Ok( _dtoBuilder.BuildToMyListRecipeDetailDto( recipes, UserId ) );
+        }
+
+        // GET: api/recipes/favourites
+        [HttpGet( "favourites" )]
+        public IActionResult GetFavouritesRecipe()
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            List<Recipe> recipes = _recipesService.GetFavouritesRecipes( UserId );
+
+            return Ok( _dtoBuilder.BuildToListRecipeDetailDto( recipes, UserId ) );
+        }
+
         // GET: api/recipes/recipe-of-day
         [HttpGet( "recipe-of-day" )]
         public List<RecipeDto> GetRecipeOfDay()

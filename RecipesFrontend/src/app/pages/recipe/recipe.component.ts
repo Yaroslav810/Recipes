@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Store } from '@ngrx/store';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subscription } from 'rxjs';
 
 import { DishCard } from '../../components/dish-card/dish-card';
@@ -35,12 +36,14 @@ export class RecipeComponent implements OnInit, OnDestroy  {
     private recipeService: RecipeService,
     private imageService: ImageService,
     private store$: Store,
+    private snackBar: MatSnackBar,
   ) {  }
 
   ngOnInit(): void {
     const recipeId: number = this.getRecipeIdFromQuery();
 
     this.loadRecipe(recipeId);
+    this.checkUser(recipeId);
   }
 
   ngOnDestroy(): void {
@@ -61,6 +64,31 @@ export class RecipeComponent implements OnInit, OnDestroy  {
     this.router.navigate(['edit', this.recipeDetails.id]);
   }
 
+  public onDeleteRecipe(): void {
+    const recipeId = this.getRecipeIdFromQuery();
+
+    this.recipeService.deleteRecipe(recipeId)
+      .then(() => {
+        this.router.navigate(['recipes']);
+        this.snackBar.open('Рецепт успешно удалён!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      })
+      .catch(() => {
+        this.snackBar.open('Такой логин уже есть в системе', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      });
+  }
+
+  public onLikeClick(): void { }
+
+  public onStarClick(): void { }
+
   private getRecipeIdFromQuery(): number {
     return Number(this.activatedRoute.snapshot.paramMap.get("id"));
   }
@@ -72,7 +100,6 @@ export class RecipeComponent implements OnInit, OnDestroy  {
         this.recipeDetails = this.convertToRecipe(recipeDetails);
         this.card = this.convertRecipeForCard(this.recipeDetails);
         this.isShowControlButtons = recipeDetails.isEditable;
-        this.checkUser(recipeId);
       })
       .catch((response) => {
         if (response.status === 404) {
@@ -132,6 +159,8 @@ export class RecipeComponent implements OnInit, OnDestroy  {
       this.recipeService.isRecipeEditable(recipeId)
         .then((isEditable: boolean) => {
           this.isShowControlButtons = isEditable;
+          const recipeId: number = this.getRecipeIdFromQuery();
+          this.loadRecipe(recipeId);
         });
     });
   }

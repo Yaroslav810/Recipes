@@ -87,6 +87,14 @@ export class RecipeService {
       .toPromise();
   }
 
+  public async deleteRecipe(recipeId: number): Promise<void> {
+    const url = `${this.recipeUrl}/${recipeId}/delete`;
+
+    await this.httpClient
+      .post(url, {})
+      .toPromise();
+  }
+
   public async updateRecipeWithImage(recipeId: number, editRecipe: EditRecipeDto): Promise<void> {
     const url = `${this.recipeUrl}/${recipeId}/update-with-image`;
 

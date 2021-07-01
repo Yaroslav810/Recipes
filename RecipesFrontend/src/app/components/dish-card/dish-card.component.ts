@@ -12,6 +12,8 @@ export class DishCardComponent implements OnInit {
 
   @Input() card: DishCard;
   @Input() onOpenDishCard: Function;
+  @Input() onLikeClick: Function;
+  @Input() onStarClick: Function;
 
   constructor(
     private recipeService: RecipeService,
@@ -25,6 +27,9 @@ export class DishCardComponent implements OnInit {
     if (this.card.isStarSet) {
       this.card.starsCount = --this.card.starsCount;
       this.recipeService.removeFromFavourite(this.card.id)
+        .then(() => {
+          this.onStarClick();
+        })
         .catch((response) => {
           this.card.starsCount = ++this.card.starsCount;
           this.card.isStarSet = !this.card.isStarSet;
@@ -45,6 +50,9 @@ export class DishCardComponent implements OnInit {
     } else {
       this.card.starsCount = ++this.card.starsCount;
       this.recipeService.addToFavourite(this.card.id)
+        .then(() => {
+          this.onStarClick();
+        })
         .catch((response) => {
           this.card.starsCount = --this.card.starsCount;
           this.card.isStarSet = !this.card.isStarSet;
@@ -71,6 +79,9 @@ export class DishCardComponent implements OnInit {
     if (this.card.isLikeSet) {
       this.card.likesCount = --this.card.likesCount;
       this.recipeService.removeLike(this.card.id)
+        .then(() => {
+          this.onLikeClick();
+        })
         .catch((response) => {
           this.card.likesCount = ++this.card.likesCount;
           this.card.isLikeSet = !this.card.isLikeSet;
@@ -91,6 +102,9 @@ export class DishCardComponent implements OnInit {
     } else {
       this.card.likesCount = ++this.card.likesCount;
       this.recipeService.addLike(this.card.id)
+        .then(() => {
+          this.onLikeClick();
+        })
         .catch((response) => {
           this.card.likesCount = --this.card.likesCount;
           this.card.isLikeSet = !this.card.isLikeSet;
