@@ -11,6 +11,8 @@ namespace Recipes.Api.Application.Services
     public interface IRecipesService
     {
         public List<Recipe> GetRecipes( string searchString, int take, int skip );
+        public List<Recipe> GetRecipesByAuthorId( int userId );
+        public List<Recipe> GetFavouritesRecipes( int userId );
         public Recipe? GetRecipe( int recipeId );
         public UserRating? GetUserRating( int recipeId, int userId );
         public bool AddLike( int recipeId, int userId );
@@ -20,6 +22,7 @@ namespace Recipes.Api.Application.Services
         public Task CreateRecipeAsync( EditRecipe editRecipe, int userId );
         public Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe, int userId );
         public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe, int userId );
+        public void DeleteRecipe( int recipeId );
     }
 
     public class RecipesService : IRecipesService
@@ -36,6 +39,24 @@ namespace Recipes.Api.Application.Services
         public List<Recipe> GetRecipes( string searchString, int take, int skip )
         {
             return _recipeRepository.GetRecipes( searchString, take, skip );
+        }
+
+        public List<Recipe> GetRecipesByAuthorId( int userId )
+        {
+            return _recipeRepository.GetRecipesByAuthorId( userId );
+        }
+
+        public List<Recipe> GetFavouritesRecipes( int userId )
+        {
+            List<UserRating> userRatings = _recipeRepository.GetFavouriteUserRatings( userId );
+
+            var result = new List<Recipe>();
+            foreach ( var userRating in userRatings )
+            {
+                result.Add( _recipeRepository.GetRecipe( userRating.RecipeId, false ) );
+            }
+
+            return result;
         }
 
         public Recipe? GetRecipe( int recipeId )
@@ -212,6 +233,14 @@ namespace Recipes.Api.Application.Services
             currentRecipe.PersonCount = recipe.PersonCount;
             currentRecipe.Ingredients = recipe.Ingredients;
             currentRecipe.Steps = recipe.Steps;
+        }
+
+        public void DeleteRecipe( int recipeId )
+        {
+            Recipe recipe = _recipeRepository.GetRecipe( recipeId, true );
+            List<UserRating> userRatings = _recipeRepository.GetUserRatings( recipeId );
+            _recipeRepository.DeleteUserRating( userRatings );
+            _recipeRepository.DeleteRecipe( recipe );
         }
     }
 }

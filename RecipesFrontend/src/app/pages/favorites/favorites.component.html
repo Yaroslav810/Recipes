@@ -1,5 +1,11 @@
 <section class="favorites">
   <h2 class="favorites-title">Избранное</h2>
-  <app-dish-card *ngFor="let favorite of favorites" [card]="favorite" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
+  <app-dish-card 
+    *ngFor="let favorite of favorites" 
+    [card]="favorite" 
+    [onOpenDishCard]="openRecipes.bind(this)"
+    [onLikeClick]="onLikeClick.bind(this)"
+    [onStarClick]="onStarClick.bind(this)"
+  ></app-dish-card>
   <p class="empty" [hidden]="favorites.length !== 0">Ваш список пуст</p>
 </section>

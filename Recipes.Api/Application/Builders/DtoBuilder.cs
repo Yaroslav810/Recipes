@@ -11,6 +11,7 @@ namespace Recipes.Api.Application.Builders
     public interface IDtoBuilder
     {
         public List<RecipeDto> BuildToListRecipeDetailDto( List<Recipe> recipes, int? userId );
+        public List<RecipeDto> BuildToMyListRecipeDetailDto( List<Recipe> recipes, int userId );
         public RecipeDetailDto BuildToRecipeDetailDto( Recipe recipe, int? userId );
     }
 
@@ -42,6 +43,26 @@ namespace Recipes.Api.Application.Builders
                         isFavouriteSet = userRating.IsFavoritesSet;
                     }
 
+                }
+                result.Add( recipe.MapToRecipeDto( user.Login, isLikeSet, isFavouriteSet ) );
+            }
+
+            return result;
+        }
+
+        public List<RecipeDto> BuildToMyListRecipeDetailDto( List<Recipe> recipes, int userId )
+        {
+            var result = new List<RecipeDto>();
+            var user = _accountService.GetUserById( userId );
+            foreach ( var recipe in recipes )
+            {
+                bool isLikeSet = false;
+                bool isFavouriteSet = false;
+                var userRating = _recipesService.GetUserRating( recipe.Id, userId );
+                if ( userRating != null )
+                {
+                    isLikeSet = userRating.IsLikeSet;
+                    isFavouriteSet = userRating.IsFavoritesSet;
                 }
                 result.Add( recipe.MapToRecipeDto( user.Login, isLikeSet, isFavouriteSet ) );
             }

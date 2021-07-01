@@ -34,5 +34,28 @@ namespace Recipes.Api.Infrastructure.Repositories
                 .Set<User>()
                 .FirstOrDefault( x => x.Login == login );
         }
+
+        public int GetRecipesCount( int userId )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Count( x => x.AuthorId == userId );
+        }
+
+        public int GetLikesCount( int userId )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Where( x => x.AuthorId == userId )
+                .Sum( x => x.LikesCount );
+        }
+
+        public int GetStarsCount( int userId )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Where( x => x.AuthorId == userId )
+                .Sum( x => x.StarsCount );
+        }
     }
 }

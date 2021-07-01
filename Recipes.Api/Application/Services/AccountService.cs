@@ -16,6 +16,7 @@ namespace Recipes.Api.Application.Services
         public User GetUserById( int userId );
         public bool ChangeUserData( User user, int userId );
         public bool ChangeUserPassword( PasswordDto passwordDto, int userId );
+        public UserStatistics GetUserStatistics( int userId );
         public User GetUserByLogin( string login );
         public List<User> GetUsersByUserIds( List<int> userIds );
     }
@@ -93,6 +94,16 @@ namespace Recipes.Api.Application.Services
 
             currentUser.Password = HashPassword( passwordDto.NewPassword );
             return true;
+        }
+
+        public UserStatistics GetUserStatistics( int userId )
+        {
+            return new()
+            {
+                RecipesCount = _accountRepository.GetRecipesCount( userId ),
+                LikesCount = _accountRepository.GetLikesCount( userId ),
+                FavouritesCount = _accountRepository.GetStarsCount( userId ),
+            };
         }
 
         public User GetUserByLogin( string login )

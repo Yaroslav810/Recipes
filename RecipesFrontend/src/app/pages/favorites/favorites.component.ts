@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { ImageService } from '../../services/image/image.service';
+import { RecipesService } from '../../services/recipes/recipes.service';
 import { DishCard } from '../../components/dish-card/dish-card';
+import { RecipeDto } from '../../dto/recipe/recipe-dto';
 
 @Component({
   selector: 'app-favorites',
@@ -9,49 +14,58 @@ import { DishCard } from '../../components/dish-card/dish-card';
 })
 export class FavoritesComponent implements OnInit {
 
-  public favorites: DishCard[];
+  public favorites: DishCard[] = [];
 
-  constructor(private router: Router) { 
-    this.favorites = this.getFavoritesCard();
+  constructor(
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private recipesService: RecipesService,
+    private imageService: ImageService,
+    ) { 
+    this.getFavoritesCard();
   }
 
   ngOnInit(): void {
   }
 
-  private getFavoritesCard(): DishCard[] {
-    return [
-      {
-        id: 2,
-        title: 'Клубничная панна-котта',
-        description: 'Десерт, который невероятно легко и быстро готовится. Советую подавать его порционно в красивых бокалах, украсив взбитыми сливками, свежими ягодами и мятой.',
-        keywords: ['десерты', 'клубника', 'сливки'],
-        author: 'glazest',
-        likesCount: 8,
-        starsCount: 10,
-        time: '35  мин',
-        personsCount: '5 персон',
-        image: './assets/images/strawberry-panna-cotta.png', 
-        isStarSet: true,
-        isLikeSet: false,
-      },
-      {
-        id: 4,
-        title: 'Панкейки',
-        description: 'Панкейки: меньше, чем блины, но больше, чем оладьи. Основное отличие — в тесте, оно должно быть воздушным, чтобы панкейки не растекались по сковородке...',
-        keywords: ['десерты', 'завтрак', 'блины'],
-        author: 'turum-pum-pum',
-        likesCount: 7,
-        starsCount: 25,
-        time: '40  мин',
-        personsCount: '3 персон',
-        image: './assets/images/pancakes.png', 
-        isStarSet: true,
-        isLikeSet: true,
-      },
-    ];
+  private getFavoritesCard(): void {
+    this.recipesService.getFavouritesRecipes()
+      .then((dishCard: RecipeDto[]) => {
+        this.favorites = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
+      })
+      .catch(() => {
+        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+        });
+      });
   }
 
   public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
+  }
+
+  public onLikeClick(): void { }
+
+  public onStarClick(): void {
+    this.getFavoritesCard();
+  }
+
+  private convertToDishCard(recipeDto: RecipeDto): DishCard {
+    return {
+      id: recipeDto.id,
+      title: recipeDto.title,
+      description: recipeDto.description,
+      keywords: recipeDto.keywords,
+      author: recipeDto.author,
+      likesCount: recipeDto.likesCount,
+      starsCount: recipeDto.starsCount,
+      time: recipeDto.timeInMin + ' минут',
+      personsCount: recipeDto.personCount + ' человек',
+      image: this.imageService.buildFullPath(recipeDto.imagePath),
+      isStarSet: recipeDto.isStarSet,
+      isLikeSet: recipeDto.isLikeSet,
+    } as DishCard;
   }
 }

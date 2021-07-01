@@ -36,6 +36,16 @@ namespace Recipes.Api.Infrastructure.Repositories
                 .ToList();
         }
 
+        public List<Recipe> GetRecipesByAuthorId( int userId )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Include( x => x.Tags )
+                .Where( x => x.AuthorId == userId )
+                .OrderByDescending( x => x.CreationDateTime )
+                .ToList();
+        }
+
         public Recipe GetRecipe( int recipeId, bool includeIngredientsAndSteps )
         {
             var recipeQuery = _recipeContext
@@ -71,6 +81,39 @@ namespace Recipes.Api.Infrastructure.Repositories
             return _recipeContext
                 .Set<UserRating>()
                 .FirstOrDefault( x => ( x.RecipeId == recipeId && x.UserId == userId ) );
+        }
+
+        public List<UserRating> GetUserRatings( int recipeId )
+        {
+            return _recipeContext
+                .Set<UserRating>()
+                .Where( x => x.RecipeId == recipeId )
+                .ToList();
+        }
+
+        public void DeleteRecipe( Recipe recipe )
+        {
+            _recipeContext
+                .Set<Recipe>()
+                .Remove( recipe );
+        }
+
+        public void DeleteUserRating( List<UserRating> userRatings )
+        {
+            foreach ( var userRating in userRatings )
+            {
+                _recipeContext
+                    .Set<UserRating>()
+                    .Remove( userRating );
+            }
+        }
+
+        public List<UserRating> GetFavouriteUserRatings( int userId )
+        {
+            return _recipeContext
+                .Set<UserRating>()
+                .Where( x => ( x.UserId == userId && x.IsFavoritesSet == true ) )
+                .ToList();
         }
     }
 }

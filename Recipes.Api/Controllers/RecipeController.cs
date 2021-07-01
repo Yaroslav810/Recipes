@@ -165,6 +165,26 @@ namespace Recipes.Api.Controllers
             return Ok( recipe.MapToEditDetail() );
         }
 
+        // POST api/recipe/{recipeId}/delete
+        [HttpPost( "{recipeId}/delete" )]
+        public IActionResult DeleteRecipe( [FromRoute] int recipeId )
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            Recipe recipe = _recipesService.GetRecipe( recipeId );
+            if ( recipe == null )
+                return NotFound();
+
+            if ( recipe.AuthorId != UserId )
+                return StatusCode( ( int )HttpStatusCode.Forbidden );
+
+            _recipesService.DeleteRecipe( recipeId );
+            _unitOfWork.Commit();
+
+            return Ok();
+        }
+
         // POST api/recipe/add
         [HttpPost( "add" )]
         public async Task<IActionResult> AddRecipeAsync()

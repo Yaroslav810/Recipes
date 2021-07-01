@@ -79,6 +79,16 @@ namespace Recipes.Api.Controllers
             return Ok( userDataDto );
         }
 
+        // GET api/account/get-statistics
+        [HttpGet( "get-statistics" )]
+        public IActionResult GetStatistics()
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            return Ok( _accountService.GetUserStatistics( UserId ) );
+        }
+
         // POST api/account/change-user-data
         [HttpPost( "change-user-data" )]
         public IActionResult ChangeUserData( [FromBody] UserDto userDto )

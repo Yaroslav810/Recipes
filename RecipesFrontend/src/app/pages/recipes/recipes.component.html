@@ -33,7 +33,13 @@
       </form>
     </div>
     <div class="search__results">
-      <app-dish-card *ngFor="let card of dishCards" [card]="card" [onOpenDishCard]="openRecipes.bind(this)"></app-dish-card>
+      <app-dish-card 
+        *ngFor="let card of dishCards" 
+        [card]="card" 
+        [onOpenDishCard]="openRecipes.bind(this)"
+        [onLikeClick]="onLikeClick"
+        [onStarClick]="onStarClick"
+      ></app-dish-card>
       <app-loader *ngIf="isLoadingActive"></app-loader>
       <p *ngIf="dishCards && dishCards.length === 0 && !isLoadingActive" class="text-error">Оооопс.... Ничего не найдено</p>
       <div *ngIf="!dishCards && !isLoadingActive" class="server-error">
