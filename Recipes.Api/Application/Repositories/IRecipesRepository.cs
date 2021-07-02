@@ -10,6 +10,7 @@ namespace Recipes.Api.Application.Repositories
         public void CreateRecipe( Recipe recipe );
         public void DeleteRecipe( Recipe recipe );
         public Recipe GetRecipe( int recipeId, bool includeIngredientsAndSteps = true );
+        public Recipe GetFirstRecipeWithSkip( int skip );
         public void CreateUserRating( UserRating userRating );
         public void DeleteUserRating( List<UserRating> userRatings );
         public UserRating GetUserRating( int recipeId, int userId );

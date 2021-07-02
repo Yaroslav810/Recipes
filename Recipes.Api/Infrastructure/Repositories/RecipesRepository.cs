@@ -63,6 +63,17 @@ namespace Recipes.Api.Infrastructure.Repositories
             return recipeQuery.FirstOrDefault( x => x.Id == recipeId );
         }
 
+        public Recipe GetFirstRecipeWithSkip( int skip )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Include( x => x.Tags )
+                .AsQueryable()
+                .OrderBy( x => x.CreationDateTime )
+                .Skip( skip )
+                .FirstOrDefault();
+        }
+
         public RecipeOfDay GetRecipeOfDayForToday()
         {
             return _recipeContext

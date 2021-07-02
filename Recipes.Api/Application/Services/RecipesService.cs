@@ -80,11 +80,21 @@ namespace Recipes.Api.Application.Services
                     }
                 }
 
-                int recipeId = 1;
+                Recipe? firstRecipe = _recipeRepository.GetFirstRecipeWithSkip( 0 );
+                if ( firstRecipe == null )
+                    return null;
+
+                int recipeId = firstRecipe.Id;
                 if ( recipeRating == null )
                 {
                     if ( recipeOfDayYesterday != null && recipeOfDayYesterday.RecipeId == recipeId )
-                        recipeId = 2;
+                    {
+                        Recipe? secondRecipe = _recipeRepository.GetFirstRecipeWithSkip( 1 );
+                        if ( secondRecipe == null )
+                            return null;
+
+                        recipeId = secondRecipe.Id;
+                    }
                 }
                 else
                 {
