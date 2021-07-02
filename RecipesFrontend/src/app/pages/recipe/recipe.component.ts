@@ -42,7 +42,6 @@ export class RecipeComponent implements OnInit, OnDestroy  {
   ngOnInit(): void {
     const recipeId: number = this.getRecipeIdFromQuery();
 
-    this.loadRecipe(recipeId);
     this.checkUser(recipeId);
   }
 
@@ -68,16 +67,24 @@ export class RecipeComponent implements OnInit, OnDestroy  {
     const recipeId = this.getRecipeIdFromQuery();
 
     this.recipeService.deleteRecipe(recipeId)
-      .then(() => {
-        this.router.navigate(['recipes']);
-        this.snackBar.open('Рецепт успешно удалён!', 'Закрыть', {
-          duration: 5000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-        });
+      .then((canDelete: boolean) => {
+        if (canDelete) {
+          this.router.navigate(['recipes']);
+          this.snackBar.open('Рецепт успешно удалён!', 'Закрыть', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
+        } else {
+          this.snackBar.open('Невозможно удалить рецепт дня!', 'Закрыть', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
+        }
       })
       .catch(() => {
-        this.snackBar.open('Такой логин уже есть в системе', 'Закрыть', {
+        this.snackBar.open('Ошибка удаления рецепта!', 'Закрыть', {
           duration: 5000,
           horizontalPosition: 'end',
           verticalPosition: 'top',
@@ -159,8 +166,7 @@ export class RecipeComponent implements OnInit, OnDestroy  {
       this.recipeService.isRecipeEditable(recipeId)
         .then((isEditable: boolean) => {
           this.isShowControlButtons = isEditable;
-          const recipeId: number = this.getRecipeIdFromQuery();
-          this.loadRecipe(recipeId);
+          this.loadRecipe(this.getRecipeIdFromQuery());
         });
     });
   }

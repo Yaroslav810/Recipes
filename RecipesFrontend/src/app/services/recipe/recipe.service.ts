@@ -5,6 +5,7 @@ import { RecipeApi } from '../../constants/RecipeApi';
 import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
 import { EditRecipeDetailDto } from '../../dto/edit-recipe-detail/edit-recipe-detail-dto';
+import { RecipeOfDayDto } from '../../dto/recipe-of-day/recipe-of-day-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,14 @@ export class RecipeService {
                     .get<RecipeDetailDto>(url)
                     .toPromise();
     return recipe ?? null;
+  }
+
+  public async getRecipeOfDay(): Promise<RecipeOfDayDto> {
+    const url = `${this.recipeUrl}/day`;
+
+    return await this.httpClient
+      .get<RecipeOfDayDto>(url)
+      .toPromise() ?? null;
   }
 
   public async isRecipeEditable(recipeId: number): Promise<boolean> {
@@ -87,11 +96,11 @@ export class RecipeService {
       .toPromise();
   }
 
-  public async deleteRecipe(recipeId: number): Promise<void> {
+  public async deleteRecipe(recipeId: number): Promise<boolean> {
     const url = `${this.recipeUrl}/${recipeId}/delete`;
 
-    await this.httpClient
-      .post(url, {})
+    return await this.httpClient
+      .post<boolean>(url, {})
       .toPromise();
   }
 

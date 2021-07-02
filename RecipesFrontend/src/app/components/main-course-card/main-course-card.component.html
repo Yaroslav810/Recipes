@@ -1,6 +1,6 @@
 <mat-card class="card" (click)="onCardButtonClick()">
   <div class="card-image">
-    <img mat-card-image src="{{ card.image }}" alt="{{ card.title }}">
+    <img mat-card-image src="{{ card.imagePath }}" alt="{{ card.title }}">
     <div class="card-author">
       <p class="author">@{{ card.author }}</p>
     </div>
@@ -13,7 +13,7 @@
       </div>
       <div class="additional-info__item">
         <div class="timer-icon"></div>
-        <div class="value">{{ card.time }}</div>
+        <div class="value">{{ card.timeInMin }}</div>
       </div>
     </div>
     <img mat-card-sm-image class="card-icon" src="{{ card.icon }}" alt="{{ card.title }}" />

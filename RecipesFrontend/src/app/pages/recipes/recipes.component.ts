@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -18,7 +18,7 @@ import { Store } from '@ngrx/store';
   templateUrl: './recipes.component.html',
   styleUrls: ['./recipes.component.css']
 })
-export class RecipesComponent implements OnInit {
+export class RecipesComponent implements OnInit, OnDestroy {
 
   public cards: SimpleCard[];
   public dishCards: DishCard[] = null;
@@ -27,8 +27,8 @@ export class RecipesComponent implements OnInit {
   public dishTags: string[];
   public isButtonActive: boolean = false;
   public isLoadingActive: boolean = true;
-  public isShowAddButton: boolean = false;
-  public sub: Subscription;
+  public subUser: Subscription;
+  public sunQuery: Subscription;
 
   private take: number = 2;
 
@@ -45,11 +45,13 @@ export class RecipesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.searchDishes = params['search'] || '';
-      this.updateRecipes('get');   
-    });
+    this.checkQuery();
     this.checkUser();
+  }
+
+  ngOnDestroy(): void {
+    this.subUser.unsubscribe();
+    this.sunQuery.unsubscribe();
   }
 
   public changeQuery(): void {
@@ -171,16 +173,20 @@ export class RecipesComponent implements OnInit {
     } as DishCard;
   }
 
+  private checkQuery(): void {
+    this.sunQuery = this.activatedRoute.queryParams
+      .subscribe(params => {
+        this.searchDishes = params['search'] || '';
+        this.updateRecipes('get');   
+      });
+  }
+
   private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
-    this.sub = user.subscribe((user) => {
-      if (user !== null) {
-        this.isShowAddButton = true;
-      } else {
-        this.isShowAddButton = false;
-      }
-      this.updateRecipes('get');
-    });
+    this.subUser = user
+      .subscribe(() => {
+        this.updateRecipes('get');
+      });
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Application.Repositories;
@@ -62,6 +63,38 @@ namespace Recipes.Api.Infrastructure.Repositories
             return recipeQuery.FirstOrDefault( x => x.Id == recipeId );
         }
 
+        public Recipe GetFirstRecipeWithSkip( int skip )
+        {
+            return _recipeContext
+                .Set<Recipe>()
+                .Include( x => x.Tags )
+                .AsQueryable()
+                .OrderBy( x => x.CreationDateTime )
+                .Skip( skip )
+                .FirstOrDefault();
+        }
+
+        public RecipeOfDay GetRecipeOfDayForToday()
+        {
+            return _recipeContext
+                .Set<RecipeOfDay>()
+                .FirstOrDefault( x => x.Day == DateTime.Today );
+        }
+
+        public RecipeOfDay GetRecipeOfDayForYesterday()
+        {
+            return _recipeContext
+                .Set<RecipeOfDay>()
+                .FirstOrDefault( x => x.Day == ( DateTime.Today.AddDays( -1 ) ) );
+        }
+
+        public void CreateRecipeOfDay( RecipeOfDay recipeOfDay )
+        {
+            _recipeContext
+                .Set<RecipeOfDay>()
+                .Add( recipeOfDay );
+        }
+
         public void CreateRecipe( Recipe recipe )
         {
             _recipeContext
@@ -114,6 +147,36 @@ namespace Recipes.Api.Infrastructure.Repositories
                 .Set<UserRating>()
                 .Where( x => ( x.UserId == userId && x.IsFavoritesSet == true ) )
                 .ToList();
+        }
+
+        public void CreateRecipeRating( RecipeRating recipeRating )
+        {
+            _recipeContext
+                .Set<RecipeRating>()
+                .Add( recipeRating );
+        }
+
+        public RecipeRating GetRecipeWithMaxRating( int skip )
+        {
+            return _recipeContext
+                .Set<RecipeRating>()
+                .OrderByDescending( x => x.Rating )
+                .Skip( skip )
+                .FirstOrDefault();
+        }
+
+        public RecipeRating GetRecipeRatingById( int recipeId )
+        {
+            return _recipeContext
+                .Set<RecipeRating>()
+                .FirstOrDefault( x => x.RecipeId == recipeId );
+        }
+
+        public void DeleteRecipeRating()
+        {
+            _recipeContext
+                .Set<RecipeRating>()
+                .RemoveRange( _recipeContext.Set<RecipeRating>().ToList() );
         }
     }
 }

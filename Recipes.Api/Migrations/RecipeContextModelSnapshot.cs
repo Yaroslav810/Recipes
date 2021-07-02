@@ -117,6 +117,50 @@ namespace Recipes.Api.Migrations
                     b.ToTable("Recipe");
                 });
 
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeOfDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeOfDay");
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeRating");
+                });
+
             modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeTag", b =>
                 {
                     b.Property<int>("Id")
@@ -261,6 +305,24 @@ namespace Recipes.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeOfDay", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeRating", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeTag", b =>
                 {
                     b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
@@ -284,13 +346,13 @@ namespace Recipes.Api.Migrations
                     b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
                         .WithMany()
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Recipes.Api.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 

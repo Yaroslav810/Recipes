@@ -1,10 +1,9 @@
-export interface MainCourseCard {
+export interface RecipeOfDayDto {
   id: number,
   title: string,
   description: string,
   author: string,
   likesCount: number,
-  timeInMin: string,
-  imagePath: string, 
-  icon: string,
+  timeInMin: number,
+  imagePath: string,
 }
