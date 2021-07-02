@@ -42,7 +42,6 @@ export class RecipeComponent implements OnInit, OnDestroy  {
   ngOnInit(): void {
     const recipeId: number = this.getRecipeIdFromQuery();
 
-    this.loadRecipe(recipeId);
     this.checkUser(recipeId);
   }
 
@@ -159,8 +158,7 @@ export class RecipeComponent implements OnInit, OnDestroy  {
       this.recipeService.isRecipeEditable(recipeId)
         .then((isEditable: boolean) => {
           this.isShowControlButtons = isEditable;
-          const recipeId: number = this.getRecipeIdFromQuery();
-          this.loadRecipe(recipeId);
+          this.loadRecipe(this.getRecipeIdFromQuery());
         });
     });
   }

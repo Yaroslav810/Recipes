@@ -62,8 +62,21 @@ namespace Recipes.Api.Controllers
                 return NotFound();
 
             int? userId = ( User.Identity is { IsAuthenticated: true } ) ? UserId : null;
-
             return Ok( _dtoBuilder.BuildToRecipeDetailDto( recipe, userId ) );
+        }
+
+        // GET api/recipe/day
+        [HttpGet( "day" )]
+        public IActionResult GetRecipeOfDay()
+        {
+            Recipe? recipe = _recipesService.GetRecipeOfDay();
+            if ( recipe == null )
+                return NotFound();
+
+            _unitOfWork.Commit();
+            int? userId = ( User.Identity is { IsAuthenticated: true } ) ? UserId : null;
+
+            return Ok( _dtoBuilder.BuildToRecipeOfDayDto( recipe, userId ) );
         }
 
         // GET api/recipe/{recipeId}/is-editable

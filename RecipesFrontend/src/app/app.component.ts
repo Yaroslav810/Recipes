@@ -20,5 +20,6 @@ export class AppComponent {
       .then(user => {
         this.store$.dispatch(StoreActions.setUser({user}));
       })
+      .catch(() => {})
   }
 }

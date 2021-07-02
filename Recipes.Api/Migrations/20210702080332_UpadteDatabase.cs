@@ -3,10 +3,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Recipes.Api.Migrations
 {
-    public partial class UpdatedDatabase : Migration
+    public partial class UpadteDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "RecipeOfDay",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    Day = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeOfDay", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecipeOfDay_RecipeOfDay_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "RecipeOfDay",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
@@ -22,22 +41,6 @@ namespace Recipes.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRating",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RecipeId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    IsLikeSet = table.Column<bool>(type: "bit", nullable: false),
-                    IsFavoritesSet = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRating", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,6 +91,26 @@ namespace Recipes.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RecipeRating",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeRating", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecipeRating_Recipe_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipe",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RecipeTag",
                 columns: table => new
                 {
@@ -129,6 +152,32 @@ namespace Recipes.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserRating",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    IsLikeSet = table.Column<bool>(type: "bit", nullable: false),
+                    IsFavoritesSet = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRating", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRating_Recipe_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipe",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserRating_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IngredientItem",
                 columns: table => new
                 {
@@ -164,6 +213,16 @@ namespace Recipes.Api.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecipeOfDay_RecipeId",
+                table: "RecipeOfDay",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeRating_RecipeId",
+                table: "RecipeRating",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeTag_RecipeId",
                 table: "RecipeTag",
                 column: "RecipeId");
@@ -172,12 +231,28 @@ namespace Recipes.Api.Migrations
                 name: "IX_Step_RecipeId",
                 table: "Step",
                 column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRating_RecipeId",
+                table: "UserRating",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRating_UserId",
+                table: "UserRating",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "IngredientItem");
+
+            migrationBuilder.DropTable(
+                name: "RecipeOfDay");
+
+            migrationBuilder.DropTable(
+                name: "RecipeRating");
 
             migrationBuilder.DropTable(
                 name: "RecipeTag");

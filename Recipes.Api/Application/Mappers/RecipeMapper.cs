@@ -191,5 +191,20 @@ namespace Recipes.Api.Application.Mappers
                 StarsCount = starsCount,
             };
         }
+
+        public static RecipeOfDayDto MapToRecipeOfDayDto( this Recipe recipe, string authorLogin, bool isLikeSet )
+        {
+            return new RecipeOfDayDto()
+            {
+                Id = recipe.Id,
+                Title = recipe.Title,
+                Description = recipe.Description,
+                Author = authorLogin,
+                LikesCount = recipe.LikesCount,
+                TimeInMin = recipe.TimeInMin,
+                ImagePath = recipe.ImagePath,
+                IsLikeSet = isLikeSet,
+            };
+        }
     }
 }

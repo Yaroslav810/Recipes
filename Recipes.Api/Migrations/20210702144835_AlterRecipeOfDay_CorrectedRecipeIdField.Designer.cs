@@ -10,8 +10,8 @@ using Recipes.Api.Infrastructure.Dbcontext;
 namespace Recipes.Api.Migrations
 {
     [DbContext(typeof(RecipeContext))]
-    [Migration("20210629111347_AddedForeignKey")]
-    partial class AddedForeignKey
+    [Migration("20210702144835_AlterRecipeOfDay_CorrectedRecipeIdField")]
+    partial class AlterRecipeOfDay_CorrectedRecipeIdField
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -117,6 +117,50 @@ namespace Recipes.Api.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Recipe");
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeOfDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeOfDay");
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeRating");
                 });
 
             modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeTag", b =>
@@ -259,6 +303,24 @@ namespace Recipes.Api.Migrations
                     b.HasOne("Recipes.Api.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeOfDay", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Recipes.Api.Application.Entities.RecipeRating", b =>
+                {
+                    b.HasOne("Recipes.Api.Application.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

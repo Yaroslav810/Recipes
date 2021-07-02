@@ -26,7 +26,7 @@
   </section>
 
   <section class="dynamic-content">
-    <app-main-course-card [card]="mainCourseCard" [onOpenDishCard]="openRecipe"></app-main-course-card>
+    <app-main-course-card *ngIf="mainCourseCard" [card]="mainCourseCard" [onOpenDishCard]="openRecipe"></app-main-course-card>
   </section>
 
   <section class="search">

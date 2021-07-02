@@ -14,6 +14,7 @@ namespace Recipes.Api.Application.Services
         public List<Recipe> GetRecipesByAuthorId( int userId );
         public List<Recipe> GetFavouritesRecipes( int userId );
         public Recipe? GetRecipe( int recipeId );
+        public Recipe? GetRecipeOfDay();
         public UserRating? GetUserRating( int recipeId, int userId );
         public bool AddLike( int recipeId, int userId );
         public bool RemoveLike( int recipeId, int userId );
@@ -64,6 +65,41 @@ namespace Recipes.Api.Application.Services
             return _recipeRepository.GetRecipe( recipeId ) ?? null;
         }
 
+        public Recipe? GetRecipeOfDay()
+        {
+            RecipeOfDay? recipeOfDay = _recipeRepository.GetRecipeOfDayForToday();
+            if ( recipeOfDay == null )
+            {
+                RecipeRating recipeRating = _recipeRepository.GetRecipeWithMaxRating( 0 );
+                RecipeOfDay? recipeOfDayYesterday = _recipeRepository.GetRecipeOfDayForYesterday();
+                if ( recipeRating != null )
+                {
+                    if ( recipeOfDayYesterday != null && recipeRating.RecipeId == recipeOfDayYesterday.RecipeId )
+                    {
+                        recipeRating = _recipeRepository.GetRecipeWithMaxRating( 1 );
+                    }
+                }
+
+                int recipeId = 1;
+                if ( recipeRating == null )
+                {
+                    if ( recipeOfDayYesterday != null && recipeOfDayYesterday.RecipeId == recipeId )
+                        recipeId = 2;
+                }
+                else
+                {
+                    recipeId = recipeRating.RecipeId;
+                }
+
+                CreateRecipeOfDay( recipeId );
+                _recipeRepository.DeleteRecipeRating();
+
+                return _recipeRepository.GetRecipe( recipeId, false );
+            }
+
+            return _recipeRepository.GetRecipe( recipeOfDay.RecipeId, false );
+        }
+
         public UserRating? GetUserRating( int recipeId, int userId )
         {
             return _recipeRepository.GetUserRating( recipeId, userId ) ?? null;
@@ -93,8 +129,20 @@ namespace Recipes.Api.Application.Services
                     return false;
             }
 
+            RecipeRating recipeRating = _recipeRepository.GetRecipeRatingById( recipeId );
+            if ( recipeRating == null )
+            {
+                recipeRating = new RecipeRating()
+                {
+                    RecipeId = recipeId,
+                    Rating = 0,
+                };
+                _recipeRepository.CreateRecipeRating( recipeRating );
+            }
+
             userRating.IsLikeSet = true;
             recipe.LikesCount++;
+            recipeRating.Rating++;
 
             return true;
         }
@@ -241,6 +289,16 @@ namespace Recipes.Api.Application.Services
             List<UserRating> userRatings = _recipeRepository.GetUserRatings( recipeId );
             _recipeRepository.DeleteUserRating( userRatings );
             _recipeRepository.DeleteRecipe( recipe );
+        }
+
+        private void CreateRecipeOfDay( int recipeId )
+        {
+            var recipeOfDay = new RecipeOfDay()
+            {
+                RecipeId = recipeId,
+                Day = DateTime.Today,
+            };
+            _recipeRepository.CreateRecipeOfDay( recipeOfDay );
         }
     }
 }

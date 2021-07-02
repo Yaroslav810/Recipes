@@ -4,25 +4,23 @@ using Recipes.Api.Application.Entities;
 
 namespace Recipes.Api.Infrastructure.Configurations
 {
-    public class UserRatingConfiguration : IEntityTypeConfiguration<UserRating>
+    public class RecipeOfDayConfiguration : IEntityTypeConfiguration<RecipeOfDay>
     {
-        public void Configure( EntityTypeBuilder<UserRating> builder )
+        public void Configure( EntityTypeBuilder<RecipeOfDay> builder )
         {
-            builder.ToTable( "UserRating" )
+            builder.ToTable( "RecipeOfDay" )
                 .HasKey( item => item.Id );
 
             builder.Property( item => item.Id )
                 .UseIdentityColumn();
 
-            builder.HasOne<User>()
-                .WithMany()
-                .HasForeignKey( item => item.UserId )
-                .OnDelete( DeleteBehavior.NoAction );
-
             builder.HasOne<Recipe>()
                 .WithMany()
                 .HasForeignKey( item => item.RecipeId )
                 .OnDelete( DeleteBehavior.NoAction );
+
+            builder.Property( item => item.Day )
+                .HasColumnType( "datetime2" );
         }
     }
 }

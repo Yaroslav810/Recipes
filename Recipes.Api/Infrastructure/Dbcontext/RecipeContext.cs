@@ -16,6 +16,8 @@ namespace Recipes.Api.Infrastructure.Dbcontext
             modelBuilder.ApplyConfiguration( new StepConfiguration() );
             modelBuilder.ApplyConfiguration( new UserConfiguration() );
             modelBuilder.ApplyConfiguration( new UserRatingConfiguration() );
+            modelBuilder.ApplyConfiguration( new RecipeRatingConfiguration() );
+            modelBuilder.ApplyConfiguration( new RecipeOfDayConfiguration() );
         }
     }
 }

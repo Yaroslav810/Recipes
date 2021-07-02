@@ -13,6 +13,7 @@ namespace Recipes.Api.Application.Builders
         public List<RecipeDto> BuildToListRecipeDetailDto( List<Recipe> recipes, int? userId );
         public List<RecipeDto> BuildToMyListRecipeDetailDto( List<Recipe> recipes, int userId );
         public RecipeDetailDto BuildToRecipeDetailDto( Recipe recipe, int? userId );
+        public RecipeOfDayDto BuildToRecipeOfDayDto( Recipe recipe, int? userId );
     }
 
     public class DtoBuilder : IDtoBuilder
@@ -89,6 +90,20 @@ namespace Recipes.Api.Application.Builders
             }
 
             return recipe.MapToRecipeDetailDto( user.Login, isEditable, isLikeSet, isFavouriteSet );
+        }
+
+        public RecipeOfDayDto BuildToRecipeOfDayDto( Recipe recipe, int? userId )
+        {
+            bool isLikeSet = false;
+            if ( userId != null )
+            {
+                var userRating = _recipesService.GetUserRating( recipe.Id, ( int )userId );
+                if ( userRating != null )
+                    isLikeSet = userRating.IsLikeSet;
+            }
+
+            User user = _accountService.GetUserById( recipe.AuthorId );
+            return recipe.MapToRecipeOfDayDto( user.Login, isLikeSet );
         }
     }
 }
