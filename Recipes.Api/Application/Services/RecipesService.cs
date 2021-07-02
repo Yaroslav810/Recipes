@@ -23,7 +23,7 @@ namespace Recipes.Api.Application.Services
         public Task CreateRecipeAsync( EditRecipe editRecipe, int userId );
         public Task UpdateRecipeWithImageAsync( int recipeId, EditRecipe editRecipe, int userId );
         public void UpdateRecipeWithOutImage( int recipeId, Recipe recipe, int userId );
-        public void DeleteRecipe( int recipeId );
+        public bool DeleteRecipe( int recipeId );
     }
 
     public class RecipesService : IRecipesService
@@ -293,12 +293,18 @@ namespace Recipes.Api.Application.Services
             currentRecipe.Steps = recipe.Steps;
         }
 
-        public void DeleteRecipe( int recipeId )
+        public bool DeleteRecipe( int recipeId )
         {
             Recipe recipe = _recipeRepository.GetRecipe( recipeId, true );
+            RecipeOfDay recipeOfDay = _recipeRepository.GetRecipeOfDayForToday();
+            if ( recipeOfDay != null && recipeOfDay.RecipeId == recipe.Id )
+                return false;
+
             List<UserRating> userRatings = _recipeRepository.GetUserRatings( recipeId );
             _recipeRepository.DeleteUserRating( userRatings );
             _recipeRepository.DeleteRecipe( recipe );
+
+            return true;
         }
 
         private void CreateRecipeOfDay( int recipeId )

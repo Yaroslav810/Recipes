@@ -96,11 +96,11 @@ export class RecipeService {
       .toPromise();
   }
 
-  public async deleteRecipe(recipeId: number): Promise<void> {
+  public async deleteRecipe(recipeId: number): Promise<boolean> {
     const url = `${this.recipeUrl}/${recipeId}/delete`;
 
-    await this.httpClient
-      .post(url, {})
+    return await this.httpClient
+      .post<boolean>(url, {})
       .toPromise();
   }
 

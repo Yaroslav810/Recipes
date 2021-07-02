@@ -192,10 +192,11 @@ namespace Recipes.Api.Controllers
             if ( recipe.AuthorId != UserId )
                 return StatusCode( ( int )HttpStatusCode.Forbidden );
 
-            _recipesService.DeleteRecipe( recipeId );
-            _unitOfWork.Commit();
+            bool status = _recipesService.DeleteRecipe( recipeId );
+            if ( status )
+                _unitOfWork.Commit();
 
-            return Ok();
+            return Ok( status );
         }
 
         // POST api/recipe/add
