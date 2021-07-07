@@ -79,6 +79,19 @@ namespace Recipes.Api.Controllers
             return Ok( userDataDto );
         }
 
+        // GET api/account/get-current-user-data
+        [HttpGet( "get-current-user-data" )]
+        public IActionResult GetCurrentUserData()
+        {
+            if ( !( User.Identity is { IsAuthenticated: true } ) )
+                return Unauthorized();
+
+            User user = _accountService.GetUserById( UserId );
+            UserDataDto userDataDto = user.MapToUserData();
+
+            return Ok( userDataDto );
+        }
+
         // GET api/account/get-statistics
         [HttpGet( "get-statistics" )]
         public IActionResult GetStatistics()

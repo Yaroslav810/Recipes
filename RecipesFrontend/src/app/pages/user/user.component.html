@@ -2,15 +2,6 @@
   <p class="back" (click)="goBack()">
     Назад
   </p>
-  <section class="error">
-    <app-loader *ngIf="isLoadingActive"></app-loader>
-    <div *ngIf="isError && !isLoadingActive" class="server-error">
-      <p class="text-error">Ошибка!</p>
-      <button mat-stroked-button color="accent" class="stroked-button try-again__button" (click)="initializationData()">
-        <span>Повторить</span>
-      </button>
-    </div>
-  </section>
   <section *ngIf="!isError && !isLoadingActive">
     <div class="main">
       <h2 class="title">Мой профиль</h2>
@@ -112,5 +103,9 @@
         [onStarClick]="onStarClick.bind(this)"
       ></app-dish-card>
     </div>
+  </section>
+  <section class="error">
+    <app-loader *ngIf="isLoadingActive"></app-loader>
+    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="displayData()"></app-error-block>
   </section>
 </div>

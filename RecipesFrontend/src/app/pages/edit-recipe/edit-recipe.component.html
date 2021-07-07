@@ -191,11 +191,6 @@
   </form>
   <section>
     <app-loader *ngIf="isLoadingActive"></app-loader>
-    <div *ngIf="isError && !isLoadingActive" class="server-error">
-      <p class="text-error">Кажется что-то пошло не так, но мы уже работаем над этим!</p>
-      <button mat-stroked-button color="accent" class="try-again__button" (click)="loadRecipe()">
-        <span>Повторить попытку</span>
-      </button>
-    </div>
+    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="loadRecipe()"></app-error-block>
   </section>
 </div>

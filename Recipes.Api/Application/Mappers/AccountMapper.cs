@@ -37,7 +37,6 @@ namespace Recipes.Api.Application.Mappers
         {
             return new()
             {
-                Id = user.Id,
                 Name = user.FirstName,
                 Login = user.Login,
                 About = user.About,

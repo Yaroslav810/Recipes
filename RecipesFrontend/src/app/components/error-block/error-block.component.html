@@ -1,0 +1,32 @@
+<section [ngSwitch]="error.status" class="error-block">
+  <div *ngSwitchCase="400" class="error">
+    <p class="error__text">Ошибка! Некорректный запрос!</p>
+    <button mat-stroked-button color="accent" class="error__button" routerLink="/">
+      <span>На главную</span>
+    </button>
+  </div>
+  <div *ngSwitchCase="401" class="error">
+    <p class="error__text">Необходимо войти в свой аккаунт!</p>
+    <button mat-stroked-button color="accent" class="error__button" (click)="openIdentificationModal()">
+      <span>Войти</span>
+    </button>
+  </div>
+  <div *ngSwitchCase="403" class="error">
+    <p class="error__text">У вас нет прав на просмотр данного ресурса</p>
+    <button mat-stroked-button color="accent" class="error__button" routerLink="/">
+      <span>На главную</span>
+    </button>
+  </div>
+  <div *ngSwitchCase="404" class="error">
+    <p class="error__text">Ресурс не найден</p>
+    <button mat-stroked-button color="accent" class="error__button" routerLink="/">
+      <span>На главную</span>
+    </button>
+  </div>
+  <div *ngSwitchDefault class="error">
+    <p class="error__text">Кажется что-то пошло не так, но мы уже работаем над этим!</p>
+    <button mat-stroked-button color="accent" class="error__button" (click)="clickTryAgain()">
+      <span>Повторить попытку</span>
+    </button>
+  </div>
+</section>

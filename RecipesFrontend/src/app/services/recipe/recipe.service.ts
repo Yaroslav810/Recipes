@@ -28,8 +28,8 @@ export class RecipeService {
     const url = `${this.recipeUrl}/day`;
 
     return await this.httpClient
-      .get<RecipeOfDayDto>(url)
-      .toPromise() ?? null;
+                    .get<RecipeOfDayDto>(url)
+                    .toPromise() ?? null;
   }
 
   public async isRecipeEditable(recipeId: number): Promise<boolean> {
@@ -41,24 +41,23 @@ export class RecipeService {
 
   public async getRecipeForEdit(recipeId: number): Promise<EditRecipeDetailDto> {
     const url = `${this.recipeUrl}/${recipeId}/edit`;
-    const recipe = await this.httpClient
+    return await this.httpClient
                     .get<EditRecipeDetailDto>(url)
                     .toPromise();
-    return recipe ?? null;
   }
 
   public async addLike(recipeId: number): Promise<void> {
     const url = `${this.recipeUrl}/${recipeId}/add-like`;
     await this.httpClient
-      .get<void>(url)
-      .toPromise();
+            .get<void>(url)
+            .toPromise();
   }
 
   public async removeLike(recipeId: number): Promise<void> {
     const url = `${this.recipeUrl}/${recipeId}/remove-like`;
     await this.httpClient
-      .get<void>(url)
-      .toPromise();
+            .get<void>(url)
+            .toPromise();
   }
 
   public async addToFavourite(recipeId: number): Promise<void> {

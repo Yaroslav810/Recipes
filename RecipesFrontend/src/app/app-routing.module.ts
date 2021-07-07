@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { UserDataDeactivateGuard } from './guards/user-data-deactivate.guard';
+import { UserDataDeactivateGuard } from './guards/user-data-deactivate/user-data-deactivate.guard';
+import { AuthenticationAccessGuard } from './guards/authentication-access/authentication-access.guard';
 
 import { MainComponent } from './pages/main/main.component';
 import { RecipesComponent } from './pages/recipes/recipes.component'
@@ -15,11 +16,14 @@ const routes: Routes = [
   { path: '', component: MainComponent },
   { path: 'recipes', component: RecipesComponent },
   { path: 'recipe/:id', component: RecipeComponent },
-  { path: 'favorites', component: FavoritesComponent },
-  { path: 'edit', component: EditRecipeComponent, canDeactivate: [UserDataDeactivateGuard], children: [
-    { path: ':id', component: EditRecipeComponent }
-  ] },
-  { path: 'user', component: UserComponent },
+  { path: 'favorites', component: FavoritesComponent, canActivate: [AuthenticationAccessGuard] },
+  { path: 'edit', component: EditRecipeComponent, 
+    canDeactivate: [UserDataDeactivateGuard], 
+    children: [
+      { path: ':id', component: EditRecipeComponent, canActivate: [AuthenticationAccessGuard] }
+    ] 
+  },
+  { path: 'user', component: UserComponent, canActivate: [AuthenticationAccessGuard] },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404' },
 ];

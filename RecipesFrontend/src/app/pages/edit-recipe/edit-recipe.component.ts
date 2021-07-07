@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormControl, Validators, FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { Observable, Subscription } from "rxjs";
 import { map } from 'rxjs/operators';
 
 import { DataLossModalComponent } from '../../components/data-loss-modal/data-loss-modal.component';
-import { IComponentCanDeactivate } from '../../guards/user-data-deactivate.guard';
+import { IComponentCanDeactivate } from '../../guards/user-data-deactivate/user-data-deactivate.guard';
 import { RecipeService } from '../../services/recipe/recipe.service';
 import { ImageService } from '../../services/image/image.service';
 import { EditRecipeDto } from '../../dto/edit-recipe/edit-recipe-dto';
@@ -29,28 +29,27 @@ import { StoreSelectors } from '../../store/store.selectors';
   styleUrls: ['./edit-recipe.component.css']
 })
 export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
-
+  public typeFile: string[] = ['image/png', 'image/jpeg', 'image/webp'];
   public timeValue: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120];
   public personValue: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  public typeFile: string[] = ['image/png', 'image/jpeg', 'image/webp'];
-  public isLoadingActive: boolean = true;
-  public isError: boolean = false;
   public previewImage: string = null;
   public formData: IFormGroup<EditRecipeDto>;
-  private sub: Subscription;
+  public isLoadingActive: boolean = true;
+  public isError: boolean = false;
+  public error: any = null;
   private formBuilder: IFormBuilder;
+  private subscription: Subscription = Subscription.EMPTY;
   private recipeId: number;
 
   constructor(
     private location: Location, 
     public dialog: MatDialog,
-    private router: Router, 
     private activatedRoute: ActivatedRoute,
     private recipeService: RecipeService,
     private imageService: ImageService,
     private snackBar: MatSnackBar,
-    formBuilder: FormBuilder,
     private store$: Store,
+    formBuilder: FormBuilder,
   ) {
     this.formBuilder = formBuilder;
   }
@@ -60,7 +59,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   public canDeactivate() {
@@ -240,28 +239,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
         })
         .catch((response) => {
           this.isError = true;
-          switch(response.status) {
-            case 401: {
-              this.snackBar.open(`Для доступа к этому ресурсу, необходимо
-              войти в аккаунт`, 'Закрыть', {
-                duration: 5000,
-                horizontalPosition: 'end',
-                verticalPosition: 'top',
-              });
-              break;
-            }
-            case 403: {
-              this.router.navigate(['/recipe', this.recipeId]);
-              break;
-            }
-            default: {
-              this.snackBar.open('Не удалось загрузить рецепт', 'Закрыть', {
-                duration: 5000,
-                horizontalPosition: 'end',
-                verticalPosition: 'top',
-              });
-            }
-          }
+          this.error = response;
         })
         .finally(() => {
           this.isLoadingActive = false;
@@ -439,7 +417,7 @@ export class EditRecipeComponent implements OnInit, IComponentCanDeactivate {
   private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
-    this.sub = user.subscribe(() => {
+    this.subscription = user.subscribe(() => {
       this.loadRecipe();
     });
   }

@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { SimpleCard } from '../../components/simple-card/simple-card';
 import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipesService } from '../../services/recipes/recipes.service';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
-import { ImageService } from 'src/app/services/image/image.service';
-import { Observable, Subscription } from 'rxjs';
-import { User } from 'src/app/store/store.reducer';
-import { StoreSelectors } from 'src/app/store/store.selectors';
-import { Store } from '@ngrx/store';
-
+import { ImageService } from '../../services/image/image.service';
+import { IdentificationWindowModalComponent } from '../../components/identification-window-modal/identification-window-modal.component';
+import { StoreSelectors } from '../../store/store.selectors';
 
 @Component({
   selector: 'app-recipes',
@@ -20,16 +20,15 @@ import { Store } from '@ngrx/store';
 })
 export class RecipesComponent implements OnInit, OnDestroy {
 
-  public cards: SimpleCard[];
+  public cards: SimpleCard[] = [];
   public dishCards: DishCard[] = null;
-
   public searchDishes: string = '';
-  public dishTags: string[];
+  public dishTags: string[] = [];
   public isButtonActive: boolean = false;
   public isLoadingActive: boolean = true;
-  public subUser: Subscription;
-  public sunQuery: Subscription;
-
+  public isError: boolean = false;
+  public error: any = null;
+  public subscription: Subscription = new Subscription();
   private take: number = 2;
 
   constructor(
@@ -37,8 +36,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute, 
     private recipesService: RecipesService,
     private imageService: ImageService,
-    private snackBar: MatSnackBar,
     private store$: Store,
+    private dialog: MatDialog,
   ) {
     this.cards = this.getAdvantagesCards();
     this.dishTags = this.getDishTags();
@@ -50,8 +49,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subUser.unsubscribe();
-    this.sunQuery.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   public changeQuery(): void {
@@ -70,20 +68,24 @@ export class RecipesComponent implements OnInit, OnDestroy {
     this.changeQuery();
   }
 
-  public loadAdditionalCards(): void {
-    this.updateRecipes('update');
-  }
-
-  public tryLoadAgain(): void {
-    this.updateRecipes('get');  
-  }
-
   public openRecipes(card: DishCard): void {
     this.router.navigate(['/recipe', card.id]);
   }
 
   public onAddRecipe(): void {
-    this.router.navigate(['/edit']);
+    this.store$
+      .select(StoreSelectors.user)
+      .pipe(take(1))
+      .subscribe((user) => {
+        if (user !== null) {
+          this.router.navigate(['/edit']);
+        } else {
+          this.dialog.open(IdentificationWindowModalComponent, {
+            autoFocus: false,
+            data: '',
+          });
+        }
+      });
   }
 
   public onLikeClick(): void { }
@@ -128,12 +130,14 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
   private updateRecipes(action: string): void {
     const searchString = this.searchDishes.trim();
-    const length = (this.dishCards && action !== 'get')? this.dishCards.length : 0;
+    const length = (this.dishCards && action !== 'get') ? this.dishCards.length : 0;
 
     this.isLoadingActive = true;
+    this.isError = false;
     this.recipesService.getRecipes(searchString, this.take, length)
-      .then((dishCard: RecipeDto[]) => {
-        const recipes = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
+      .then((recipesDto: RecipeDto[]) => {
+        const recipes = recipesDto.map((recipeDto: RecipeDto) => 
+          this.convertToDishCard(recipeDto));
         switch (action) {
           case 'get':
             this.dishCards = recipes
@@ -142,14 +146,11 @@ export class RecipesComponent implements OnInit, OnDestroy {
             this.dishCards = this.dishCards.concat(recipes)
             break;
         };    
-        this.isButtonActive = dishCard.length === this.take;
+        this.isButtonActive = recipesDto.length === this.take;
       })
-      .catch(() => {
-        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
-          duration: 5000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-        });
+      .catch((response) => {
+        this.isError = true;
+        this.error = response;
       })
       .finally(() => {
         this.isLoadingActive = false;
@@ -174,19 +175,22 @@ export class RecipesComponent implements OnInit, OnDestroy {
   }
 
   private checkQuery(): void {
-    this.sunQuery = this.activatedRoute.queryParams
-      .subscribe(params => {
-        this.searchDishes = params['search'] || '';
-        this.updateRecipes('get');   
-      });
+    this.subscription.add(
+      this.activatedRoute.queryParams
+        .subscribe(params => {
+          this.searchDishes = params['search'] || '';
+          this.updateRecipes('get');   
+        })
+    );
   }
 
-  private checkUser(): void {
-    const user: Observable<User> = this.store$.select(StoreSelectors.user);
-    
-    this.subUser = user
-      .subscribe(() => {
+  private checkUser(): void {  
+    const user = this.store$.select(StoreSelectors.user);
+
+    this.subscription.add(
+      user.subscribe(() => {
         this.updateRecipes('get');
-      });
+      })
+    );
   }
 }

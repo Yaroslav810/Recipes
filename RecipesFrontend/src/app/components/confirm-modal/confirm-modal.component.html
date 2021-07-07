@@ -1,0 +1,19 @@
+<div class="confirm-modal">
+  <div class="close-container">
+    <div class="close" [mat-dialog-close]>
+      <div class="close-icon"></div>
+    </div>
+  </div>
+  <div class="content">
+    <h3 class="title">{{ warning }}</h3>
+    <p class="description">Отменить это действие будет невозможно</p>
+    <div class="buttons">
+      <button mat-flat-button color="accent" class="button" [mat-dialog-close]="true">
+        <span>Подтверждаю</span>
+      </button>
+      <button mat-stroked-button color="accent" class="button stroked-button" [mat-dialog-close]="false">
+        <span>Отмена</span>
+      </button>
+    </div>
+  </div>
+</div>
