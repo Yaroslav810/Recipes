@@ -13,7 +13,6 @@
   </div>
   <div *ngSwitchCase="403" class="error">
     <p class="error__text">У вас нет прав на просмотр данного ресурса</p>
-    <img *ngIf="withImage" src="/assets/images/403.png" alt="sad cat" class="error__image">
     <button mat-stroked-button color="accent" class="error__button" routerLink="/">
       <span>На главную</span>
     </button>
