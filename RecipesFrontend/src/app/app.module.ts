@@ -32,6 +32,8 @@ import { DefaultComponent } from './components/identification-window-modal/compo
 import { LoaderComponent } from './components/loader/loader.component';
 import { StatisticCardComponent } from './components/statistic-card/statistic-card.component';
 import { PasswordChangeWindowModalComponent } from './components/password-change-window-modal/password-change-window-modal.component';
+import { ErrorBlockComponent } from './components/error-block/error-block.component';
+import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,8 @@ import { PasswordChangeWindowModalComponent } from './components/password-change
     UserComponent,
     StatisticCardComponent,
     PasswordChangeWindowModalComponent,
+    ErrorBlockComponent,
+    ConfirmModalComponent,
   ],
   imports: [
     BrowserModule,

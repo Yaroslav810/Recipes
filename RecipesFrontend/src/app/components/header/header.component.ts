@@ -98,9 +98,9 @@ export class HeaderComponent implements OnInit {
             icon: 'user.svg',
             onAction: ($event) => {
               $event.preventDefault();
-              const modal = this.dialog.open(IdentificationWindowModalComponent, {
+              this.dialog.open(IdentificationWindowModalComponent, {
                 autoFocus: false,
-                data: '',
+                data: 'login',
               });
             }
           },

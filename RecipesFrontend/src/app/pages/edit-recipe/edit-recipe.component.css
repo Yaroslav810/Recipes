@@ -395,25 +395,3 @@
   text-align: center;
   color: #808080;
 }
-
-.text-error {
-  max-width: 450px;
-  margin: 10px auto 0;
-  font: normal bold 24px/30px 'Montserrat', sans-serif;
-  text-align: center;
-  color: #808080;
-}
-
-.try-again__button {
-  display: flex;
-  margin: 25px auto 0;
-  padding: 12px 78px;
-  border: 1px solid #808080;
-  border-radius: 16px;
-  background: #fff;
-}
-
-.try-again__button span {
-  font: normal 600 18px/22px 'Montserrat', sans-serif;
-  color: #808080;
-}

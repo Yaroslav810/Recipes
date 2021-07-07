@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { SimpleCard } from '../../components/simple-card/simple-card';
 import { MainCourseCard } from '../../components/main-course-card/main-course-card';
 import { IdentificationWindowModalComponent} from './../../components/identification-window-modal/identification-window-modal.component';
-import { StoreSelectors } from '../../store/store.selectors';
+import { RecipeService } from '../../services/recipe/recipe.service';
+import { ImageService } from '../../services/image/image.service';
+import { RecipeOfDayDto } from '../../dto/recipe-of-day/recipe-of-day-dto';
 import { User } from '../../store/store.reducer';
-import { RecipeService } from 'src/app/services/recipe/recipe.service';
-import { ImageService } from 'src/app/services/image/image.service';
-import { RecipeOfDayDto } from 'src/app/dto/recipe-of-day/recipe-of-day-dto';
+import { StoreSelectors } from '../../store/store.selectors';
 
 @Component({
   selector: 'app-main',
@@ -19,13 +20,13 @@ import { RecipeOfDayDto } from 'src/app/dto/recipe-of-day/recipe-of-day-dto';
   styleUrls: ['./main.component.css']
 })
 
-export class MainComponent implements OnInit {
-  public isShowLoginButton: boolean = false;
-  public cards: SimpleCard[];
+export class MainComponent implements OnInit, OnDestroy {
+  public cards: SimpleCard[] = [];
+  public hintsDishes: string[] = [];
   public mainCourseCard: MainCourseCard = null;
-  public hintsDishes: string[];
   public searchDishes = '';
-  public sub: Subscription;
+  public isShowLoginButton: boolean = false;
+  public subscription: Subscription;
 
   constructor(
     private router: Router,
@@ -41,6 +42,51 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.getMainCourseCard();
     this.checkUser();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  public searchByHint = (hint: string): void => {
+    this.searchDishes = hint;
+  }
+
+  public openRecipe = (card: MainCourseCard): void => {
+    this.router.navigate(['recipe', card.id]);
+  }
+
+  public onAddRecipe(): void {
+    this.store$
+      .select(StoreSelectors.user)
+      .pipe(take(1))
+      .subscribe((user) => {
+        if (user !== null) {
+          this.router.navigate(['/edit']);
+        } else {
+          this.dialog.open(IdentificationWindowModalComponent, {
+            autoFocus: false,
+            data: '',
+          });
+        }
+      });
+  }
+
+  public onSearch(): void {
+    let inputString = this.searchDishes.trim();
+    if (inputString !== '') 
+      this.router.navigate(['/recipes'], {
+        queryParams: {
+          search: inputString, 
+        }
+      })
+  }
+
+  public showModalWindow(): void {
+    this.dialog.open(IdentificationWindowModalComponent, {
+      autoFocus: false,
+      data: 'login',
+    });
   }
 
   private getAdvantagesCards = (): SimpleCard[] => {
@@ -68,41 +114,21 @@ export class MainComponent implements OnInit {
     ];
   }
 
+  private getDishHints = (): string[] => {
+    return [
+      'Мясо',
+      'Деликатесы',
+      'Пироги',
+      'Рыба',
+    ];
+  }
+
   private getMainCourseCard = (): void => {
     this.recipeService.getRecipeOfDay()
       .then((recipeOfDayDto: RecipeOfDayDto) => {
         this.mainCourseCard = this.convertToMainCourseCard(recipeOfDayDto);
       })
       .catch(() => {})
-  }
-
-  public searchByHint = (hint: string): void => {
-    this.searchDishes = hint;
-  }
-
-  public openRecipe = (card: MainCourseCard): void => {
-    this.router.navigate(['recipe', card.id]);
-  }
-
-  public onAddRecipe(): void {
-    this.router.navigate(['/edit']);
-  }
-
-  public onSearch(): void {
-    let inputString = this.searchDishes.trim();
-    if (inputString !== '') 
-      this.router.navigate(['/recipes'], {
-        queryParams: {
-          search: inputString, 
-        }
-      })
-  }
-
-  public showModalWindow(): void {
-    const modal = this.dialog.open(IdentificationWindowModalComponent, {
-      autoFocus: false,
-      data: 'login',
-    });
   }
 
   private convertToMainCourseCard(recipeOfDayDto: RecipeOfDayDto): MainCourseCard {
@@ -118,19 +144,10 @@ export class MainComponent implements OnInit {
     } as MainCourseCard;
   }
 
-  private getDishHints = (): string[] => {
-    return [
-      'Мясо',
-      'Деликатесы',
-      'Пироги',
-      'Рыба',
-    ];
-  }
-
   private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
-    this.sub = user.subscribe((user) => {
+    this.subscription = user.subscribe((user) => {
       if (user !== null) {
         this.isShowLoginButton = false;
       } else {

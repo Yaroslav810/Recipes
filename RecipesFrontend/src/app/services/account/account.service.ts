@@ -43,6 +43,13 @@ export class AccountService {
     return user ?? null;
   }
 
+  public async getCurrentUserData(): Promise<UserDataDto> {
+    const url = `${this.accountUrl}/get-current-user-data`;
+
+    const user = await this.httpClient.get<UserDataDto>(url).toPromise();
+    return user ?? null;
+  }
+
   public async getStatistics(): Promise<UserStatisticsDto> {
     const url = `${this.accountUrl}/get-statistics`;
 

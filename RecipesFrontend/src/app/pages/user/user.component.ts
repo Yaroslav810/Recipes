@@ -13,6 +13,7 @@ import { StatisticCard } from '../../components/statistic-card/statistic-card';
 import { PasswordChangeWindowModalComponent } from '../../components/password-change-window-modal/password-change-window-modal.component';
 import { UserDto } from '../../dto/user/user-dto';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
+import { UserDataDto } from '../../dto/user-data/user-data-dto';
 import { UserStatisticsDto } from '../../dto/user-statistics/user-statistics-dto';
 import { AccountService } from '../../services/account/account.service';
 import { RecipesService } from '../../services/recipes/recipes.service';
@@ -28,14 +29,15 @@ import { StoreActions } from '../../store/store.actions';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit, OnDestroy {
+  public userForm: IFormGroup<UserDto> = null;
+  public statistics: StatisticCard[] = [];
+  public recipes: DishCard[] = [];
   public isEditing: boolean = false;
   public isLoadingActive: boolean = true;
   public isError: boolean = false;
-  public statistics: StatisticCard[] = [];
-  public recipes: DishCard[] = [];
-  public userForm: IFormGroup<UserDto> = null;
+  public error: any = null;
   private formBuilder: IFormBuilder;
-  private sub: Subscription;
+  private subscription: Subscription;
 
   constructor(
     private location: Location,
@@ -52,12 +54,11 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.displayData();
     this.checkUser();
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   public goBack(): void {
@@ -81,6 +82,7 @@ export class UserComponent implements OnInit, OnDestroy {
               about: this.userForm.value.about,
             } as User;
             this.store$.dispatch(StoreActions.setUser({user}));
+            this.isEditing = false;
           } else {
             this.snackBar.open('Такой логин уже есть в системе', 'Закрыть', {
               duration: 5000,
@@ -106,7 +108,7 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   public onChangePassword(): void {
-    const modal = this.dialog.open(PasswordChangeWindowModalComponent, {
+    this.dialog.open(PasswordChangeWindowModalComponent, {
       autoFocus: false
     });
   }
@@ -120,30 +122,17 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   private displayData(): void {
-    this.initializationData();
-    this.getStatistics();
-    this.getUserRecipes();
-  }
-
-  private initializationData(): void {
     this.isError = false;
     this.isLoadingActive = true;
-    this.accountService.getCurrentUser()
-      .then(user => {
-        if (user === null){
-          this.isError = true;
-          this.snackBar.open(`Для доступа к этому ресурсу, необходимо
-              войти в аккаунт`, 'Закрыть', {
-                duration: 5000,
-                horizontalPosition: 'end',
-                verticalPosition: 'top',
-              });
-        } else {
-          this.updateUserInfo(user);
-        }
+    this.accountService.getCurrentUserData()
+      .then((user: UserDataDto) => {
+        this.updateUserInfo(user);
+        this.getStatistics();
+        this.getUserRecipes();
       })
-      .catch(() => {
+      .catch((response) => {
         this.isError = true;
+        this.error = response;
       })
       .finally(() => {
         this.isLoadingActive = false;
@@ -188,7 +177,11 @@ export class UserComponent implements OnInit, OnDestroy {
             value: userStatisticsDto.favouritesCount,
           }
         ];
-      });    
+      })
+      .catch((response) => {
+        this.isError = true;
+        this.error = response;
+      }); 
   }
 
   private getUserRecipes(): void {
@@ -196,12 +189,9 @@ export class UserComponent implements OnInit, OnDestroy {
       .then((dishCard: RecipeDto[]) => {
         this.recipes = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
       })
-      .catch(() => {
-        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
-          duration: 5000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-        });
+      .catch((response) => {
+        this.isError = true;
+        this.error = response;
       });
   }
 
@@ -225,7 +215,7 @@ export class UserComponent implements OnInit, OnDestroy {
   private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
-    this.sub = user.subscribe(() => {
+    this.subscription = user.subscribe(() => {
       this.displayData();
     });
   }

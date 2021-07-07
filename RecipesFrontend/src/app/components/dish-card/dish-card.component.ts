@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RecipeService } from 'src/app/services/recipe/recipe.service';
+
+import { RecipeService } from '../../services/recipe/recipe.service';
+import { IdentificationWindowModalComponent } from '../identification-window-modal/identification-window-modal.component';
 import { DishCard } from './dish-card';
 
 @Component({
@@ -17,7 +20,8 @@ export class DishCardComponent implements OnInit {
 
   constructor(
     private recipeService: RecipeService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {  }
 
   ngOnInit(): void {  }
@@ -30,22 +34,14 @@ export class DishCardComponent implements OnInit {
         .then(() => {
           this.onStarClick();
         })
-        .catch((response) => {
+        .catch(() => {
           this.card.starsCount = ++this.card.starsCount;
           this.card.isStarSet = !this.card.isStarSet;
-          if (response.status === 401) {
-            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
-            });
-          } else {
-            this.snackBar.open('Ошибка!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
-            });
-          }
+          this.snackBar.open('Ошибка!', 'Закрыть', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
         });
     } else {
       this.card.starsCount = ++this.card.starsCount;
@@ -57,10 +53,9 @@ export class DishCardComponent implements OnInit {
           this.card.starsCount = --this.card.starsCount;
           this.card.isStarSet = !this.card.isStarSet;
           if (response.status === 401) {
-            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
+            this.dialog.open(IdentificationWindowModalComponent, {
+              autoFocus: false,
+              data: '',
             });
           } else {
             this.snackBar.open('Ошибка!', 'Закрыть', {
@@ -82,22 +77,14 @@ export class DishCardComponent implements OnInit {
         .then(() => {
           this.onLikeClick();
         })
-        .catch((response) => {
+        .catch(() => {
           this.card.likesCount = ++this.card.likesCount;
           this.card.isLikeSet = !this.card.isLikeSet;
-          if (response.status === 401) {
-            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
-            });
-          } else {
-            this.snackBar.open('Ошибка!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
-            });
-          }
+          this.snackBar.open('Ошибка!', 'Закрыть', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+          });
         }); 
     } else {
       this.card.likesCount = ++this.card.likesCount;
@@ -109,10 +96,9 @@ export class DishCardComponent implements OnInit {
           this.card.likesCount = --this.card.likesCount;
           this.card.isLikeSet = !this.card.isLikeSet;
           if (response.status === 401) {
-            this.snackBar.open('Войдите в аккаунт!', 'Закрыть', {
-              duration: 3000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
+            this.dialog.open(IdentificationWindowModalComponent, {
+              autoFocus: false,
+              data: '',
             });
           } else {
             this.snackBar.open('Ошибка!', 'Закрыть', {

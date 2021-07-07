@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Store } from '@ngrx/store';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subscription } from 'rxjs';
 
@@ -13,6 +14,7 @@ import { RecipeDetailDto } from '../../dto/recipe-detail/recipe-detail-dto';
 import { IngredientDto } from '../../dto/ingredient/ingredient-dto';
 import { StepDto } from '../../dto/step/step-dto';
 import { StepCard } from '../../components/step-card/step-card';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { User } from '../../store/store.reducer';
 import { StoreSelectors } from '../../store/store.selectors';
 
@@ -22,14 +24,16 @@ import { StoreSelectors } from '../../store/store.selectors';
   styleUrls: ['./recipe.component.css']
 })  
 export class RecipeComponent implements OnInit, OnDestroy  {
-  
   public recipeDetails: Recipe = null;
   public card: DishCard = null;
   public isLoadingActive: boolean = true;
   public isShowControlButtons: boolean = false;
-  private sub: Subscription;
+  public isError: boolean = false;
+  public error: any = null;
+  private subscription: Subscription;
 
   constructor(
+    public dialog: MatDialog,
     private location: Location,
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -40,57 +44,78 @@ export class RecipeComponent implements OnInit, OnDestroy  {
   ) {  }
 
   ngOnInit(): void {
-    const recipeId: number = this.getRecipeIdFromQuery();
-
-    this.checkUser(recipeId);
+    this.checkUser();
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   public goBack(): void {
     this.location.back();
   }
 
-  public openCard(): void {  }
+  public loadRecipe(): void {
+    this.isLoadingActive = true;
+    this.isError = false;
+    this.recipeService.getRecipeDetail(this.getRecipeIdFromQuery())
+      .then((recipeDetails: RecipeDetailDto) => {
+        this.recipeDetails = this.convertToRecipe(recipeDetails);
+        this.card = this.convertRecipeForCard(this.recipeDetails);
+        this.isShowControlButtons = recipeDetails.isEditable;
+      })
+      .catch((response) => {
+        this.isError = true;
+        this.error = response;
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
+      });
+  }
 
-  public loadRecipe(recipeId: number): void {
-    this.updateRecipe(recipeId);
+  public onDeleteRecipe(): void {
+    const isDeleted = this.dialog.open(ConfirmModalComponent, {
+      autoFocus: false,
+      data: 'Вы действительно хотите удалить рецепт?',
+    });
+
+    isDeleted.afterClosed().subscribe(result => {
+      if (result) {
+        const recipeId = this.getRecipeIdFromQuery();
+
+        this.recipeService.deleteRecipe(recipeId)
+          .then((canDelete: boolean) => {
+            if (canDelete) {
+              this.router.navigate(['recipes']);
+              this.snackBar.open('Рецепт успешно удалён!', 'Закрыть', {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+              });
+            } else {
+              this.snackBar.open('Невозможно удалить рецепт дня!', 'Закрыть', {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+              });
+            }
+          })
+          .catch(() => {
+            this.snackBar.open('Ошибка удаления рецепта!', 'Закрыть', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+            });
+          });
+      }
+    });
   }
 
   public openEditPage(): void {
     this.router.navigate(['edit', this.recipeDetails.id]);
   }
 
-  public onDeleteRecipe(): void {
-    const recipeId = this.getRecipeIdFromQuery();
-
-    this.recipeService.deleteRecipe(recipeId)
-      .then((canDelete: boolean) => {
-        if (canDelete) {
-          this.router.navigate(['recipes']);
-          this.snackBar.open('Рецепт успешно удалён!', 'Закрыть', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-        } else {
-          this.snackBar.open('Невозможно удалить рецепт дня!', 'Закрыть', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-        }
-      })
-      .catch(() => {
-        this.snackBar.open('Ошибка удаления рецепта!', 'Закрыть', {
-          duration: 5000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-        });
-      });
-  }
+  public openCard(): void {  }
 
   public onLikeClick(): void { }
 
@@ -98,24 +123,6 @@ export class RecipeComponent implements OnInit, OnDestroy  {
 
   private getRecipeIdFromQuery(): number {
     return Number(this.activatedRoute.snapshot.paramMap.get("id"));
-  }
-
-  private updateRecipe(recipeId: number): void {
-    this.isLoadingActive = true;
-    this.recipeService.getRecipeDetail(recipeId)
-      .then((recipeDetails: RecipeDetailDto) => {
-        this.recipeDetails = this.convertToRecipe(recipeDetails);
-        this.card = this.convertRecipeForCard(this.recipeDetails);
-        this.isShowControlButtons = recipeDetails.isEditable;
-      })
-      .catch((response) => {
-        if (response.status === 404) {
-          this.router.navigate(['/404']);
-        };
-      })
-      .finally(() => {
-        this.isLoadingActive = false;
-      });
   }
 
   private convertToRecipe(recipeDetailDto: RecipeDetailDto): Recipe {
@@ -159,15 +166,11 @@ export class RecipeComponent implements OnInit, OnDestroy  {
     } as DishCard;
   }
 
-  private checkUser(recipeId: number): void {
+  private checkUser(): void {
     const user: Observable<User> = this.store$.select(StoreSelectors.user);
     
-    this.sub = user.subscribe(() => {
-      this.recipeService.isRecipeEditable(recipeId)
-        .then((isEditable: boolean) => {
-          this.isShowControlButtons = isEditable;
-          this.loadRecipe(this.getRecipeIdFromQuery());
-        });
+    this.subscription = user.subscribe(() => {
+      this.loadRecipe();
     });
   }
 }

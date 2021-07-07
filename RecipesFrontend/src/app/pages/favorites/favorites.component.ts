@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 
 import { ImageService } from '../../services/image/image.service';
 import { RecipesService } from '../../services/recipes/recipes.service';
 import { DishCard } from '../../components/dish-card/dish-card';
 import { RecipeDto } from '../../dto/recipe/recipe-dto';
+import { User } from '../../store/store.reducer';
+import { StoreSelectors } from '../../store/store.selectors';
 
 @Component({
   selector: 'app-favorites',
@@ -15,30 +18,39 @@ import { RecipeDto } from '../../dto/recipe/recipe-dto';
 export class FavoritesComponent implements OnInit {
 
   public favorites: DishCard[] = [];
+  public isLoadingActive: boolean = true;
+  public isError: boolean = false;
+  public error: any = null;
+  public subscription: Subscription = Subscription.EMPTY;
 
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar,
     private recipesService: RecipesService,
     private imageService: ImageService,
-    ) { 
-    this.getFavoritesCard();
-  }
+    private store$: Store,
+  ) {  }
 
   ngOnInit(): void {
+    this.checkUser();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   private getFavoritesCard(): void {
+    this.isLoadingActive = true;
+    this.isError = false;
     this.recipesService.getFavouritesRecipes()
       .then((dishCard: RecipeDto[]) => {
         this.favorites = dishCard.map((recipeDto: RecipeDto) => this.convertToDishCard(recipeDto));
       })
-      .catch(() => {
-        this.snackBar.open('Ошибка соединения!', 'Закрыть', {
-          duration: 5000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-        });
+      .catch((response) => {
+        this.isError = true;
+        this.error = response;
+      })
+      .finally(() => {
+        this.isLoadingActive = false;
       });
   }
 
@@ -67,5 +79,13 @@ export class FavoritesComponent implements OnInit {
       isStarSet: recipeDto.isStarSet,
       isLikeSet: recipeDto.isLikeSet,
     } as DishCard;
+  }
+
+  private checkUser(): void {
+    const user: Observable<User> = this.store$.select(StoreSelectors.user);
+    
+    this.subscription = user.subscribe(() => {
+      this.getFavoritesCard();
+    });
   }
 }
