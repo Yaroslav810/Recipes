@@ -42,7 +42,7 @@
       ></app-dish-card>
       <app-loader *ngIf="!isError && isLoadingActive"></app-loader>
       <p *ngIf="dishCards && dishCards.length === 0 && !isLoadingActive" class="text-error">Оооопс.... Ничего не найдено</p>
-      <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="updateRecipes('get')"></app-error-block>
+      <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" [withImage]="false" (onTryAgainClick)="updateRecipes('get')"></app-error-block>
       <div *ngIf="isButtonActive">
         <button mat-stroked-button color="accent" class="stroked-button" (click)="updateRecipes('update')">
           <span>Загрузить ещё</span>

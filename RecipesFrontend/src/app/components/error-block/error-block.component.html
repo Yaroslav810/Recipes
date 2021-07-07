@@ -13,17 +13,20 @@
   </div>
   <div *ngSwitchCase="403" class="error">
     <p class="error__text">У вас нет прав на просмотр данного ресурса</p>
+    <img *ngIf="withImage" src="/assets/images/403.png" alt="sad cat" class="error__image">
     <button mat-stroked-button color="accent" class="error__button" routerLink="/">
       <span>На главную</span>
     </button>
   </div>
   <div *ngSwitchCase="404" class="error">
+    <img *ngIf="withImage" src="/assets/images/404.png" alt="sad cat" class="error__image">
     <p class="error__text">Ресурс не найден</p>
     <button mat-stroked-button color="accent" class="error__button" routerLink="/">
       <span>На главную</span>
     </button>
   </div>
   <div *ngSwitchDefault class="error">
+    <img *ngIf="withImage" src="/assets/images/50_.png" alt="sad cat" class="error__image">
     <p class="error__text">Кажется что-то пошло не так, но мы уже работаем над этим!</p>
     <button mat-stroked-button color="accent" class="error__button" (click)="clickTryAgain()">
       <span>Повторить попытку</span>

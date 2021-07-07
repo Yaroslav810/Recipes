@@ -40,6 +40,6 @@
 
   <section>
     <app-loader *ngIf="isLoadingActive"></app-loader>
-    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="loadRecipe()"></app-error-block>
+    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" [withImage]="true" (onTryAgainClick)="loadRecipe()"></app-error-block>
   </section>
 </div>

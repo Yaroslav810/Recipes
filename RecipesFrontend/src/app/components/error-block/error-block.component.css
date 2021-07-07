@@ -19,3 +19,8 @@
   font: normal 600 18px/22px 'Montserrat', sans-serif;
   color: #808080;
 }
+
+.error__image {
+  display: flex;
+  margin: 0 auto;
+}

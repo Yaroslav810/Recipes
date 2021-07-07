@@ -12,6 +12,7 @@ import { IdentificationWindowModalComponent } from '../identification-window-mod
 export class ErrorBlockComponent implements OnInit {
 
   @Input() error: any = null;
+  @Input() withImage: boolean = false;
   @Output() onTryAgainClick = new EventEmitter();
 
   constructor(

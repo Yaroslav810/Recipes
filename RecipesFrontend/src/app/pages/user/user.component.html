@@ -106,6 +106,6 @@
   </section>
   <section class="error">
     <app-loader *ngIf="isLoadingActive"></app-loader>
-    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="displayData()"></app-error-block>
+    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" [withImage]="true" (onTryAgainClick)="displayData()"></app-error-block>
   </section>
 </div>

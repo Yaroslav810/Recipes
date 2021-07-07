@@ -15,6 +15,6 @@
   
   <section>
     <app-loader *ngIf="isLoadingActive"></app-loader>
-    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" (onTryAgainClick)="getFavoritesCard()"></app-error-block>
+    <app-error-block *ngIf="isError && !isLoadingActive" [error]="error" [withImage]="true" (onTryAgainClick)="getFavoritesCard()"></app-error-block>
   </section>
 </div>
