@@ -20,6 +20,7 @@
   <div *ngSwitchCase="404" class="error">
     <img *ngIf="withImage" src="/assets/images/404.png" alt="sad cat" class="error__image">
     <p class="error__text">Ресурс не найден</p>
+    <p class="error__text">404</p>
     <button mat-stroked-button color="accent" class="error__button" routerLink="/">
       <span>На главную</span>
     </button>
