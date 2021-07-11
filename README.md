@@ -38,7 +38,7 @@ ASP.NET Web API (.NET 5) / C# 9.0 / MS SQL Server 2019 / EF 5.0.6
 <br />
 
 # Запуск приложения
-Кто завернёт это в Docker - Красава!
+Кто завернёт это в Docker - Красава! (Разбераюсь в некоторых деталях)
 
 - ## Запуск NGINX
     - Установить NGINX: [Ссылка](https://nginx.org/ru/download.html)
