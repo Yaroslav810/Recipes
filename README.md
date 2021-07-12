@@ -53,3 +53,4 @@ ASP.NET Web API (.NET 5) / C# 9.0 / MS SQL Server 2019 / EF 5.0.6
     - Перейти в директорию Recipes.Api
     - Выполнить: `dotnet run`
     - Создать БД `Recipes` и в `appsettings.json` указать подключение к ней (там же нужно установить путь до статики)
+    - Выполнить `update database`
